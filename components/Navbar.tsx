@@ -1,9 +1,13 @@
 import React, { useState, useEffect, useRef, CSSProperties } from 'react';
+import { useNavigate } from 'react-router-dom';
+import GrowthModal from './GrowthModal';
 
 const Navbar: React.FC = () => {
   const [isVisible, setIsVisible] = useState(true);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isGrowthModalOpen, setIsGrowthModalOpen] = useState(false);
   const lastScrollY = useRef(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -30,29 +34,43 @@ const Navbar: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Lock body scroll when mobile menu is open
+  // Lock body scroll when mobile menu OR modal is open
   useEffect(() => {
-    if (isMobileOpen) {
+    if (isMobileOpen || isGrowthModalOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
     }
-  }, [isMobileOpen]);
+  }, [isMobileOpen, isGrowthModalOpen]);
 
-  const scrollToSection = (id: string) => {
+  // Keyboard support for closing modal (Esc)
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (isGrowthModalOpen) setIsGrowthModalOpen(false);
+        if (isMobileOpen) setIsMobileOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [isGrowthModalOpen, isMobileOpen]);
+
+  const handleNavigation = (path: string) => {
     setIsMobileOpen(false);
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    } else if (id === 'top') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    setIsGrowthModalOpen(false);
+    navigate(path);
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  };
+
+  const openModal = () => {
+    setIsMobileOpen(false); // Close mobile menu if open
+    setIsGrowthModalOpen(true);
   };
 
   const navLinks = [
-    { name: 'Services', id: 'services' },
-    { name: 'Results', id: 'results' },
-    { name: 'Pricing', id: 'pricing' },
+    { name: 'Services', path: '/services' },
+    { name: 'Blog', path: '/blog' },
+    { name: 'Packages', path: '/packages' },
   ];
 
   // Wrapper style for black text
@@ -85,7 +103,7 @@ const Navbar: React.FC = () => {
           {/* LEFT: Logo */}
           <div className="flex justify-start">
             <button
-              onClick={() => scrollToSection('top')}
+              onClick={() => handleNavigation('/')}
               className={`font-montserrat font-semibold text-lg md:text-xl tracking-tight focus:outline-none text-current ${navHoverClass}`}
               aria-label="OLLIN Home"
             >
@@ -98,7 +116,7 @@ const Navbar: React.FC = () => {
             {navLinks.map((link) => (
               <button
                 key={link.name}
-                onClick={() => scrollToSection(link.id)}
+                onClick={() => handleNavigation(link.path)}
                 className={`text-[13px] font-medium tracking-[0.15em] uppercase relative group text-current ${navHoverClass}`}
               >
                 {link.name}
@@ -117,7 +135,7 @@ const Navbar: React.FC = () => {
             <div className="hidden md:flex items-center gap-6">
               {/* Contact Link */}
               <button
-                onClick={() => scrollToSection('contact')}
+                onClick={() => handleNavigation('/contact')}
                 className={`text-[13px] font-medium tracking-[0.15em] uppercase text-current ${navHoverClass}`}
               >
                 Contact
@@ -125,6 +143,7 @@ const Navbar: React.FC = () => {
 
               {/* CTA Button - NOT Blended (Solid) */}
               <button
+                onClick={openModal}
                 className="bg-ollin-black text-white text-[13px] font-medium tracking-wide px-5 py-2.5 rounded-[12px] hover:translate-y-[-1px] hover:shadow-lg transition-transform duration-300 ease-[cubic-bezier(0.33,1,0.68,1)]"
               >
                 Get a Free Growth Plan
@@ -163,7 +182,7 @@ const Navbar: React.FC = () => {
           {navLinks.map((link, idx) => (
             <button
               key={link.name}
-              onClick={() => scrollToSection(link.id)}
+              onClick={() => handleNavigation(link.path)}
               className={`text-3xl font-light text-ollin-black tracking-tight transition-all duration-500 delay-[${idx * 50}ms] ${isMobileOpen ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
                 }`}
             >
@@ -171,7 +190,7 @@ const Navbar: React.FC = () => {
             </button>
           ))}
           <button
-            onClick={() => scrollToSection('contact')}
+            onClick={() => handleNavigation('/contact')}
             className={`text-3xl font-light text-ollin-black tracking-tight transition-all duration-500 delay-150 ${isMobileOpen ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
               }`}
           >
@@ -179,12 +198,22 @@ const Navbar: React.FC = () => {
           </button>
 
           <div className={`mt-8 transition-all duration-500 delay-200 ${isMobileOpen ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-            <button className="bg-ollin-black text-white text-base font-medium px-8 py-4 rounded-[12px] w-full max-w-xs">
+            <button
+              onClick={openModal}
+              className="bg-ollin-black text-white text-base font-medium px-8 py-4 rounded-[12px] w-full max-w-xs"
+            >
               Get a Free Growth Plan
             </button>
           </div>
         </div>
       </div>
+
+      {/* Growth Modal Portal/Overlay */}
+      <GrowthModal
+        isOpen={isGrowthModalOpen}
+        onClose={() => setIsGrowthModalOpen(false)}
+      />
+
     </>
   );
 };

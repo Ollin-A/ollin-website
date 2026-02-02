@@ -137,7 +137,7 @@ const Hero: React.FC = () => {
           </span>
           <h1 className={`heroTitle heroIntro heroIntroDelay1 ${mounted ? '' : 'opacity-0'}`}>
             <span className="heroTitleStrong">Booked jobs.</span>
-            <span className="heroTitleSoft">Built with Design & Systems.</span>
+            <span className="heroTitleSoft">Built with Design & Technology.</span>
           </h1>
         </div>
 

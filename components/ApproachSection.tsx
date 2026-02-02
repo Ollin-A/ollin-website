@@ -1,49 +1,58 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
+type Lane = "Baseline" | "Growth";
+
 const ApproachSection: React.FC = () => {
     const cards = useMemo(
         () => [
             {
                 n: "01",
-                title: "Answer fast",
-                body: "Missed call = missed money. We set up instant text-back + follow-ups.",
-                micro: "Reply in minutes.",
+                lane: "Baseline" as Lane,
+                title: "Kickoff + simple plan",
+                body: "We learn your service area, your best jobs, and what to say so homeowners understand you fast.",
+                micro: "Clear plan. No fluff.",
             },
             {
                 n: "02",
-                title: "Look legit fast",
-                body: "Pages, reviews, and clear offers that build trust before they call.",
-                micro: "Easy to say yes.",
+                lane: "Baseline" as Lane,
+                title: "Look trustworthy online",
+                body: "We tighten the essentials so people instantly see what you do, where you work, and how to reach you.",
+                micro: "Clean, simple, credible.",
             },
             {
                 n: "03",
-                title: "Win your service area",
-                body: "We tune your Maps + local presence so you show up nearby.",
-                micro: "Get found locally.",
+                lane: "Baseline" as Lane,
+                title: "Make it easy to contact you",
+                body: "We set up your contact flow so calls and messages don’t get lost—and you reply fast.",
+                micro: "Fewer missed leads.",
             },
             {
                 n: "04",
-                title: "Ads that bring calls",
-                body: "Campaigns built for real phone calls. No junk clicks.",
-                micro: "Better leads.",
+                lane: "Growth" as Lane,
+                title: "Get found near you",
+                body: "We strengthen your Google presence so you show up when people search for your service nearby.",
+                micro: "More local visibility.",
             },
             {
                 n: "05",
-                title: "Make choosing you easy",
-                body: "Packages + pricing framing so your estimate feels safe and clear.",
-                micro: "Less back-and-forth.",
+                lane: "Growth" as Lane,
+                title: "Bring in real calls",
+                body: "We launch simple call-focused campaigns to reach people already looking for your service.",
+                micro: "Less junk. More serious leads.",
             },
             {
                 n: "06",
-                title: "Follow-ups + reviews",
-                body: "Automations that cut no-shows and bring in steady 5-stars.",
-                micro: "More trust. More work.",
+                lane: "Growth" as Lane,
+                title: "Follow-ups that book",
+                body: "We add reminders and follow-ups so estimates don’t slip through the cracks.",
+                micro: "More booked work.",
             },
             {
                 n: "07",
-                title: "Weekly tighten-up",
-                body: "We review calls, estimates, and results. Then we adjust what’s not working.",
-                micro: "Small tweaks, better weeks.",
+                lane: "Baseline" as Lane,
+                title: "Launch + weekly improvement",
+                body: "We review what’s working and adjust every week based on calls, estimates, and booked jobs.",
+                micro: "Small changes add up.",
             },
         ],
         []
@@ -53,33 +62,8 @@ const ApproachSection: React.FC = () => {
     const [active, setActive] = useState(0);
     const activeRef = useRef(0);
 
-    // ✅ How we help: stays mounted during close animation
-    const [helpOpen, setHelpOpen] = useState(false);
-    const [helpClosing, setHelpClosing] = useState(false);
-    const btnRef = useRef<HTMLButtonElement | null>(null);
-    const popRef = useRef<HTMLDivElement | null>(null);
-    const helpId = "approach-how-we-help";
-
-    // ✅ refs to compute the gap (between button row and the REAL start of carousel)
-    const sectionRef = useRef<HTMLElement | null>(null);
-    const helpRowRef = useRef<HTMLDivElement | null>(null);
-    const carouselEdgeRef = useRef<HTMLDivElement | null>(null);
-
-    const [popTop, setPopTop] = useState<number | null>(null);
-    const [popTight, setPopTight] = useState(false);
-
-    const openHelp = () => {
-        setHelpClosing(false);
-        setPopTight(false);
-        setHelpOpen(true);
-    };
-    const closeHelp = () => {
-        setHelpClosing(true);
-    };
-    const toggleHelp = () => {
-        if (!helpOpen) openHelp();
-        else closeHelp();
-    };
+    // Progress (0..1) across steps (index-based, stable)
+    const progress = cards.length > 1 ? active / (cards.length - 1) : 0;
 
     const getItems = (track: HTMLDivElement) => {
         return Array.from(track.children).filter(
@@ -95,6 +79,7 @@ const ApproachSection: React.FC = () => {
         const el = items[idx];
         if (!el) return;
 
+        // Make sure we always land on a clean left-edge position (one-by-one)
         track.scrollTo({
             left: el.offsetLeft,
             behavior: "smooth",
@@ -115,20 +100,22 @@ const ApproachSection: React.FC = () => {
         scrollToIndex(next);
     };
 
-    // Keep `active` synced to the actual scroll position
+    // Keep `active` synced to scroll position (buttons drive it, but this keeps it accurate)
     useEffect(() => {
         const track = trackRef.current;
         if (!track) return;
 
         let raf = 0;
 
-        const updateActiveFromScroll = () => {
+        const updateFromScroll = () => {
             raf = 0;
+
             const items = getItems(track);
             if (!items.length) return;
 
             const x = track.scrollLeft;
 
+            // nearest card by left edge distance
             let bestIdx = 0;
             let bestDist = Number.POSITIVE_INFINITY;
 
@@ -148,11 +135,11 @@ const ApproachSection: React.FC = () => {
 
         const onScroll = () => {
             if (raf) return;
-            raf = window.requestAnimationFrame(updateActiveFromScroll);
+            raf = window.requestAnimationFrame(updateFromScroll);
         };
 
         track.addEventListener("scroll", onScroll, { passive: true });
-        updateActiveFromScroll();
+        updateFromScroll();
 
         return () => {
             track.removeEventListener("scroll", onScroll);
@@ -160,133 +147,20 @@ const ApproachSection: React.FC = () => {
         };
     }, [cards.length]);
 
-    // Block horizontal wheel on carousel
+    // Prevent mouse-wheel / trackpad horizontal scrolling (buttons-only on desktop behavior)
     useEffect(() => {
         const track = trackRef.current;
         if (!track) return;
 
         const onWheel = (e: WheelEvent) => {
-            const wouldScrollHorizontally = e.shiftKey || Math.abs(e.deltaX) > 0;
-            if (wouldScrollHorizontally) e.preventDefault();
+            // block horizontal intent (shift-wheel or deltaX)
+            const horizontalIntent = e.shiftKey || Math.abs(e.deltaX) > 0;
+            if (horizontalIntent) e.preventDefault();
         };
 
         track.addEventListener("wheel", onWheel, { passive: false });
-        return () => {
-            track.removeEventListener("wheel", onWheel);
-        };
+        return () => track.removeEventListener("wheel", onWheel);
     }, []);
-
-    // Close on outside click + ESC
-    useEffect(() => {
-        if (!helpOpen) return;
-
-        const onKeyDown = (e: KeyboardEvent) => {
-            if (e.key === "Escape" && !helpClosing) closeHelp();
-        };
-
-        const onPointerDown = (e: PointerEvent) => {
-            if (helpClosing) return;
-
-            const t = e.target as Node | null;
-            if (!t) return;
-
-            const btn = btnRef.current;
-            const pop = popRef.current;
-
-            const insideBtn = !!btn && btn.contains(t);
-            const insidePop = !!pop && pop.contains(t);
-
-            if (!insideBtn && !insidePop) closeHelp();
-        };
-
-        window.addEventListener("keydown", onKeyDown);
-        window.addEventListener("pointerdown", onPointerDown);
-
-        return () => {
-            window.removeEventListener("keydown", onKeyDown);
-            window.removeEventListener("pointerdown", onPointerDown);
-        };
-    }, [helpOpen, helpClosing]);
-
-    // ✅ Place popup centered between help row and carousel start.
-    // No internal scrolling. If it doesn't fit, switch to "tight" mode automatically.
-    useEffect(() => {
-        if (!helpOpen) {
-            setPopTop(null);
-            setPopTight(false);
-            return;
-        }
-
-        let raf1 = 0;
-        let raf2 = 0;
-
-        const recalc = () => {
-            const section = sectionRef.current;
-            const topEl = helpRowRef.current;
-            const bottomEl = carouselEdgeRef.current;
-            const popEl = popRef.current;
-
-            if (!section || !topEl || !bottomEl || !popEl) return;
-
-            const pad = 16;
-
-            const sR = section.getBoundingClientRect();
-            const tR = topEl.getBoundingClientRect();
-            const bR = bottomEl.getBoundingClientRect();
-
-            const gTop = tR.bottom + pad;
-            const gBot = bR.top - pad;
-            const avail = Math.max(0, gBot - gTop);
-
-            // Ensure we measure after styles apply
-            raf2 = window.requestAnimationFrame(() => {
-                const popNow = popRef.current;
-                const secNow = sectionRef.current;
-                const topNow = helpRowRef.current;
-                const botNow = carouselEdgeRef.current;
-
-                if (!popNow || !secNow || !topNow || !botNow) return;
-
-                const sR2 = secNow.getBoundingClientRect();
-                const tR2 = topNow.getBoundingClientRect();
-                const bR2 = botNow.getBoundingClientRect();
-
-                const gTop2 = tR2.bottom + pad;
-                const gBot2 = bR2.top - pad;
-                const avail2 = Math.max(0, gBot2 - gTop2);
-
-                const popH = popNow.getBoundingClientRect().height;
-
-                // If it doesn't fit and we haven't tightened yet, tighten and re-run.
-                if (!popTight && popH > avail2) {
-                    setPopTight(true);
-                    return;
-                }
-
-                // Center within the gap, clamped to not touch edges
-                const fitH = Math.min(popH, avail2);
-                const desiredTop = gTop2 + (avail2 - fitH) / 2;
-                const clampedTop = Math.min(Math.max(desiredTop, gTop2), gBot2 - fitH);
-
-                setPopTop(Math.max(0, clampedTop - sR2.top));
-            });
-        };
-
-        raf1 = window.requestAnimationFrame(recalc);
-
-        const onResize = () => recalc();
-        const onScroll = () => recalc();
-
-        window.addEventListener("resize", onResize);
-        window.addEventListener("scroll", onScroll, true);
-
-        return () => {
-            if (raf1) window.cancelAnimationFrame(raf1);
-            if (raf2) window.cancelAnimationFrame(raf2);
-            window.removeEventListener("resize", onResize);
-            window.removeEventListener("scroll", onScroll, true);
-        };
-    }, [helpOpen, popTight]);
 
     const ArrowIcon = ({ dir }: { dir: "left" | "right" }) => (
         <svg
@@ -323,143 +197,55 @@ const ApproachSection: React.FC = () => {
         </svg>
     );
 
-    const copyNormal =
-        "You’re busy running jobs. Your marketing shouldn’t be another full-time job. We handle your social, your brand, and your website so you look legit and get found in your area. Then we tighten the follow-ups so missed calls don’t turn into missed money. Simple setup, steady improvements, and work that keeps coming in.";
-
-    // Tight mode: shorter so it always fits without scroll, without touching cards
-    const copyTight =
-        "You’re busy running jobs. We handle your website, local presence, and follow-ups so you get found and booked. Faster replies, clearer offers, and tighter systems that turn missed calls into jobs.";
-
     return (
-        <section ref={sectionRef} id="approach" className="relative w-full bg-ollin-bg text-ollin-black py-20 md:py-28">
+        <section id="approach" className="relative w-full bg-ollin-bg text-ollin-black py-20 md:py-28">
             <style>{`
-        /* =========================
-           How we help (pill + panel)
-           ========================= */
-        #approach .helpWrap{
-          position: static; /* popup anchored to section, not the button */
-          display: inline-block;
+        #approach ._hideScroll::-webkit-scrollbar{ display:none; }
+
+        /* Progress rail */
+        #approach .progRail{
+          height: 2px;
+          background: rgba(17,17,17,0.10);
+          overflow: hidden;
+        }
+        #approach .progFill{
+          height: 100%;
+          background: rgba(17,17,17,0.38);
+          transform-origin: left center;
+          will-change: transform;
         }
 
-        #approach .helpPill{
-          --bg: rgba(17,17,17,0.04);
-          --bgHover: rgba(17,17,17,0.09);
-          --bd: rgba(17,17,17,0.10);
-          --bdHover: rgba(17,17,17,0.18);
-
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-
-          padding: 14px 22px;
-          border-radius: 999px;
-          border: 1px solid var(--bd);
-          background: var(--bg);
-          color: rgba(17,17,17,0.88);
-
-          cursor: pointer;
-          user-select: none;
-
-          transition: background 180ms ease, border-color 180ms ease, color 180ms ease;
+        /* Dots nav */
+        #approach .dotsRow{
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          gap:10px;
+          flex-wrap:wrap;
         }
-
-        #approach .helpPill:hover{
-          background: var(--bgHover);
-          border-color: var(--bdHover);
-          color: rgba(17,17,17,0.98);
+        #approach .dot{
+          width:8px;
+          height:8px;
+          border-radius:999px;
+          background:rgba(17,17,17,0.18);
+          border:0;
+          padding:0;
+          cursor:pointer;
+          transition:transform 160ms ease, background 160ms ease, opacity 160ms ease;
+          opacity:0.9;
         }
-
-        #approach .helpPill[data-open="true"]{
-          background: var(--bgHover);
-          border-color: var(--bdHover);
-          color: rgba(17,17,17,0.98);
+        #approach .dot:hover{
+          background:rgba(17,17,17,0.28);
+          transform:scale(1.15);
         }
-
-        #approach .helpPillLabel{
-          font-weight: 650;
-          letter-spacing: -0.01em;
-          line-height: 1;
+        #approach .dot[data-active="true"]{
+          background:rgba(17,17,17,0.44);
+          transform:scale(1.35);
+          opacity:1;
         }
-
-        /* =========================
-           Popup: centered, wide, no internal scroll
-           ========================= */
-        #approach .helpPop{
-          position: absolute;
-          left: 50%;
-          transform: translateX(-50%);
-          width: min(980px, calc(100vw - 10vw));
-          z-index: 40;
-          pointer-events: auto;
-        }
-
-        #approach .helpPopInner{
-          border-radius: 0px;
-          background: rgba(17,17,17,0.06);
-          border: 1px solid rgba(17,17,17,0.08);
-
-          padding: 18px 22px;
-          overflow: hidden; /* ✅ no scrollbars */
-          will-change: transform, opacity, filter;
-        }
-
-        /* Tight mode: slightly smaller + tighter padding so it fits in the gap */
-        #approach .helpPopInner[data-tight="true"]{
-          padding: 14px 18px;
-        }
-
-        #approach .helpPopText{
-          color: rgba(17,17,17,0.82);
-          font-size: 16px;
-          line-height: 1.55;
-        }
-
-        #approach .helpPopText[data-tight="true"]{
-          font-size: 15px;
-          line-height: 1.5;
-        }
-
-        /* open/close animation */
-        @keyframes helpIn {
-          0%   { opacity: 0; transform: translateX(-6px) scaleX(0.05); filter: blur(1.6px); }
-          55%  { opacity: 1; transform: translateX(0px) scaleX(1.02); filter: blur(0.6px); }
-          100% { opacity: 1; transform: translateX(0px) scaleX(1.00); filter: blur(0px); }
-        }
-        @keyframes helpOut {
-          0%   { opacity: 1; transform: translateX(0px) scaleX(1.00); filter: blur(0px); }
-          100% { opacity: 0; transform: translateX(-6px) scaleX(0.05); filter: blur(1.6px); }
-        }
-
-        #approach .helpPopInner[data-state="open"]{ animation: helpIn 320ms cubic-bezier(.2,.9,.2,1) both; }
-        #approach .helpPopInner[data-state="closing"]{ animation: helpOut 220ms cubic-bezier(.2,.9,.2,1) both; }
-
-        /* =========================
-           Mobile: centered modal + overlay
-           ========================= */
-        #approach .helpOverlay{ display: none; }
-
-        @media (max-width: 640px){
-          #approach .helpOverlay{
-            display: block;
-            position: fixed;
-            inset: 0;
-            z-index: 45;
-            background: rgba(0,0,0,0.22);
-          }
-
-          #approach .helpPop{
-            position: fixed;
-            left: 50%;
-            top: 50% !important;
-            transform: translate(-50%, -50%);
-            width: min(92vw, 680px);
-            z-index: 50;
-          }
-        }
-
-        @media (prefers-reduced-motion: reduce){
-          #approach .helpPopInner[data-state="open"],
-          #approach .helpPopInner[data-state="closing"]{ animation: none !important; }
+        #approach .dot:focus-visible{
+          outline:2px solid rgba(17,17,17,0.22);
+          outline-offset:3px;
         }
       `}</style>
 
@@ -468,81 +254,25 @@ const ApproachSection: React.FC = () => {
                 <div className="max-w-[980px]">
                     <h3 className="text-3xl md:text-4xl lg:text-5xl tracking-tight leading-[1.02] font-medium">
                         <span className="text-ollin-black">Your</span>{" "}
-                        <span className="text-ollin-black/65">marketing</span>{" "}
-                        <span className="text-ollin-black">team,</span>{" "}
-                        <span className="text-ollin-black/45">built for local</span>{" "}
-                        <span className="text-ollin-black">contractors</span>.
+                        <span className="text-ollin-black">first</span>{" "}
+                        <span className="text-ollin-black/65">14 days.</span>
                     </h3>
 
-                    <p className="mt-5 text-base md:text-lg leading-snug text-ollin-black/70 max-w-[760px]">
-                        <span className="text-ollin-black/80">
-                            Most contractors don’t need more ideas. They need execution that brings calls and closes estimates.
+                    <p className="mt-5 text-base md:text-lg leading-snug text-ollin-black/70 max-w-[820px]">
+                        We start with what you need now—then we add what brings calls and closes estimates.
+                        <br />
+                        Some steps are <span className="text-ollin-black/80 font-medium">Baseline</span>. Others unlock faster{" "}
+                        <span className="text-ollin-black/80 font-medium">Growth</span>.
+                        <br />
+                        <span className="text-ollin-black/70">
+                            Most contractors start with a website and social. That’s fine. The real win is when the phone rings—and
+                            leads don’t slip.
                         </span>
-                        <br />
-                        We run ads, Maps visibility, and follow-ups. Then we improve it every week.
-                        <br />
-                        <span className="text-ollin-black/70">Bilingual. Contractor-first. Built for speed.</span>
                     </p>
                 </div>
 
-                {/* Button between text and cards */}
-                <div ref={helpRowRef} className="mt-10 md:mt-12 flex justify-start">
-                    <div className="helpWrap">
-                        <button
-                            ref={btnRef}
-                            type="button"
-                            className="helpPill"
-                            data-open={helpOpen ? "true" : "false"}
-                            aria-expanded={helpOpen}
-                            aria-controls={helpId}
-                            onClick={toggleHelp}
-                        >
-                            <span className="helpPillLabel">How we help</span>
-                        </button>
-
-                        {helpOpen && (
-                            <div
-                                className="helpOverlay"
-                                aria-hidden="true"
-                                onClick={() => {
-                                    if (!helpClosing) closeHelp();
-                                }}
-                            />
-                        )}
-
-                        {helpOpen && (
-                            <div
-                                ref={popRef}
-                                id={helpId}
-                                className="helpPop"
-                                style={{ top: popTop ?? 0 }}
-                                role="dialog"
-                                aria-label="How we help"
-                            >
-                                <div
-                                    className="helpPopInner"
-                                    data-state={helpClosing ? "closing" : "open"}
-                                    data-tight={popTight ? "true" : "false"}
-                                    onAnimationEnd={() => {
-                                        if (helpClosing) {
-                                            setHelpOpen(false);
-                                            setHelpClosing(false);
-                                            setPopTight(false);
-                                            setPopTop(null);
-                                        }
-                                    }}
-                                >
-                                    <p className="helpPopText" data-tight={popTight ? "true" : "false"}>
-                                        {popTight ? copyTight : copyNormal}
-                                    </p>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                </div>
-
-                {/* Header row: nav only */}
-                <div className="mt-10 md:mt-10 flex items-center justify-end">
+                {/* Arrows only (top row) */}
+                <div className="mt-10 md:mt-12 flex items-center justify-end">
                     <div className="flex items-center gap-2">
                         <button
                             onClick={goPrev}
@@ -578,8 +308,15 @@ const ApproachSection: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Carousel (this ref is the REAL bottom boundary for the popup gap) */}
-                <div ref={carouselEdgeRef} className="mt-6">
+                {/* Progress rail */}
+                <div className="mt-6">
+                    <div className="progRail w-full">
+                        <div className="progFill" style={{ transform: `scaleX(${progress})` }} />
+                    </div>
+                </div>
+
+                {/* Carousel */}
+                <div className="mt-6">
                     <div
                         ref={trackRef}
                         className={[
@@ -595,31 +332,48 @@ const ApproachSection: React.FC = () => {
                         ].join(" ")}
                         style={{
                             WebkitOverflowScrolling: "touch",
-                            paddingRight: "clamp(120px, 35vw, 520px)",
+                            scrollSnapStop: "always",
                         }}
                     >
-                        <style>{`
-              #approach ._hideScroll::-webkit-scrollbar{ display:none; }
-            `}</style>
-
                         {cards.map((c) => (
                             <div
                                 key={c.n}
                                 data-card="1"
                                 className={[
                                     "snap-start",
+                                    "shrink-0",
                                     "relative",
                                     "border border-black/10",
                                     "bg-transparent",
                                     "px-8 py-8",
-                                    "min-w-[88%]",
-                                    "sm:min-w-[520px]",
-                                    "lg:min-w-[620px]",
+                                    "w-[88%]",
+                                    "sm:w-[520px]",
+                                    "lg:w-[620px]",
                                     "transition-colors duration-200",
                                     "hover:border-black/20",
                                 ].join(" ")}
                             >
-                                <div className="text-sm font-semibold tracking-tight text-ollin-black/85">{c.title}</div>
+                                {/* Baseline / Growth label */}
+                                <div className="text-[11px] uppercase tracking-[0.18em] text-ollin-black/45">
+                                    <span
+                                        className={[
+                                            "inline-flex items-center gap-2",
+                                            "px-2.5 py-1",
+                                            "border",
+                                            c.lane === "Growth" ? "border-black/15 text-ollin-black/70" : "border-black/10 text-ollin-black/55",
+                                        ].join(" ")}
+                                    >
+                                        <span
+                                            className={[
+                                                "h-[6px] w-[6px] rounded-full",
+                                                c.lane === "Growth" ? "bg-ollin-black/45" : "bg-ollin-black/25",
+                                            ].join(" ")}
+                                        />
+                                        {c.lane}
+                                    </span>
+                                </div>
+
+                                <div className="mt-4 text-sm font-semibold tracking-tight text-ollin-black/85">{c.title}</div>
 
                                 <div className="mt-2 text-sm md:text-[15px] leading-snug text-ollin-black/65 max-w-[52ch]">
                                     {c.body}
@@ -631,6 +385,29 @@ const ApproachSection: React.FC = () => {
                                     {c.n}
                                 </div>
                             </div>
+                        ))}
+
+                        {/* End spacer: lets the last cards align cleanly without getting stuck */}
+                        <div
+                            aria-hidden
+                            data-spacer="1"
+                            className="shrink-0 w-[12%] sm:w-[calc(100%-520px)] lg:w-[calc(100%-620px)]"
+                        />
+                    </div>
+                </div>
+
+                {/* Dots BELOW the cards, centered */}
+                <div className="mt-8">
+                    <div className="dotsRow" aria-label="Jump to a step">
+                        {cards.map((c, i) => (
+                            <button
+                                key={c.n}
+                                type="button"
+                                className="dot"
+                                data-active={i === active ? "true" : "false"}
+                                aria-label={`Go to step ${c.n}: ${c.title} (${c.lane})`}
+                                onClick={() => scrollToIndex(i)}
+                            />
                         ))}
                     </div>
                 </div>
