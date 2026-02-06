@@ -1,5 +1,5 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import BackgroundShape from './BackgroundShape';
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import BackgroundShape from "./BackgroundShape";
 
 import {
   motion,
@@ -8,10 +8,12 @@ import {
   useTransform,
   useMotionValue,
   useVelocity,
-  useAnimationFrame
-} from 'motion/react';
+  useAnimationFrame,
+} from "framer-motion";
 
-function useElementWidth<T extends HTMLElement>(ref: React.RefObject<T | null>): number {
+function useElementWidth<T extends HTMLElement>(
+  ref: React.RefObject<T | null>,
+): number {
   const [width, setWidth] = useState(0);
 
   useLayoutEffect(() => {
@@ -26,14 +28,14 @@ function useElementWidth<T extends HTMLElement>(ref: React.RefObject<T | null>):
 
     // ResizeObserver (mejor que solo window resize)
     let ro: ResizeObserver | null = null;
-    if (typeof ResizeObserver !== 'undefined') {
+    if (typeof ResizeObserver !== "undefined") {
       ro = new ResizeObserver(update);
       ro.observe(el);
     }
 
-    window.addEventListener('resize', update);
+    window.addEventListener("resize", update);
     return () => {
-      window.removeEventListener('resize', update);
+      window.removeEventListener("resize", update);
       ro?.disconnect();
     };
   }, [ref]);
@@ -53,22 +55,31 @@ type VelocityRowProps = {
   className?: string;
 };
 
-const VelocityRow: React.FC<VelocityRowProps> = ({ items, baseVelocity, className = '' }) => {
+const VelocityRow: React.FC<VelocityRowProps> = ({
+  items,
+  baseVelocity,
+  className = "",
+}) => {
   const baseX = useMotionValue(0);
 
   const { scrollY } = useScroll();
   const scrollVelocity = useVelocity(scrollY);
 
-  const smoothVelocity = useSpring(scrollVelocity, { damping: 50, stiffness: 400 });
+  const smoothVelocity = useSpring(scrollVelocity, {
+    damping: 50,
+    stiffness: 400,
+  });
 
   // ✅ Suave (no se vuelve loco)
-  const velocityFactor = useTransform(smoothVelocity, [0, 1200], [0, 2.4], { clamp: false });
+  const velocityFactor = useTransform(smoothVelocity, [0, 1200], [0, 2.4], {
+    clamp: false,
+  });
 
   const copyRef = useRef<HTMLSpanElement>(null);
   const copyWidth = useElementWidth(copyRef);
 
   const x = useTransform(baseX, (v) => {
-    if (copyWidth === 0) return '0px';
+    if (copyWidth === 0) return "0px";
     return `${wrap(-copyWidth, 0, v)}px`;
   });
 
@@ -119,7 +130,7 @@ const Hero: React.FC = () => {
     "BOOKED JOBS",
     "MORE CALLS",
     "BETTER WEBSITE",
-    "FASTER REPLIES"
+    "FASTER REPLIES",
   ];
 
   // ✅ Fila 2 (mismo count = 6, pero “más servicios”)
@@ -129,7 +140,7 @@ const Hero: React.FC = () => {
     "GET FOUND EASILY",
     "ORGANIC GROWTH",
     "BRANDING",
-    "AUTOMATIC FOLLOW-UPS"
+    "AUTOMATIC FOLLOW-UPS",
   ];
 
   return (
@@ -441,33 +452,44 @@ const Hero: React.FC = () => {
 
       <div className="heroInner">
         <div className="heroLeft">
-          <span className={`eyebrow heroIntro ${mounted ? '' : 'opacity-0'}`}>
+          <span className={`eyebrow heroIntro ${mounted ? "" : "opacity-0"}`}>
             FOR U.S. CONTRACTORS
           </span>
 
-          <h1 className={`heroTitle heroIntro heroIntroDelay1 ${mounted ? '' : 'opacity-0'}`}>
+          <h1
+            className={`heroTitle heroIntro heroIntroDelay1 ${mounted ? "" : "opacity-0"}`}
+          >
             <span className="heroTitleStrong">Booked jobs.</span>
-            <span className="heroTitleSoft">Built with Design & Technology.</span>
+            <span className="heroTitleSoft">
+              Built with Design & Technology.
+            </span>
           </h1>
         </div>
 
         <div className="heroRight">
-          <div className={`eyebrow heroIntro heroIntroDelay2 ${mounted ? '' : 'opacity-0'}`}>
+          <div
+            className={`eyebrow heroIntro heroIntroDelay2 ${mounted ? "" : "opacity-0"}`}
+          >
             CONTRACTOR MARKETING
           </div>
 
-          <p className={`heroRightCopy heroIntro heroIntroDelay2 ${mounted ? '' : 'opacity-0'}`}>
-            More calls and estimates—then we turn them into booked jobs with a better website, faster replies, and automatic follow-ups.
+          <p
+            className={`heroRightCopy heroIntro heroIntroDelay2 ${mounted ? "" : "opacity-0"}`}
+          >
+            More calls and estimates—then we turn them into booked jobs with a
+            better website, faster replies, and automatic follow-ups.
           </p>
 
-          <div className={`bilingualLine heroIntro heroIntroDelay3 ${mounted ? '' : 'opacity-0'}`}>
+          <div
+            className={`bilingualLine heroIntro heroIntroDelay3 ${mounted ? "" : "opacity-0"}`}
+          >
             English & Spanish. Same team.
           </div>
 
-          <div className={`heroCtas heroIntro heroIntroDelay3 ${mounted ? '' : 'opacity-0'}`}>
-            <button className="btnPrimary">
-              Get a Free Growth Plan
-            </button>
+          <div
+            className={`heroCtas heroIntro heroIntroDelay3 ${mounted ? "" : "opacity-0"}`}
+          >
+            <button className="btnPrimary">Get a Free Growth Plan</button>
 
             <button className="btnSecondary btnSecondary14">
               <span className="btnSecondary14Text" data-text="View Our Work">
@@ -475,7 +497,11 @@ const Hero: React.FC = () => {
               </span>
 
               <span className="btnSecondary14Arrow" aria-hidden="true">
-                <svg className="btnSecondary14ArrowLineSvg" viewBox="0 0 100 16" fill="none">
+                <svg
+                  className="btnSecondary14ArrowLineSvg"
+                  viewBox="0 0 100 16"
+                  fill="none"
+                >
                   <line
                     x1="0"
                     y1="8"
@@ -508,18 +534,25 @@ const Hero: React.FC = () => {
 
           {/* ✅ MISMO BLOQUE, MISMA POSICIÓN. Solo cambia el motor interno. */}
           <div
-            className={`marquee heroIntro heroIntroDelay4 ${mounted ? '' : 'opacity-0'}`}
+            className={`marquee heroIntro heroIntroDelay4 ${mounted ? "" : "opacity-0"}`}
             aria-label="Services list"
             role="marquee"
           >
             <div className="marqueeViewport">
               <div className="marqueeLines">
-                <VelocityRow items={row1Items} baseVelocity={60} className="marqueeRow1" />
-                <VelocityRow items={row2Items} baseVelocity={-54} className="marqueeRow2" />
+                <VelocityRow
+                  items={row1Items}
+                  baseVelocity={60}
+                  className="marqueeRow1"
+                />
+                <VelocityRow
+                  items={row2Items}
+                  baseVelocity={-54}
+                  className="marqueeRow2"
+                />
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </section>

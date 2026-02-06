@@ -21,13 +21,15 @@ const App: React.FC = () => {
   const location = useLocation();
   const isContact = location.pathname.startsWith("/contact");
 
+  // ✅ define esto (o cámbialo por tus clases reales)
+  const mainBgClass = "bg-ollin-bg";
+
   return (
     <>
-      {/* Global scroll-to-top on route change */}
+      {/* ✅ Global scroll-to-top on route change (solo una vez) */}
       <ScrollToTop />
 
       <Navbar />
-      <ScrollToTop />
 
       <main
         className={`w-full min-h-screen ${mainBgClass} text-ollin-black overflow-x-hidden relative selection:bg-black selection:text-white`}

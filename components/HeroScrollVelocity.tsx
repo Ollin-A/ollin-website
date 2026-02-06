@@ -7,7 +7,7 @@ import {
   useMotionValue,
   useVelocity,
   useAnimationFrame,
-} from "motion/react";
+} from "framer-motion";
 
 type Props = {
   row1: string[];
@@ -16,7 +16,9 @@ type Props = {
   className?: string;
 };
 
-function useElementWidth<T extends HTMLElement>(ref: React.RefObject<T | null>): number {
+function useElementWidth<T extends HTMLElement>(
+  ref: React.RefObject<T | null>,
+): number {
   const [width, setWidth] = useState(0);
 
   useLayoutEffect(() => {
@@ -53,10 +55,15 @@ const VelocityLine: React.FC<{
 
   const { scrollY } = useScroll();
   const scrollVelocity = useVelocity(scrollY);
-  const smoothVelocity = useSpring(scrollVelocity, { damping: 50, stiffness: 400 });
+  const smoothVelocity = useSpring(scrollVelocity, {
+    damping: 50,
+    stiffness: 400,
+  });
 
   // Ajuste: que no se vuelva loco con scroll fuerte
-  const velocityFactor = useTransform(smoothVelocity, [0, 1200], [0, 3.5], { clamp: false });
+  const velocityFactor = useTransform(smoothVelocity, [0, 1200], [0, 3.5], {
+    clamp: false,
+  });
 
   const copyRef = useRef<HTMLSpanElement>(null);
   const copyWidth = useElementWidth(copyRef);
@@ -108,7 +115,12 @@ const VelocityLine: React.FC<{
   );
 };
 
-const HeroScrollVelocity: React.FC<Props> = ({ row1, row2, velocity = 62, className = "" }) => {
+const HeroScrollVelocity: React.FC<Props> = ({
+  row1,
+  row2,
+  velocity = 62,
+  className = "",
+}) => {
   return (
     <div className={`hvWrap ${className}`}>
       <style>{`
@@ -203,7 +215,11 @@ const HeroScrollVelocity: React.FC<Props> = ({ row1, row2, velocity = 62, classN
 
         {/* Fila 2 (más larga) */}
         <div className="hvRow2">
-          <VelocityLine items={row2} baseVelocity={velocity * 0.9} reverse={true} />
+          <VelocityLine
+            items={row2}
+            baseVelocity={velocity * 0.9}
+            reverse={true}
+          />
         </div>
       </div>
     </div>
