@@ -17,7 +17,7 @@ export default function CustomPlanCTASection({ onBuildYourOwnPlan }: Props) {
                 <div className="mt-6">
                     <button type="button" onClick={onBuildYourOwnPlan} className="btnSecondary btnSecondary14">
                         <span className="btnSecondary14Text" data-text="BUILD YOUR OWN PLAN">
-                            BUILD YOUR OWN PLAN
+                            Build your own plan
                         </span>
 
                         <span className="btnSecondary14Arrow" aria-hidden="true">
