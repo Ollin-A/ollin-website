@@ -25,12 +25,19 @@ export default function ServicesHero({ muted = "rgba(0,0,0,0.4)" }: Props) {
                     className={cx(
                         // mobile: centered
                         "max-w-[380px] mx-auto text-center",
+<<<<<<< HEAD
                         // ⬇️ slightly less push-down on mobile so it sits a bit higher
                         "mt-5 md:mt-8",
                         // desktop: absolute positioning
                         "lg:mx-0 lg:text-left lg:absolute",
                         // ⬇️ move it up slightly on desktop
                         "lg:top-[14%] lg:left-[56%]",
+=======
+                        "mt-6 md:mt-10",
+                        // desktop: absolute positioning
+                        "lg:mx-0 lg:text-left lg:absolute",
+                        "lg:top-[18%] lg:left-[56%]",
+>>>>>>> zip/incoming
                         "transition-all duration-[1000ms] delay-[120ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
                         introIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
                     )}
@@ -47,10 +54,14 @@ export default function ServicesHero({ muted = "rgba(0,0,0,0.4)" }: Props) {
                 <div
                     className={cx(
                         "absolute inset-x-0",
+<<<<<<< HEAD
                         "bottom-6 md:bottom-10 lg:bottom-14",
                         // ✅ add gentle “gutters” so text doesn’t hug the viewport edges
                         // (keeps it subtle; scales up slightly on large screens)
                         "px-5 sm:px-6 lg:px-10"
+=======
+                        "bottom-6 md:bottom-10 lg:bottom-14"
+>>>>>>> zip/incoming
                     )}
                 >
                     {/* LINE 1: Services */}
@@ -69,7 +80,16 @@ export default function ServicesHero({ muted = "rgba(0,0,0,0.4)" }: Props) {
                     </h1>
 
                     {/* LINE 2: & Systems */}
+<<<<<<< HEAD
                     <div className={cx("mt-8 md:mt-10 lg:mt-12", "flex justify-end")}>
+=======
+                    <div
+                        className={cx(
+                            "mt-8 md:mt-10 lg:mt-12",
+                            "flex justify-end"
+                        )}
+                    >
+>>>>>>> zip/incoming
                         <div
                             className={cx(
                                 "flex items-baseline justify-end",

@@ -1,4 +1,5 @@
 import React from "react";
+<<<<<<< HEAD
 import { Link } from "react-router-dom";
 
 function Chip({ href, children }: { href: string; children: React.ReactNode }) {
@@ -211,5 +212,14 @@ export default function ServicesRetention() {
                 </div>
             </section>
         </main>
+=======
+
+export default function ServicesRetention() {
+    return (
+        <div className="pt-32 pb-20 px-6 min-h-[50vh] flex flex-col items-center justify-center text-center">
+            <h1 className="text-4xl md:text-6xl font-[Montserrat] mb-4">Retention</h1>
+            <p className="text-xl text-gray-500">Coming soon</p>
+        </div>
+>>>>>>> zip/incoming
     );
 }
