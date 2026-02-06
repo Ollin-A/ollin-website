@@ -1,16 +1,13 @@
-import React from 'react';
+import React from "react";
+import ServicesHero from "./ServicesHero";
+import ServicesChapters from "../components/ServicesChapters";
+import SiteOutro from "../components/SiteOutro";
 
-const Services: React.FC = () => {
+export default function Services() {
     return (
-        <div className="w-full min-h-screen pt-32 pb-20 px-[5vw]">
-            <div className="max-w-[1500px] mx-auto">
-                <h1 className="text-4xl md:text-6xl font-semibold mb-8 text-ollin-black">Services</h1>
-                <p className="text-lg text-ollin-black opacity-70">
-                    Our services are designed to help you build and grow. Content coming soon.
-                </p>
-            </div>
-        </div>
+        <>
+            <ServicesHero />
+            <ServicesChapters />
+        </>
     );
-};
-
-export default Services;
+}

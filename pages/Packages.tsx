@@ -44,6 +44,11 @@ export default function PackagesPage() {
 
     const anySelected = !!activeId;
 
+    const handleBuildYourOwnPlan = () => {
+        navigate("/packages/personalized");
+        window.scrollTo(0, 0);
+    };
+
     return (
         <div className="w-full" style={{ background: PALETTE.bg, color: PALETTE.ink }}>
             <div className="max-w-6xl mx-auto px-6 pt-14 pb-20 font-[Poppins]">
@@ -64,16 +69,10 @@ export default function PackagesPage() {
                     activeId={activeId}
                     panelPkg={panelPkg}
                     onRequestScope={(packageId) => goContactWith({ package: packageId })}
-                    onBuildYourOwnPlan={() => navigate("/packages/personalized")}
+                    onBuildYourOwnPlan={handleBuildYourOwnPlan}
                 />
 
-                {/* SINGLE SERVICES */}
-                <SingleServicesSection
-                    services={SINGLE_SERVICES}
-                    onRequestScope={(serviceId) => goContactWith({ type: "single", service: serviceId })}
-                />
-
-                {/* COMPARISON */}
+                {/* COMPARISON (moved ABOVE single services) */}
                 <ComparisonSection
                     packages={PACKAGES}
                     rows={COMPARISON}
@@ -81,8 +80,14 @@ export default function PackagesPage() {
                     onSelect={togglePackage}
                 />
 
+                {/* SINGLE SERVICES (moved BELOW comparison) */}
+                <SingleServicesSection
+                    services={SINGLE_SERVICES}
+                    onRequestScope={(serviceId) => goContactWith({ type: "single", service: serviceId })}
+                />
+
                 {/* CUSTOM CTA */}
-                <CustomPlanCTASection onBuildYourOwnPlan={() => navigate("/packages/personalized")} />
+                <CustomPlanCTASection onBuildYourOwnPlan={handleBuildYourOwnPlan} />
             </div>
         </div>
     );

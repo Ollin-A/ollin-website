@@ -270,9 +270,7 @@ const faqCategories: FaqCategory[] = [
 const OPEN_SCROLL_DELAY_MS = 340; // coincide con duration-300 + un colchón
 
 const Faq: React.FC = () => {
-    const [activeCategoryId, setActiveCategoryId] = useState<string>(
-        faqCategories[0].id
-    );
+    const [activeCategoryId, setActiveCategoryId] = useState<string>(faqCategories[0].id);
 
     // ✅ por default ninguna pregunta abierta
     const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -286,17 +284,13 @@ const Faq: React.FC = () => {
     const pendingScrollRef = useRef(false);
     const scrollTimerRef = useRef<number | null>(null);
 
-    const activeCategory =
-        faqCategories.find((c) => c.id === activeCategoryId) || faqCategories[0];
+    const activeCategory = faqCategories.find((c) => c.id === activeCategoryId) || faqCategories[0];
 
     const scrollToAccordion = () => {
         if (typeof window === "undefined" || !accordionRef.current) return;
 
         const yOffset = -96;
-        const y =
-            accordionRef.current.getBoundingClientRect().top +
-            window.pageYOffset +
-            yOffset;
+        const y = accordionRef.current.getBoundingClientRect().top + window.pageYOffset + yOffset;
 
         window.scrollTo({ top: y, behavior: "smooth" });
     };
@@ -356,10 +350,7 @@ const Faq: React.FC = () => {
     };
 
     return (
-        <section
-            id="faq"
-            className="relative w-full bg-ollin-bg text-ollin-black py-20 md:py-28"
-        >
+        <section id="faq" className="relative w-full bg-[#F2F2F2] text-ollin-black py-20 md:py-28">
             <div className="max-w-[1500px] mx-auto px-[5vw] w-full">
                 {/* Top copy */}
                 <Reveal>
@@ -448,9 +439,7 @@ const Faq: React.FC = () => {
                     <div
                         className={[
                             "grid transition-[grid-template-rows,opacity] duration-300 ease-in-out",
-                            accordionOpen
-                                ? "grid-rows-[1fr] opacity-100"
-                                : "grid-rows-[0fr] opacity-0",
+                            accordionOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0",
                         ].join(" ")}
                         aria-hidden={!accordionOpen}
                     >
@@ -488,10 +477,7 @@ const Faq: React.FC = () => {
                                         const isOpen = openIndex === idx;
 
                                         return (
-                                            <div
-                                                key={item.id}
-                                                className="border-b border-black/10 last:border-0"
-                                            >
+                                            <div key={item.id} className="border-b border-black/10 last:border-0">
                                                 <button
                                                     onClick={() => toggleAccordionQuestion(idx)}
                                                     className="w-full flex items-start justify-between py-5 text-left focus:outline-none"
@@ -500,9 +486,7 @@ const Faq: React.FC = () => {
                                                     <span
                                                         className={[
                                                             "text-[16px] md:text-[17px] font-medium pr-8 transition-colors",
-                                                            isOpen
-                                                                ? "text-ollin-black"
-                                                                : "text-ollin-black/80",
+                                                            isOpen ? "text-ollin-black" : "text-ollin-black/80",
                                                         ].join(" ")}
                                                     >
                                                         {item.question}
@@ -524,9 +508,7 @@ const Faq: React.FC = () => {
                                                 <div
                                                     className={[
                                                         "grid transition-[grid-template-rows,opacity,margin] duration-300 ease-in-out",
-                                                        isOpen
-                                                            ? "grid-rows-[1fr] opacity-100 mb-6"
-                                                            : "grid-rows-[0fr] opacity-0 mb-0",
+                                                        isOpen ? "grid-rows-[1fr] opacity-100 mb-6" : "grid-rows-[0fr] opacity-0 mb-0",
                                                     ].join(" ")}
                                                 >
                                                     <div className="overflow-hidden">
@@ -572,3 +554,4 @@ const Faq: React.FC = () => {
 };
 
 export default Faq;
+

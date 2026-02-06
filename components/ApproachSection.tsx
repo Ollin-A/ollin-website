@@ -198,7 +198,7 @@ const ApproachSection: React.FC = () => {
     );
 
     return (
-        <section id="approach" className="relative w-full bg-ollin-bg text-ollin-black py-20 md:py-28">
+        <section id="approach" className="relative w-full bg-[#F2F2F2] text-ollin-black py-20 md:py-28">
             <style>{`
         #approach ._hideScroll::-webkit-scrollbar{ display:none; }
 
@@ -360,7 +360,9 @@ const ApproachSection: React.FC = () => {
                                             "inline-flex items-center gap-2",
                                             "px-2.5 py-1",
                                             "border",
-                                            c.lane === "Growth" ? "border-black/15 text-ollin-black/70" : "border-black/10 text-ollin-black/55",
+                                            c.lane === "Growth"
+                                                ? "border-black/15 text-ollin-black/70"
+                                                : "border-black/10 text-ollin-black/55",
                                         ].join(" ")}
                                     >
                                         <span

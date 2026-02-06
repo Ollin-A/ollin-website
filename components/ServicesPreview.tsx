@@ -133,7 +133,7 @@ function BlobCTA({
             className={[
                 "group/cta relative isolate overflow-hidden",
                 "rounded-full",
-                "bg-ollin-bg",
+                "bg-[#F2F2F2]", // ✅ antes: bg-ollin-bg
                 "border border-black/15",
                 "text-ollin-black",
                 "flex items-center justify-center",
@@ -171,7 +171,7 @@ function ServiceCard({ group }: { group: ServiceGroup }) {
                 "group relative",
                 "rounded-none",
                 "border border-black/10",
-                "bg-ollin-bg",
+                "bg-[#F2F2F2]", // ✅ antes: bg-ollin-bg
                 "text-ollin-black",
                 "overflow-hidden",
                 "h-[330px] md:h-[380px]",
@@ -375,7 +375,7 @@ const ServicesPreview: React.FC = () => {
     );
 
     return (
-        <section id="services" className="relative w-full bg-ollin-bg text-ollin-black py-20 md:py-28">
+        <section id="services" className="relative w-full bg-[#F2F2F2] text-ollin-black py-20 md:py-28">
             {/* ✅ Botón 14islands (versión compacta para "Explore services") */}
             <style>{`
         .btnSecondary.btnSecondary14 {
@@ -535,10 +535,7 @@ const ServicesPreview: React.FC = () => {
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
                                 >
-                                    <path
-                                        d="M0 3 L12 8 L0 13"
-                                        vectorEffect="non-scaling-stroke"
-                                    />
+                                    <path d="M0 3 L12 8 L0 13" vectorEffect="non-scaling-stroke" />
                                 </svg>
                             </span>
                         </button>

@@ -11,13 +11,20 @@ type Props = {
 };
 
 type LeadDraft = {
-    serviceId: string;
+    serviceId: string; // real id (website/gbp/etc) OR "custom"
     serviceName: string;
     name: string;
     phone: string;
     email: string;
     company: string;
     details: string;
+};
+
+type MenuItem = {
+    key: string;
+    serviceId: string; // what we send to /contact
+    label: string;     // what user sees in the list + modal title
+    hint?: string;     // optional modal subcopy
 };
 
 const STORAGE_KEY = "ollin.scope_draft.v1";
@@ -31,16 +38,88 @@ function setBodyScrollLocked(locked: boolean) {
     };
 }
 
+/**
+ * These map to your existing SINGLE_SERVICES ids (so /contact receives a known service id)
+ * Display labels are shortened so the whole list can fit in one viewport.
+ */
+const CORE_ITEMS: Array<{ id: string; label: string }> = [
+    { id: "website", label: "Website build" },
+    { id: "site-tune", label: "Website tune-up" },
+    { id: "logo", label: "Logo cleanup" },
+    { id: "social", label: "Social setup" },
+    { id: "gbp", label: "GBP setup + cleanup" },
+    { id: "reviews", label: "Review engine" },
+    { id: "ads", label: "Ads management" },
+    { id: "tracking", label: "Tracking + ROI" },
+];
+
+/**
+ * Extra services (from your list). These open the same overlay,
+ * but submit as serviceId="custom" while preserving the selected label in sessionStorage.
+ *
+ * Keep these short so mobile can stay 2 columns without making the list tall.
+ */
+const EXTRA_ITEMS: string[] = [
+    "360° Revenue Leak Audit",
+    "Call review (30–50)",
+    "Website audit (speed + SEO)",
+    "Conversion audit (forms + offer)",
+    "90-Day plan (PDF)",
+    "Quick-wins sprint",
+
+    "Landing page (long-form)",
+    "Full website (5 pages)",
+    "Multi-city website",
+    "Bilingual EN/ES",
+    "Website care (hosting + updates)",
+
+    "Mini brand guide",
+    "Brand templates (truck/uniform)",
+
+    "Google Ads setup",
+    "Meta Ads setup",
+    "CRM pipeline setup",
+    "NAP + citations cleanup",
+    "Reviews flow (SMS/WhatsApp)",
+    "Lead capture + booking",
+    "Monthly content plan",
+
+    "",
+];
+
 export default function SingleServicesSection({ services, onRequestScope }: Props) {
     const navigate = useNavigate();
 
-    const [openId, setOpenId] = useState<string | null>(null);
+    const [openKey, setOpenKey] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
 
-    const selected = useMemo(() => {
-        if (!openId) return null;
-        return services.find((s) => s.id === openId) ?? null;
-    }, [openId, services]);
+    const menuItems: MenuItem[] = useMemo(() => {
+        const byId = new Map(services.map((s) => [s.id, s] as const));
+
+        const core: MenuItem[] = CORE_ITEMS.map((c) => {
+            const s = byId.get(c.id);
+            return {
+                key: `core-${c.id}`,
+                serviceId: c.id,
+                label: c.label,
+                hint: s?.hint ?? "We’ll reply with a clean scope (what’s included + timeline).",
+            };
+        });
+
+        const extras: MenuItem[] = EXTRA_ITEMS.map((label, i) => ({
+            key: `extra-${i}`,
+            serviceId: "custom",
+            label,
+            hint: "We’ll reply with a clean scope (what’s included + timeline).",
+        }));
+
+        return [...core, ...extras];
+    }, [services]);
+
+    const selectedItem = useMemo(() => {
+        if (!openKey) return null;
+        return menuItems.find((m) => m.key === openKey) ?? null;
+    }, [openKey, menuItems]);
 
     const [draft, setDraft] = useState<LeadDraft>(() => ({
         serviceId: "",
@@ -52,41 +131,21 @@ export default function SingleServicesSection({ services, onRequestScope }: Prop
         details: "",
     }));
 
-    // Keep draft synced with selected service
-    useEffect(() => {
-        if (!selected) return;
+    const isCustom = draft.serviceId === "custom";
+
+    const openWithItem = (item: MenuItem) => {
+        setOpenKey(item.key);
+        setError(null);
         setDraft((d) => ({
             ...d,
-            serviceId: selected.id,
-            serviceName: selected.name,
+            serviceId: item.serviceId,
+            serviceName: item.label,
         }));
+    };
+
+    const openCustomBlank = () => {
+        setOpenKey("__custom__");
         setError(null);
-    }, [selected]);
-
-    // Lock scroll + ESC close
-    useEffect(() => {
-        if (!openId) return;
-
-        const unlock = setBodyScrollLocked(true);
-
-        const onKeyDown = (e: KeyboardEvent) => {
-            if (e.key === "Escape") setOpenId(null);
-        };
-
-        window.addEventListener("keydown", onKeyDown);
-        return () => {
-            unlock?.();
-            window.removeEventListener("keydown", onKeyDown);
-        };
-    }, [openId]);
-
-    if (!services?.length) return null;
-
-    const openModal = (id: string) => setOpenId(id);
-
-    const openCustom = () => {
-        // “Custom” service request (for people who didn’t find what they need)
-        setOpenId("custom");
         setDraft((d) => ({
             ...d,
             serviceId: "custom",
@@ -95,9 +154,27 @@ export default function SingleServicesSection({ services, onRequestScope }: Prop
     };
 
     const closeModal = () => {
-        setOpenId(null);
+        setOpenKey(null);
         setError(null);
     };
+
+    // Lock scroll + ESC close
+    useEffect(() => {
+        if (!openKey) return;
+
+        const unlock = setBodyScrollLocked(true);
+        const onKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "Escape") setOpenKey(null);
+        };
+
+        window.addEventListener("keydown", onKeyDown);
+        return () => {
+            unlock?.();
+            window.removeEventListener("keydown", onKeyDown);
+        };
+    }, [openKey]);
+
+    if (!menuItems.length) return null;
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -115,144 +192,252 @@ export default function SingleServicesSection({ services, onRequestScope }: Prop
             return;
         }
 
-        // Store draft so /contact can prefill later if you want.
-        // (Optional but useful: you can read this in Contact page.)
         try {
             sessionStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
         } catch {
             // ignore
         }
 
-        // Keep your existing flow (Packages.tsx already routes to /contact with service id)
         onRequestScope(draft.serviceId);
-
-        // If you ever want to keep users on this page instead of navigating,
-        // replace the line above with your own API call and show a success state.
     };
 
-    const isCustomOpen = openId === "custom";
-
-    // Visual rhythm: subtle “landing-like” spotlight behind the section
-    const spotlightBg =
-        "radial-gradient(900px 420px at 20% 0%, rgba(0,0,0,0.06), transparent 60%)," +
-        "radial-gradient(700px 380px at 85% 10%, rgba(0,0,0,0.04), transparent 60%)";
-
     return (
-        <section className="mt-20 relative">
+        <section className="mt-16">
+            {/* ✅ CSS del botón (igual al Hero) + override para que NO “brinque” el texto */}
+            <style>{`
+        .btnSecondary.btnSecondary14 {
+          color: #6b6b6b;
+          background: transparent;
+          border: 0;
+          padding: 0;              /* ✅ evita layout shift por estilos default */
+          display: inline-flex;
+          align-items: center;
+          cursor: pointer;
+          transition: color 280ms ease-out;
+
+          transform: none !important; /* ✅ por si tu .btnSecondary global mete translate */
+          will-change: auto;
+
+          --arrowLen: 18px;
+          --arrowLenHover: 46px;
+          --arrowOverlap: 7.5px;
+        }
+        .btnSecondary.btnSecondary14:hover {
+          color: #111111;
+          --arrowLen: var(--arrowLenHover);
+          transform: none !important; /* ✅ no queremos “brinco” */
+        }
+
+        .btnSecondary14Text {
+          position: relative;
+          display: inline-block;
+          line-height: 1;
+        }
+        .btnSecondary14Text::after {
+          content: attr(data-text);
+          position: absolute;
+          inset: 0;
+          color: transparent;
+          background-image: linear-gradient(
+            90deg,
+            transparent 0%,
+            rgba(255, 248, 220, 0.92) 45%,
+            transparent 62%
+          );
+          background-size: 220% 100%;
+          background-position: 220% 0;
+          -webkit-background-clip: text;
+          background-clip: text;
+          opacity: 0;
+          pointer-events: none;
+        }
+        @keyframes ollinSheenOnceLR {
+          0%   { background-position: 220% 0; opacity: 0; }
+          12%  { opacity: 0.70; }
+          88%  { opacity: 0.70; }
+          100% { background-position: -220% 0; opacity: 0; }
+        }
+        .btnSecondary.btnSecondary14:hover .btnSecondary14Text::after {
+          animation: ollinSheenOnceLR 720ms ease-out 1;
+        }
+
+        .btnSecondary14Arrow {
+          position: relative;
+          display: inline-block;
+          width: 68px;
+          height: 12px;
+          margin-left: 6px;
+          pointer-events: none;
+        }
+
+        .btnSecondary14ArrowLineSvg {
+          position: absolute;
+          left: 0;
+          top: 50%;
+          transform: translateY(-50%);
+          width: var(--arrowLen);
+          height: 12px;
+          overflow: visible;
+          transition: width 380ms cubic-bezier(0.2, 0.7, 0.2, 1);
+          will-change: width;
+        }
+
+        .btnSecondary14ArrowHeadSvg {
+          position: absolute;
+          left: 0;
+          top: 50%;
+          width: 13px;
+          height: 12px;
+          transform: translate3d(calc(var(--arrowLen) - var(--arrowOverlap)), -50%, 0);
+          transition: transform 380ms cubic-bezier(0.2, 0.7, 0.2, 1);
+          will-change: transform;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .btnSecondary.btnSecondary14 { transition: none !important; }
+          .btnSecondary14ArrowLineSvg,
+          .btnSecondary14ArrowHeadSvg { transition: none !important; }
+          .btnSecondary.btnSecondary14:hover .btnSecondary14Text::after { animation: none !important; }
+        }
+      `}</style>
+
+            {/* header (kept compact so the list can fit without scroll) */}
             <div
-                className="absolute inset-0 pointer-events-none"
-                style={{ background: spotlightBg }}
-                aria-hidden="true"
-            />
+                className="text-[11px] uppercase tracking-[0.28em]"
+                style={{ color: "rgba(0,0,0,0.45)" }}
+            >
+                Single services
+            </div>
 
-            {/* Minimal header (subchapter vibe, not a whole new section) */}
-            <div className="relative">
-                <div
-                    className="text-xs uppercase tracking-[0.28em]"
-                    style={{ color: "rgba(0,0,0,0.45)" }}
-                >
-                    Single services
+            <div className="mt-2 max-w-3xl">
+                <h2 className="font-[Montserrat] font-medium text-2xl md:text-3xl leading-tight">
+                    Pick one. We’ll scope it cleanly.
+                </h2>
+                <p className="mt-1 text-sm md:text-base leading-relaxed" style={{ color: PALETTE.muted }}>
+                    Click a service to request scope — quick, clear, no fluff.
+                </p>
+            </div>
+
+            <div className="mt-6">
+                <div className="border-t" style={{ borderColor: LINE, opacity: 0.7 }} />
+
+                {/* Compact list (landing-like): small, gray, no bold, no hover “OPEN” */}
+                <div className="pt-5 grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-12 gap-y-3">
+                    {menuItems.map((item) => (
+                        <button
+                            key={item.key}
+                            type="button"
+                            onClick={() => openWithItem(item)}
+                            className={cx(
+                                "text-left w-full",
+                                "transition-opacity duration-200"
+                            )}
+                            style={{
+                                fontFamily: "Montserrat, system-ui, -apple-system, Segoe UI, Roboto, Arial",
+                                fontWeight: 400, // <- no bold
+                                fontSize: "14px", // <- smaller
+                                lineHeight: 1.35,
+                                color: "rgba(0,0,0,0.52)", // <- gray like your landing
+                            }}
+                            onMouseEnter={(e) => {
+                                // subtle hover: just a tiny opacity lift
+                                (e.currentTarget.style.color = "rgba(0,0,0,0.70)");
+                            }}
+                            onMouseLeave={(e) => {
+                                (e.currentTarget.style.color = "rgba(0,0,0,0.52)");
+                            }}
+                        >
+                            {item.label}
+                        </button>
+                    ))}
                 </div>
 
-                <div className="mt-3 max-w-3xl">
-                    <h2 className="font-[Montserrat] font-medium text-3xl leading-tight">
-                        Pick one. We’ll scope it cleanly.
-                    </h2>
-                    <p className="mt-2 text-base leading-relaxed" style={{ color: PALETTE.muted }}>
-                        Click a service to request scope — quick, clear, no fluff.
-                    </p>
-                </div>
+                {/* Bottom line */}
+                <div className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+                    <span style={{ color: PALETTE.muted }}>Not seeing what you need?</span>
 
-                {/* Services list: 3 columns, names only */}
-                <div className="mt-10">
-                    <div
-                        className="border-t"
-                        style={{ borderColor: LINE, opacity: 0.7 }}
-                    />
-                    <div className="pt-7 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-14 gap-y-5">
-                        {services.map((s) => {
-                            const active = openId === s.id;
-                            return (
-                                <button
-                                    key={s.id}
-                                    type="button"
-                                    onClick={() => openModal(s.id)}
-                                    className={cx(
-                                        "group text-left w-full",
-                                        "transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
-                                        active ? "opacity-100" : "opacity-75 hover:opacity-100 hover:-translate-y-[1px]"
-                                    )}
-                                >
-                                    <div className="flex items-baseline justify-between gap-6">
-                                        <span
-                                            className={cx(
-                                                "font-[Montserrat] font-medium",
-                                                "text-[22px] md:text-[24px] leading-snug"
-                                            )}
-                                            style={{ color: PALETTE.ink }}
-                                        >
-                                            {s.name}
-                                        </span>
-
-                                        <span
-                                            className={cx(
-                                                "inline-flex items-center gap-2",
-                                                "text-xs uppercase tracking-[0.22em]",
-                                                "transition-opacity duration-300",
-                                                active ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-                                            )}
-                                            style={{ color: "rgba(0,0,0,0.55)" }}
-                                        >
-                                            <span className="hidden md:inline">Open</span>
-                                            <ArrowRight size={14} />
-                                        </span>
-                                    </div>
-                                </button>
-                            );
-                        })}
-                    </div>
-
-                    {/* Bottom line: contact + /services */}
-                    <div className="mt-10 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
-                        <span style={{ color: PALETTE.muted }}>
-                            Not seeing what you need?
+                    {/* ✅ Contact us -> botón v14 (sheen + arrow) */}
+                    <button
+                        type="button"
+                        onClick={openCustomBlank}
+                        className={cx("btnSecondary btnSecondary14")}
+                    >
+                        <span className="btnSecondary14Text" data-text="Contact us">
+                            Contact us
                         </span>
 
-                        <button
-                            type="button"
-                            onClick={openCustom}
-                            className={cx(
-                                "inline-flex items-center gap-2",
-                                "underline underline-offset-4",
-                                "transition-opacity duration-300 hover:opacity-80"
-                            )}
-                            style={{ textDecorationColor: "rgba(0,0,0,0.25)", color: "rgba(0,0,0,0.75)" }}
-                        >
-                            Contact us
-                            <ArrowRight size={16} />
-                        </button>
+                        <span className="btnSecondary14Arrow" aria-hidden="true">
+                            <svg className="btnSecondary14ArrowLineSvg" viewBox="0 0 100 16" fill="none">
+                                <line
+                                    x1="0"
+                                    y1="8"
+                                    x2="100"
+                                    y2="8"
+                                    stroke="currentColor"
+                                    strokeWidth="1"
+                                    strokeLinecap="butt"
+                                    vectorEffect="non-scaling-stroke"
+                                />
+                            </svg>
 
-                        <span style={{ color: "rgba(0,0,0,0.35)" }}>or</span>
+                            <svg
+                                className="btnSecondary14ArrowHeadSvg"
+                                viewBox="0 0 18 16"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="1"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            >
+                                <path d="M0 3 L12 8 L0 13" vectorEffect="non-scaling-stroke" />
+                            </svg>
+                        </span>
+                    </button>
 
-                        <button
-                            type="button"
-                            onClick={() => navigate("/services")}
-                            className={cx(
-                                "inline-flex items-center gap-2",
-                                "underline underline-offset-4",
-                                "transition-opacity duration-300 hover:opacity-80"
-                            )}
-                            style={{ textDecorationColor: "rgba(0,0,0,0.25)", color: "rgba(0,0,0,0.75)" }}
-                        >
+                    <span style={{ color: "rgba(0,0,0,0.35)" }}>or</span>
+
+                    {/* ✅ Browse all services -> botón v14 (sheen + arrow) */}
+                    <button
+                        type="button"
+                        onClick={() => navigate("/services")}
+                        className={cx("btnSecondary btnSecondary14")}
+                    >
+                        <span className="btnSecondary14Text" data-text="Browse all services">
                             Browse all services
-                            <ArrowRight size={16} />
-                        </button>
-                    </div>
+                        </span>
+
+                        <span className="btnSecondary14Arrow" aria-hidden="true">
+                            <svg className="btnSecondary14ArrowLineSvg" viewBox="0 0 100 16" fill="none">
+                                <line
+                                    x1="0"
+                                    y1="8"
+                                    x2="100"
+                                    y2="8"
+                                    stroke="currentColor"
+                                    strokeWidth="1"
+                                    strokeLinecap="butt"
+                                    vectorEffect="non-scaling-stroke"
+                                />
+                            </svg>
+
+                            <svg
+                                className="btnSecondary14ArrowHeadSvg"
+                                viewBox="0 0 18 16"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="1"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            >
+                                <path d="M0 3 L12 8 L0 13" vectorEffect="non-scaling-stroke" />
+                            </svg>
+                        </span>
+                    </button>
                 </div>
             </div>
 
             {/* Overlay Form */}
-            {openId && (
+            {openKey && (
                 <div className="fixed inset-0 z-[80]">
                     {/* Backdrop */}
                     <button
@@ -269,13 +454,9 @@ export default function SingleServicesSection({ services, onRequestScope }: Prop
                     {/* Modal */}
                     <div className="relative w-full h-full flex items-center justify-center px-5 py-10">
                         <div
-                            className={cx(
-                                "w-full max-w-2xl border rounded-none",
-                                "transition-[transform,opacity] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
-                            )}
+                            className={cx("w-full max-w-2xl border rounded-none")}
                             style={{
                                 borderColor: LINE,
-                                // Not pure white — tinted “paper”
                                 background: "rgba(255,255,255,0.55)",
                                 boxShadow: "0 28px 80px rgba(0,0,0,0.18)",
                             }}
@@ -292,13 +473,13 @@ export default function SingleServicesSection({ services, onRequestScope }: Prop
                                         </div>
 
                                         <div className="mt-3 font-[Montserrat] font-medium text-2xl leading-snug">
-                                            {isCustomOpen ? "Tell us what you need" : selected?.name}
+                                            {draft.serviceName || selectedItem?.label || "Service"}
                                         </div>
 
                                         <div className="mt-2 text-sm leading-relaxed" style={{ color: PALETTE.muted }}>
-                                            {isCustomOpen
-                                                ? "Describe the exact single service you want — we’ll reply with a clean scope."
-                                                : selected?.hint}
+                                            {isCustom
+                                                ? "Describe what you need — we’ll reply with a clean scope."
+                                                : selectedItem?.hint ?? "We’ll reply with a clean scope (what’s included + timeline)."}
                                         </div>
                                     </div>
 
@@ -345,13 +526,13 @@ export default function SingleServicesSection({ services, onRequestScope }: Prop
                                             inputMode="email"
                                         />
                                         <Field
-                                            label={isCustomOpen ? "What do you need?" : "Any context (optional)"}
+                                            label={isCustom ? "What do you need?" : "Any context (optional)"}
                                             value={draft.details}
                                             onChange={(v) => setDraft((d) => ({ ...d, details: v }))}
                                             textarea
                                             className="md:col-span-2"
                                             placeholder={
-                                                isCustomOpen
+                                                isCustom
                                                     ? "Example: ‘Need a landing page for roofing + call tracking.’"
                                                     : "Example: market/city, deadline, current site link, etc."
                                             }

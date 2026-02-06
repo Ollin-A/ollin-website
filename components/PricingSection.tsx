@@ -205,7 +205,11 @@ const PricingSection: React.FC = () => {
   };
 
   return (
-    <section id="pricing-preview" ref={sectionRef} className="relative w-full bg-ollin-bg text-ollin-black py-20 md:py-28">
+    <section
+      id="pricing-preview"
+      ref={sectionRef}
+      className="relative w-full bg-[#F2F2F2] text-ollin-black py-20 md:py-28"
+    >
       <div className="max-w-[1500px] mx-auto px-[5vw] w-full">
         {/* Top copy */}
         <div className="max-w-[980px]">

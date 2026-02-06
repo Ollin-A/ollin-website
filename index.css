@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+/* Base “premium” */
+html, body {
+  background: #f2efe9;
+}
