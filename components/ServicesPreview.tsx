@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useLeadModal } from "./LeadModalContext";
 
 type Headline = { muted: string; strong: string };
@@ -9,7 +10,7 @@ type ServiceGroup = {
     subtitle: string; // línea corta (más chica)
     items: string[]; // lista larga (fade hacia abajo)
     ctaLabel: string;
-    ctaTargetId: string;
+    to: string;
 };
 
 function scrollToId(id: string) {
@@ -147,7 +148,7 @@ function DecryptedTitleText({
                 if (sequential) {
                     if (prevRevealed.size < text.length) {
                         const nextIndex = getNextIndex(prevRevealed);
-                        const newRevealed = new Set(prevRevealed);
+                        const newRevealed = new Set<number>(prevRevealed);
                         newRevealed.add(nextIndex);
                         setDisplayText(shuffleText(text, newRevealed));
                         return newRevealed;
@@ -282,6 +283,7 @@ function BlobCTA({
 
 function ServiceCardContent({ group, openModal }: { group: ServiceGroup; openModal: () => void }) {
     const [isHovering, setIsHovering] = useState(false);
+    const navigate = useNavigate();
 
     return (
         <div
@@ -321,7 +323,7 @@ function ServiceCardContent({ group, openModal }: { group: ServiceGroup; openMod
                     "text-ollin-black/65",
                     "overflow-hidden",
                     "h-[200px] md:h-[245px]",
-                    "[mask-image:linear-gradient(to_bottom,black_75%,transparent)]",
+                    "mask-[linear-gradient(to_bottom,black_75%,transparent)]",
                     "pointer-events-none select-none",
                 ].join(" ")}
             >
@@ -337,7 +339,7 @@ function ServiceCardContent({ group, openModal }: { group: ServiceGroup; openMod
             {/* ✅ CTA SUBIDO (más aire) */}
             <BlobCTA
                 label={group.ctaLabel}
-                onClick={openModal}
+                onClick={() => navigate(group.to)}
                 className={[
                     "absolute left-7 md:left-8",
                     "bottom-10 md:bottom-11", // 👈 antes: bottom-7 (muy pegado)
@@ -354,6 +356,7 @@ function ServiceCardContent({ group, openModal }: { group: ServiceGroup; openMod
 
 const ServicesPreview: React.FC = () => {
     const { openModal } = useLeadModal();
+    const navigate = useNavigate();
 
     const headlines: Headline[] = useMemo(
         () => [
@@ -416,7 +419,7 @@ const ServicesPreview: React.FC = () => {
                     "Reputation positioning",
                 ],
                 ctaLabel: "Explore Foundation",
-                ctaTargetId: "contact",
+                to: "/services/foundation",
             },
             {
                 key: "demand",
@@ -451,7 +454,7 @@ const ServicesPreview: React.FC = () => {
                     "Weekly tuning",
                 ],
                 ctaLabel: "Explore Demand",
-                ctaTargetId: "contact",
+                to: "/services/demand",
             },
             {
                 key: "conversion",
@@ -486,7 +489,7 @@ const ServicesPreview: React.FC = () => {
                     "English/Spanish responses",
                 ],
                 ctaLabel: "Explore Retention",
-                ctaTargetId: "contact",
+                to: "/services/retention",
             },
         ],
         []
@@ -717,7 +720,7 @@ const ServicesPreview: React.FC = () => {
 
                     <BlobCTA
                         label="Get the Audit"
-                        onClick={openModal}
+                        onClick={() => navigate("/services/audit")}
                         className={[
                             "w-[220px] h-[52px]",
                             "opacity-0 translate-y-2",

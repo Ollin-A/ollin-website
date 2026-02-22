@@ -43,17 +43,7 @@ function estimateReadingMinutes(markdown: string | null) {
 }
 
 // --- helpers (same idea as BlogIndex) ---
-function upsertMetaDescription(content: string) {
-  let el = document.querySelector(
-    'meta[name="description"]',
-  ) as HTMLMetaElement | null;
-  if (!el) {
-    el = document.createElement("meta");
-    el.setAttribute("name", "description");
-    document.head.appendChild(el);
-  }
-  el.setAttribute("content", content);
-}
+
 
 function upsertCanonical(href: string) {
   let el = document.querySelector(
@@ -251,16 +241,12 @@ export default function BlogPost() {
 
   // Apply SEO to head (no libs)
   useEffect(() => {
-    // Title + description + canonical even while loading
-    document.title = `${seoTitle} — ${siteName}`;
-    upsertMetaDescription(seoDescription);
+    // Canonical even while loading
     upsertCanonical(canonicalPath);
 
     // OpenGraph + Twitter basics
     upsertMetaProperty("og:site_name", siteName);
     upsertMetaProperty("og:type", "article");
-    upsertMetaProperty("og:title", seoTitle);
-    upsertMetaProperty("og:description", seoDescription);
     upsertMetaProperty("og:url", canonicalPath);
 
     const hasImg = !!post?.cover_image_url;
@@ -272,8 +258,6 @@ export default function BlogPost() {
     }
 
     upsertMetaName("twitter:card", hasImg ? "summary_large_image" : "summary");
-    upsertMetaName("twitter:title", seoTitle);
-    upsertMetaName("twitter:description", seoDescription);
 
     if (hasImg) {
       upsertMetaName("twitter:image", post!.cover_image_url!);

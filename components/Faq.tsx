@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import Reveal from "./Reveal";
+import { useLeadModal } from "./LeadModalContext";
 
 // --- TYPES ---
 type FaqItem = { id: string; question: string; answer: string };
@@ -271,6 +272,7 @@ const faqCategories: FaqCategory[] = [
 const OPEN_SCROLL_DELAY_MS = 340; // coincide con duration-300 + un colchón
 
 const Faq: React.FC = () => {
+    const { openModal } = useLeadModal();
     const [activeCategoryId, setActiveCategoryId] = useState<string>(faqCategories[0].id);
 
     // ✅ por default ninguna pregunta abierta
@@ -396,7 +398,7 @@ const Faq: React.FC = () => {
                                         aria-hidden="true"
                                     />
 
-                                    <div className="mb-3 md:mb-4 w-10 h-10 border border-black/10 bg-black/[0.02] flex items-center justify-center">
+                                    <div className="mb-3 md:mb-4 w-10 h-10 border border-black/10 bg-black/2 flex items-center justify-center">
                                         {cat.icon}
                                     </div>
 
@@ -455,7 +457,7 @@ const Faq: React.FC = () => {
                                 className="bg-white border border-black/10 shadow-[0_8px_22px_rgba(0,0,0,0.06)] p-5 md:p-10 rounded-none"
                             >
                                 <div className="pb-5 border-b border-black/10 flex items-center gap-3">
-                                    <div className="w-9 h-9 border border-black/10 bg-black/[0.02] flex items-center justify-center">
+                                    <div className="w-9 h-9 border border-black/10 bg-black/2 flex items-center justify-center">
                                         {activeCategory.icon}
                                     </div>
 
@@ -497,7 +499,7 @@ const Faq: React.FC = () => {
                                                         className={[
                                                             "shrink-0 mt-0.5 w-8 h-8 border flex items-center justify-center transition-colors",
                                                             isOpen
-                                                                ? "border-black/20 bg-black/[0.02] text-ollin-black"
+                                                                ? "border-black/20 bg-black/2 text-ollin-black"
                                                                 : "border-black/10 bg-transparent text-ollin-black/55",
                                                         ].join(" ")}
                                                         aria-hidden="true"
@@ -531,12 +533,13 @@ const Faq: React.FC = () => {
                                     </div>
 
                                     <div className="flex items-center gap-3">
-                                        <a
-                                            href="#contact"
+                                        <button
+                                            type="button"
+                                            onClick={openModal}
                                             className="inline-flex items-center justify-center px-4 py-3 border border-black/10 bg-black text-ollin-bg text-sm font-medium hover:opacity-90 transition"
                                         >
                                             Get a quick plan
-                                        </a>
+                                        </button>
 
                                         {/* ✅ UPDATED: packages CTA */}
                                         <Link

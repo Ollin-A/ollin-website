@@ -19,7 +19,7 @@ const Contact: React.FC = () => {
                     {/* Header */}
                     <div className="mb-16 md:mb-24">
                         <h1 className="font-normal text-[clamp(3.5rem,7vw,7rem)] leading-[0.9] tracking-[-0.04em]">
-                            Want to talk?
+                            Ready to talk?
                         </h1>
                     </div>
 

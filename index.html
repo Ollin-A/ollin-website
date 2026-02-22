@@ -1,36 +1,43 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>OLLIN - Design & Systems</title>
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&family=Poppins:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
     <script>
       tailwind.config = {
         theme: {
           extend: {
             fontFamily: {
-              sans: ['Poppins', 'sans-serif'],
-              montserrat: ['Montserrat', 'sans-serif'],
+              sans: ["Poppins", "sans-serif"],
+              montserrat: ["Montserrat", "sans-serif"],
             },
             colors: {
-              'ollin-bg': '#f2efe9',
-              'ollin-black': '#111111',
-              'ollin-gray': '#666666',
-            }
-          }
-        }
-      }
+              "ollin-bg": "#f2efe9",
+              "ollin-black": "#111111",
+              "ollin-gray": "#666666",
+            },
+          },
+        },
+      };
     </script>
     <style>
       :root {
         --bg: #f2efe9;
         --ink: #111111;
-        --muted: rgba(17,17,17,0.60);
-        --muted-light: rgba(17,17,17,0.40);
+        --muted: rgba(17, 17, 17, 0.6);
+        --muted-light: rgba(17, 17, 17, 0.4);
         --easeOut: cubic-bezier(0.215, 0.61, 0.355, 1);
         --easeFluid: cubic-bezier(0.33, 1, 0.68, 1);
         --easePremium: cubic-bezier(0.16, 1, 0.3, 1);
@@ -47,19 +54,29 @@
       /* --- GRAIN & VIGNETTE --- */
       .textureOverlay {
         position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
         pointer-events: none;
         z-index: 10;
         opacity: 0.05;
         background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
       }
-      
+
       .vignetteOverlay {
         position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
         pointer-events: none;
         z-index: 11;
-        background: radial-gradient(circle at center, transparent 60%, rgba(0,0,0,0.03) 100%);
+        background: radial-gradient(
+          circle at center,
+          transparent 60%,
+          rgba(0, 0, 0, 0.03) 100%
+        );
       }
 
       /* --- HERO ROOT --- */
@@ -93,7 +110,11 @@
         width: 40%;
         height: 40%;
         transform: translate(-50%, -50%);
-        background: radial-gradient(circle, rgba(17,17,17,0.06) 0%, transparent 70%);
+        background: radial-gradient(
+          circle,
+          rgba(17, 17, 17, 0.06) 0%,
+          transparent 70%
+        );
         filter: blur(80px);
         border-radius: 50%;
         animation: floatOrb 10s ease-in-out infinite alternate;
@@ -105,24 +126,54 @@
         left: 50%;
         transform: translate(-50%, -50%);
         border-radius: 50%;
-        border: 1px solid rgba(17,17,17,0.08); /* Warm faint gray */
+        border: 1px solid rgba(17, 17, 17, 0.08); /* Warm faint gray */
         box-sizing: border-box;
       }
 
       /* Individual Ring Sizing & Timing */
-      .bgRing:nth-child(2) { width: 100%; height: 100%; opacity: 0.06; animation: pulseRings 14s ease-in-out infinite alternate; }
-      .bgRing:nth-child(3) { width: 80%; height: 80%; opacity: 0.08; animation: pulseRings 14s ease-in-out infinite alternate -2s; }
-      .bgRing:nth-child(4) { width: 60%; height: 60%; opacity: 0.10; animation: pulseRings 14s ease-in-out infinite alternate -4s; }
-      .bgRing:nth-child(5) { width: 40%; height: 40%; opacity: 0.12; animation: pulseRings 14s ease-in-out infinite alternate -6s; }
+      .bgRing:nth-child(2) {
+        width: 100%;
+        height: 100%;
+        opacity: 0.06;
+        animation: pulseRings 14s ease-in-out infinite alternate;
+      }
+      .bgRing:nth-child(3) {
+        width: 80%;
+        height: 80%;
+        opacity: 0.08;
+        animation: pulseRings 14s ease-in-out infinite alternate -2s;
+      }
+      .bgRing:nth-child(4) {
+        width: 60%;
+        height: 60%;
+        opacity: 0.1;
+        animation: pulseRings 14s ease-in-out infinite alternate -4s;
+      }
+      .bgRing:nth-child(5) {
+        width: 40%;
+        height: 40%;
+        opacity: 0.12;
+        animation: pulseRings 14s ease-in-out infinite alternate -6s;
+      }
 
       @keyframes pulseRings {
-        0% { transform: translate(-50%, -50%) scale(1); }
-        100% { transform: translate(-50%, -50%) scale(1.03); }
+        0% {
+          transform: translate(-50%, -50%) scale(1);
+        }
+        100% {
+          transform: translate(-50%, -50%) scale(1.03);
+        }
       }
 
       @keyframes floatOrb {
-        0% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
-        100% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.9; }
+        0% {
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 0.6;
+        }
+        100% {
+          transform: translate(-50%, -50%) scale(1.1);
+          opacity: 0.9;
+        }
       }
 
       /* --- GRID LAYOUT --- */
@@ -161,18 +212,18 @@
         font-size: clamp(3rem, 5.5vw, 6.5rem);
         color: var(--ink);
       }
-      
-      .heroTitleStrong { 
-        display: block; 
-        font-weight: 600; 
-        color: var(--ink); 
+
+      .heroTitleStrong {
+        display: block;
+        font-weight: 600;
+        color: var(--ink);
         white-space: nowrap; /* Force one line on desktop */
       }
-      
-      .heroTitleSoft { 
-        display: block; 
-        font-weight: 400; 
-        color: rgba(17,17,17,0.5); /* Reduced contrast for echo effect */
+
+      .heroTitleSoft {
+        display: block;
+        font-weight: 400;
+        color: rgba(17, 17, 17, 0.5); /* Reduced contrast for echo effect */
         margin-top: 8px;
         font-size: 0.9em; /* Slight visual reduction */
       }
@@ -181,21 +232,21 @@
         display: flex;
         flex-direction: column;
         /* Move up visually to align with decision zone */
-        transform: translateY(-24px); 
+        transform: translateY(-24px);
       }
 
       .heroRightCopy {
         margin: 0 0 20px;
-        font-size: 1.05rem; 
+        font-size: 1.05rem;
         line-height: 1.6;
-        color: rgba(17,17,17,0.7);
+        color: rgba(17, 17, 17, 0.7);
         font-weight: 400;
         max-width: 44ch; /* Editorial constraint */
       }
 
       .bilingualLine {
         font-size: 14px;
-        color: rgba(17,17,17,0.5);
+        color: rgba(17, 17, 17, 0.5);
         margin-bottom: 36px;
         font-weight: 400;
       }
@@ -222,9 +273,11 @@
         letter-spacing: 0.02em;
         border: none;
         cursor: pointer;
-        transition: transform 300ms var(--easeFluid), background-color 300ms ease;
+        transition:
+          transform 300ms var(--easeFluid),
+          background-color 300ms ease;
       }
-      .btnPrimary:hover { 
+      .btnPrimary:hover {
         transform: translateY(-1px);
         background-color: #000;
       }
@@ -243,9 +296,16 @@
         opacity: 0.7;
         transition: opacity 0.3s ease;
       }
-      .btnSecondary span { transition: transform 0.3s var(--easeFluid); display: inline-block; }
-      .btnSecondary:hover { opacity: 1; }
-      .btnSecondary:hover span { transform: translateX(3px); }
+      .btnSecondary span {
+        transition: transform 0.3s var(--easeFluid);
+        display: inline-block;
+      }
+      .btnSecondary:hover {
+        opacity: 1;
+      }
+      .btnSecondary:hover span {
+        transform: translateX(3px);
+      }
 
       /* --- MARQUEE (Restyled) --- */
       .marquee {
@@ -255,8 +315,20 @@
         position: relative;
         margin-top: -12px; /* Move UP towards content */
         opacity: 0.8; /* Slightly higher opacity for legibility of light text */
-        mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
-        -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+        mask-image: linear-gradient(
+          to right,
+          transparent 0%,
+          black 10%,
+          black 90%,
+          transparent 100%
+        );
+        -webkit-mask-image: linear-gradient(
+          to right,
+          transparent 0%,
+          black 10%,
+          black 90%,
+          transparent 100%
+        );
       }
 
       .marqueeViewport {
@@ -264,14 +336,14 @@
         overflow: hidden;
         white-space: nowrap;
       }
-      
+
       .marqueeTrack {
         display: inline-flex;
         align-items: center;
         animation: marqueeScroll 25s linear infinite;
         will-change: transform;
       }
-      
+
       .marqueeItem {
         display: inline-flex;
         align-items: center;
@@ -281,23 +353,28 @@
         letter-spacing: 0.18em;
         text-transform: uppercase;
         font-weight: 500;
-        color: #9AA0A6; /* Light Gray Text as requested */
+        color: #9aa0a6; /* Light Gray Text as requested */
       }
 
       /* Custom separator: Slash / */
       .sepMark {
         display: inline-block;
         margin-left: 32px; /* Spacing */
-        color: #B0B4B8; /* Even lighter gray for the slash */
+        color: #b0b4b8; /* Even lighter gray for the slash */
         font-weight: 300;
         border: none;
-        width: auto; height: auto;
+        width: auto;
+        height: auto;
         transform: none;
       }
 
       @keyframes marqueeScroll {
-        0% { transform: translateX(0); }
-        100% { transform: translateX(-50%); } 
+        0% {
+          transform: translateX(0);
+        }
+        100% {
+          transform: translateX(-50%);
+        }
       }
 
       /* --- ENTRANCE ANIMATIONS --- */
@@ -307,14 +384,26 @@
         transform: translateY(12px);
         animation: heroIn 1000ms var(--easePremium) forwards;
       }
-      
-      .heroIntroDelay1 { animation-delay: 200ms; }
-      .heroIntroDelay2 { animation-delay: 400ms; }
-      .heroIntroDelay3 { animation-delay: 600ms; }
-      .heroIntroDelay4 { animation-delay: 800ms; }
+
+      .heroIntroDelay1 {
+        animation-delay: 200ms;
+      }
+      .heroIntroDelay2 {
+        animation-delay: 400ms;
+      }
+      .heroIntroDelay3 {
+        animation-delay: 600ms;
+      }
+      .heroIntroDelay4 {
+        animation-delay: 800ms;
+      }
 
       @keyframes heroIn {
-        to { opacity: 1; filter: blur(0); transform: translateY(0); }
+        to {
+          opacity: 1;
+          filter: blur(0);
+          transform: translateY(0);
+        }
       }
 
       /* --- RESPONSIVE --- */
@@ -325,46 +414,75 @@
           gap: 48px;
           text-align: left;
         }
-        .heroTitle { font-size: 11vw; }
-        .heroTitleStrong { white-space: normal; } /* Allow break on mobile */
-        .heroRight { transform: none; }
-        .heroRightCopy { max-width: 100%; }
-        .marquee { max-width: 100%; margin-top: 0; }
-        
+        .heroTitle {
+          font-size: 11vw;
+        }
+        .heroTitleStrong {
+          white-space: normal;
+        } /* Allow break on mobile */
+        .heroRight {
+          transform: none;
+        }
+        .heroRightCopy {
+          max-width: 100%;
+        }
+        .marquee {
+          max-width: 100%;
+          margin-top: 0;
+        }
+
         /* Adjust background for mobile */
-        .bgRingsGroup { 
+        .bgRingsGroup {
           left: 50%;
-          width: 100vw; 
-          height: 100vw; 
+          width: 100vw;
+          height: 100vw;
           opacity: 0.5; /* Fade out slightly on mobile */
         }
       }
-      
+
       @media (max-width: 640px) {
-         .heroCtas { gap: 20px; }
-         .btnPrimary { width: 100%; }
-         .btnSecondary { width: 100%; justify-content: center; }
+        .heroCtas {
+          gap: 20px;
+        }
+        .btnPrimary {
+          width: 100%;
+        }
+        .btnSecondary {
+          width: 100%;
+          justify-content: center;
+        }
       }
 
       @media (prefers-reduced-motion: reduce) {
-        .bgRing, .bgOrb { animation: none; opacity: 1; }
-        .marqueeTrack { animation: none; }
-        .heroIntro { animation: none; opacity: 1; filter: none; transform: none; }
+        .bgRing,
+        .bgOrb {
+          animation: none;
+          opacity: 1;
+        }
+        .marqueeTrack {
+          animation: none;
+        }
+        .heroIntro {
+          animation: none;
+          opacity: 1;
+          filter: none;
+          transform: none;
+        }
       }
     </style>
-  <script type="importmap">
-{
-  "imports": {
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "react": "https://esm.sh/react@^19.2.3",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
-  }
-}
-</script>
-<link rel="stylesheet" href="/index.css">
-</head>
+    <script type="importmap">
+      {
+        "imports": {
+          "react/": "https://esm.sh/react@^19.2.3/",
+          "react": "https://esm.sh/react@^19.2.3",
+          "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
+        }
+      }
+    </script>
+    <link rel="stylesheet" href="/index.css" />
+  </head>
   <body>
     <div id="root"></div>
-  <script type="module" src="/index.tsx"></script>
-</body>
+    <script type="module" src="/index.tsx"></script>
+  </body>
 </html>

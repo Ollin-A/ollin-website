@@ -42,17 +42,7 @@ function clampText(text: string, max = 140) {
 }
 
 // --- helpers to safely upsert head tags without any library ---
-function upsertMetaDescription(content: string) {
-  let el = document.querySelector(
-    'meta[name="description"]',
-  ) as HTMLMetaElement | null;
-  if (!el) {
-    el = document.createElement("meta");
-    el.setAttribute("name", "description");
-    document.head.appendChild(el);
-  }
-  el.setAttribute("content", content);
-}
+
 
 function upsertCanonical(href: string) {
   let el = document.querySelector(
@@ -180,8 +170,6 @@ export default function BlogIndex() {
 
   // SEO side-effects (safe + no libs)
   useEffect(() => {
-    document.title = pageTitle;
-    upsertMetaDescription(pageDescription);
     upsertCanonical(canonical);
     upsertJsonLd("jsonld-blog", jsonLd);
 

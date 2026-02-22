@@ -167,11 +167,12 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose }) => {
                   style={{ backgroundImage: 'none' }} 
                 >
                   <option value="" disabled className="text-gray-400">Select Business Type *</option>
-                  <option value="e-commerce">E-commerce</option>
-                  <option value="saas">SaaS</option>
-                  <option value="agency">Agency</option>
-                  <option value="local-business">Local Business</option>
-                  <option value="content-creator">Content Creator</option>
+                  <option value="roofing">Roofing</option>
+                  <option value="plumbing">Plumbing</option>
+                  <option value="electrical">Electrical</option>
+                  <option value="hvac">HVAC</option>
+                  <option value="remodeling">Remodeling</option>
+                  <option value="general-contractor">General Contractor</option>
                   <option value="other">Other</option>
                 </select>
               </div>

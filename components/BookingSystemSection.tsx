@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import BookingSystemTrades from "./BookingSystemTrades";
 
 type Step = {
@@ -39,10 +40,7 @@ const BookingSystemSection: React.FC = () => {
         []
     );
 
-    const goContact = () => {
-        const el = document.getElementById("contact");
-        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-    };
+    const navigate = useNavigate();
 
     return (
         <section id="system" className="relative w-full bg-[#F2F2F2] text-ollin-black py-20 md:py-28">
@@ -160,7 +158,7 @@ const BookingSystemSection: React.FC = () => {
                         {/* ✅ Get a quick breakdown (same button style) */}
                         <button
                             type="button"
-                            onClick={goContact}
+                            onClick={() => navigate("/services/retention")}
                             className="mt-8 text-sm font-semibold tracking-tight btnSecondary btnSecondary14"
                         >
                             <span className="btnSecondary14Text" data-text="Get a quick breakdown">
@@ -236,7 +234,7 @@ const BookingSystemSection: React.FC = () => {
                 <div className="my-16 md:my-20 h-px w-full bg-[#F2F2F2]" />
 
                 {/* ===== BOTTOM: Trades (migrado) ===== */}
-                <BookingSystemTrades onCta={goContact} />
+                <BookingSystemTrades />
             </div>
         </section>
     );

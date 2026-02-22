@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useLeadModal } from "./LeadModalContext";
+import { useNavigate } from "react-router-dom";
 
 type Tile = {
   id: string;
@@ -15,14 +15,14 @@ type Tile = {
 
 const PricingSection: React.FC = () => {
     const sectionRef = useRef<HTMLElement | null>(null);
-    const { openModal } = useLeadModal();
+    const navigate = useNavigate();
 
   const didIntroRef = useRef(false);
 
   const reduceMotionRef = useRef(false);
 
   const handleCTA = () => {
-    openModal();
+    navigate("/packages/personalized");
   };
 
   const tiles = useMemo<Tile[]>(
@@ -289,7 +289,7 @@ const PricingSection: React.FC = () => {
                               className="ollinFrontImg absolute inset-0 h-full w-full object-cover"
                             />
 
-                            <div className="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-black/60 via-black/25 to-transparent">
+                            <div className="absolute inset-x-0 bottom-0 p-5 bg-linear-to-t from-black/60 via-black/25 to-transparent">
                               <div className={["ollinHint", showHint ? "isShow" : ""].join(" ")}>
                                 {isTouchLike ? "Tap to flip" : "Click for details"}
                               </div>
@@ -305,7 +305,7 @@ const PricingSection: React.FC = () => {
                                   "px-3 py-2",
                                   "border border-black/10",
                                   "text-ollin-black/55",
-                                  "bg-black/[0.02]",
+                                  "bg-black/2",
                                 ].join(" ")}
                               >
                                 {t.tag}

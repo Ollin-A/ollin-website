@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useLeadModal } from "./LeadModalContext";
 
 type Trade = {
     name: string;
@@ -20,6 +21,7 @@ function LiquidImage({
     className = "",
     overscan = 22,
 }: {
+    key?: React.Key;
     src: string;
     alt?: string;
     className?: string;
@@ -390,7 +392,8 @@ function LiquidImage({
     );
 }
 
-const BookingSystemTrades: React.FC<{ onCta: () => void }> = ({ onCta }) => {
+const BookingSystemTrades: React.FC = () => {
+    const { openModal } = useLeadModal();
     const trades: Trade[] = useMemo(
         () => [
             {
@@ -541,7 +544,7 @@ const BookingSystemTrades: React.FC<{ onCta: () => void }> = ({ onCta }) => {
                 <div className="mt-8 relative">
                     <div className="relative overflow-visible rounded-none bg-transparent">
                         {/* Image area: uses aspect ratio so it scales cleanly on mobile/tablet */}
-                        <div className="relative z-0 w-full bg-ollin-bg overflow-hidden aspect-[16/10] sm:aspect-[16/9]">
+                        <div className="relative z-0 w-full bg-ollin-bg overflow-hidden aspect-16/10 sm:aspect-video">
                             <img
                                 src={activeTrade.img}
                                 alt={activeTrade.name}
@@ -573,7 +576,7 @@ const BookingSystemTrades: React.FC<{ onCta: () => void }> = ({ onCta }) => {
 
                             <button
                                 type="button"
-                                onClick={onCta}
+                                onClick={openModal}
                                 className="mt-6 text-sm font-semibold tracking-tight btnSecondary btnSecondary14"
                             >
                                 <span className="btnSecondary14Text" data-text="Talk to us">
@@ -620,7 +623,7 @@ const BookingSystemTrades: React.FC<{ onCta: () => void }> = ({ onCta }) => {
             <MobileTradePicker />
 
             {/* DESKTOP (NO TOCAR NADA VISUAL) */}
-            <div className="mt-14 md:mt-16 grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-10 items-start hidden lg:grid">
+            <div className="mt-14 md:mt-16 hidden lg:grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-10 items-start">
                 {/* Left list */}
                 <div>
                     <div className="text-xs font-semibold tracking-[0.18em] uppercase text-ollin-black/45">
@@ -694,7 +697,7 @@ const BookingSystemTrades: React.FC<{ onCta: () => void }> = ({ onCta }) => {
 
                             <button
                                 type="button"
-                                onClick={onCta}
+                                onClick={openModal}
                                 className="mt-6 text-sm font-semibold tracking-tight btnSecondary btnSecondary14"
                             >
                                 <span className="btnSecondary14Text" data-text="Talk to us">
