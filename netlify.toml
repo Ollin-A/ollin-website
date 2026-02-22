@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-=======
-cat > netlify.toml << "EOF"
->>>>>>> 9d7609d (fix: prod env + blog + layout tweaks)
 [build]
   command = "npm run build"
   publish = "dist"
@@ -18,4 +14,3 @@ cat > netlify.toml << "EOF"
   from = "/api/plan-request"
   to = "/.netlify/functions/plan-request"
   status = 200
-EOF
