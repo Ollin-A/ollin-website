@@ -1,14 +1,15 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useLeadModal } from "./LeadModalContext";
+import { ChevronRight } from "lucide-react";
 
 type Headline = { muted: string; strong: string };
 
 type ServiceGroup = {
     key: string;
-    title: string; // SOLO texto (sin ">"), se anima
-    subtitle: string; // línea corta (más chica)
-    items: string[]; // lista larga (fade hacia abajo)
+    title: string; 
+    subtitle: string; 
+    items: string[]; 
     ctaLabel: string;
     to: string;
 };
@@ -18,14 +19,6 @@ function scrollToId(id: string) {
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-/**
- * DecryptedText (misma lógica/feel del snippet que mandaste),
- * pero renderizando el texto como STRING (1 nodo) para NO romper tracking-widest / uppercase.
- *
- * - Hover: empieza
- * - Mouse leave: se resetea (se apaga) y queda normal
- * - Sequential + revealDirection start (por default) = “decrypt” real
- */
 function DecryptedTitleText({
     text,
     isHovering,
@@ -252,7 +245,7 @@ function BlobCTA({
             className={[
                 "group/cta relative isolate overflow-hidden",
                 "rounded-full",
-                "bg-[#F2F2F2]", // ✅ antes: bg-ollin-bg
+                "bg-[#F2F2F2]",
                 "border border-black/15",
                 "text-ollin-black",
                 "flex items-center justify-center",
@@ -261,21 +254,20 @@ function BlobCTA({
                 className,
             ].join(" ")}
         >
-            {/* Un solo círculo (dot + fill) */}
-            <span
-                className={[
-                    "absolute left-6 top-1/2 -translate-y-1/2",
-                    "h-3 w-3 rounded-full",
-                    "transform-gpu",
-                    "transition-transform duration-300 ease-out",
-                    "group-hover/cta:scale-[260]",
-                    "z-0",
-                ].join(" ")}
-                style={{ backgroundColor: RED }}
-            />
-
-            <span className="relative z-10 px-10 text-center whitespace-nowrap transition-colors duration-200 group-hover/cta:text-white">
-                {label}
+            <span className="inline-grid grid-flow-col auto-cols-max items-center gap-3 relative z-10 w-full justify-center">
+                <span className="w-5 h-5 grid place-items-center leading-none">
+                    <span
+                        className={[
+                            "block w-2.5 h-2.5 rounded-full translate-y-[0.5px]",
+                            "transform-gpu transition-transform duration-300 ease-out",
+                            "group-hover/cta:scale-[260]",
+                        ].join(" ")}
+                        style={{ backgroundColor: RED }}
+                    />
+                </span>
+                <span className="relative z-10 leading-none transition-colors duration-200 group-hover/cta:text-white">
+                    {label}
+                </span>
             </span>
         </button>
     );
@@ -293,12 +285,12 @@ function ServiceCardContent({ group, openModal }: { group: ServiceGroup; openMod
         >
             {/* Header */}
             <div className="mb-4">
-                <div className="flex items-start gap-2">
-                    <span className="text-[14px] md:text-sm font-bold tracking-widest uppercase text-ollin-black/60 leading-none mt-[2px]">
-                        &gt;
-                    </span>
+                <div className="grid grid-cols-[18px_1fr] items-center gap-2">
+                    <div className="w-[18px] h-[18px] grid place-items-center leading-none text-ollin-black/60">
+                        <ChevronRight className="block w-[14px] h-[14px]" />
+                    </div>
 
-                    <div className="text-[14px] md:text-sm font-bold tracking-widest uppercase text-ollin-black/60 leading-none">
+                    <div className="text-[14px] md:text-sm font-bold tracking-widest uppercase text-ollin-black/60">
                         <DecryptedTitleText
                             text={group.title}
                             isHovering={isHovering}
@@ -342,7 +334,7 @@ function ServiceCardContent({ group, openModal }: { group: ServiceGroup; openMod
                 onClick={() => navigate(group.to)}
                 className={[
                     "absolute left-7 md:left-8",
-                    "bottom-10 md:bottom-11", // 👈 antes: bottom-7 (muy pegado)
+                    "bottom-10 md:bottom-11", 
                     "w-[260px] max-w-[calc(100%-3.5rem)]",
                     "h-[52px]",
                     "opacity-0 translate-y-2",
@@ -628,8 +620,8 @@ const ServicesPreview: React.FC = () => {
                             Everything contractors need: brand, demand generation, and follow-up systems—built to turn clicks into booked jobs.
                         </p>
 
-                        <button
-                            onClick={() => scrollToId("contact")}
+                        <Link
+                            to="/services"
                             className="mt-7 btnSecondary btnSecondary14 btnSecondary14--sm"
                         >
                             <span className="btnSecondary14Text" data-text="Explore services">
@@ -662,7 +654,7 @@ const ServicesPreview: React.FC = () => {
                                     <path d="M0 3 L12 8 L0 13" vectorEffect="non-scaling-stroke" />
                                 </svg>
                             </span>
-                        </button>
+                        </Link>
                     </div>
                 </div>
 

@@ -196,19 +196,15 @@ export default function BlogIndex() {
 
       {/* Filters */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="relative max-w-md w-full">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-black/40 pointer-events-none block" />
+        <div className="grid grid-cols-[20px_1fr] items-center gap-2 max-w-md w-full border border-black/10 bg-white/60 px-3 py-3 leading-none">
+          <div className="w-5 h-5 grid place-items-center">
+            <Search className="block w-4 h-4 text-black/40" aria-hidden="true" />
+          </div>
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search posts…"
-            className="
-              w-full pl-10 pr-4 py-3
-              border border-black/10
-              bg-white/60
-              text-sm
-              focus:outline-none focus:ring-0
-            "
+            className="w-full pl-0 bg-transparent text-sm leading-normal focus:outline-none focus:ring-0"
           />
         </div>
 
