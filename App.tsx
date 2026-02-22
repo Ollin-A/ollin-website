@@ -6,7 +6,7 @@ import SiteOutro from "./components/SiteOutro";
 import ScrollToTop from "./components/ScrollToTop";
 import PageLoader from "./components/PageLoader";
 import { Routes, Route, useLocation } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
+import { useHead } from "@unhead/react";
 
 const Home = lazy(() => import("./pages/Home"));
 const Services = lazy(() => import("./pages/Services"));
@@ -34,6 +34,19 @@ const App: React.FC = () => {
   useEffect(() => {
     document.title = "OLLIN - Design & Systems";
   }, [location.pathname]);
+
+  useHead({
+    title: "OLLIN - Design & Systems",
+    meta: [
+      {
+        name: "description",
+        content:
+          "More calls and estimates—then we turn them into booked jobs with a better website, faster replies, and automatic follow-ups.",
+      },
+      { property: "og:title", content: "OLLIN - Design & Systems" },
+      { name: "twitter:title", content: "OLLIN - Design & Systems" },
+    ],
+  });
 
   useEffect(() => {
     if ("scrollRestoration" in window.history) {
@@ -63,15 +76,6 @@ const App: React.FC = () => {
 
   return (
     <LeadModalProvider>
-      <Helmet>
-        <title>OLLIN - Design & Systems</title>
-        <meta
-          name="description"
-          content="More calls and estimates—then we turn them into booked jobs with a better website, faster replies, and automatic follow-ups."
-        />
-        <meta property="og:title" content="OLLIN - Design & Systems" />
-        <meta name="twitter:title" content="OLLIN - Design & Systems" />
-      </Helmet>
       <ScrollToTop />
       <Navbar />
       <main
