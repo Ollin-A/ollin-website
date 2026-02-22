@@ -496,10 +496,10 @@ const BookingSystemTrades: React.FC<{ onCta: () => void }> = ({ onCta }) => {
     const [activeTradeIdx, setActiveTradeIdx] = useState(0);
     const activeTrade = trades[activeTradeIdx];
 
-    return (
-        <div className="mt-14 md:mt-16 grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-10 items-start">
-            {/* Left list */}
-            <div>
+    // ===== MOBILE/TABLET (NO WebGL) =====
+    const MobileTradePicker = () => {
+        return (
+            <div className="mt-14 md:mt-16 lg:hidden">
                 <div className="text-xs font-semibold tracking-[0.18em] uppercase text-ollin-black/45">
                     Built for your trade
                 </div>
@@ -507,26 +507,28 @@ const BookingSystemTrades: React.FC<{ onCta: () => void }> = ({ onCta }) => {
                     Same system. Different trade. Same goal: more calls and more booked jobs.
                 </p>
 
-                {/* ✅ FIX: hitbox solo del texto (no se estira a la celda del grid) */}
-                <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-3 justify-items-start items-start">
+                {/* Tap-friendly list */}
+                <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-2">
                     {trades.map((t, idx) => {
                         const active = idx === activeTradeIdx;
                         return (
                             <button
                                 key={t.name}
-                                onMouseEnter={() => setActiveTradeIdx(idx)}
-                                onFocus={() => setActiveTradeIdx(idx)}
+                                type="button"
+                                onClick={() => setActiveTradeIdx(idx)}
+                                aria-pressed={active}
                                 className={[
                                     "justify-self-start self-start",
                                     "inline-flex w-fit",
                                     "text-left",
-                                    "text-sm md:text-[15px]",
+                                    "text-[15px] md:text-[16px]",
                                     "tracking-tight",
                                     "transition-colors duration-150",
+                                    "py-2 -my-1", // hitbox mejor para dedo sin cambiar estética
+                                    "outline-none focus-visible:ring-2 focus-visible:ring-black/15 focus-visible:ring-offset-2 focus-visible:ring-offset-[#F2F2F2]",
                                     active
                                         ? "text-ollin-black"
                                         : "text-ollin-black/55 hover:text-ollin-black/80",
-                                    "outline-none",
                                 ].join(" ")}
                             >
                                 {t.name}
@@ -534,83 +536,203 @@ const BookingSystemTrades: React.FC<{ onCta: () => void }> = ({ onCta }) => {
                         );
                     })}
                 </div>
-            </div>
 
-            {/* Right preview panel */}
-            <div className="relative">
-                <div className="relative overflow-visible rounded-none bg-transparent">
-                    {/* Image area */}
-                    <div className="relative z-0 h-[260px] sm:h-[300px] md:h-[340px] bg-ollin-bg overflow-visible">
-                        <LiquidImage
-                            key={activeTrade.img}
-                            src={activeTrade.img}
-                            alt={activeTrade.name}
-                            className="absolute inset-0 h-full w-full"
-                            overscan={22}
-                        />
+                {/* Preview card (image NEVER deforms) */}
+                <div className="mt-8 relative">
+                    <div className="relative overflow-visible rounded-none bg-transparent">
+                        {/* Image area: uses aspect ratio so it scales cleanly on mobile/tablet */}
+                        <div className="relative z-0 w-full bg-ollin-bg overflow-hidden aspect-[16/10] sm:aspect-[16/9]">
+                            <img
+                                src={activeTrade.img}
+                                alt={activeTrade.name}
+                                loading="lazy"
+                                decoding="async"
+                                className="absolute inset-0 h-full w-full object-cover"
+                            />
 
-                        <div
-                            className="absolute inset-0 pointer-events-none"
-                            style={{
-                                background:
-                                    "linear-gradient(to top, rgba(242,239,233,0.85), rgba(242,239,233,0.18), rgba(242,239,233,0.0))",
-                            }}
-                        />
-                    </div>
-
-                    {/* Text panel */}
-                    <div className="relative z-20 bg-white px-6 md:px-8 py-6 md:py-7">
-                        <div className="text-xs font-semibold tracking-[0.18em] uppercase text-ollin-black/45">
-                            {activeTrade.name}
-                        </div>
-                        <div className="mt-2 text-2xl md:text-3xl font-medium tracking-tight leading-[1.05]">
-                            {activeTrade.headline}
-                        </div>
-                        <div className="mt-2 text-sm md:text-base text-ollin-black/70 max-w-[560px]">
-                            {activeTrade.sub}
+                            <div
+                                className="absolute inset-0 pointer-events-none"
+                                style={{
+                                    background:
+                                        "linear-gradient(to top, rgba(242,239,233,0.85), rgba(242,239,233,0.18), rgba(242,239,233,0.0))",
+                                }}
+                            />
                         </div>
 
-                        {/* ✅ Talk to us (same button style; el CSS vive en BookingSystemSection) */}
-                        <button
-                            type="button"
-                            onClick={onCta}
-                            className="mt-6 text-sm font-semibold tracking-tight btnSecondary btnSecondary14"
-                        >
-                            <span className="btnSecondary14Text" data-text="Talk to us">
-                                Talk to us
-                            </span>
+                        {/* Text panel */}
+                        <div className="relative z-20 bg-white px-6 md:px-8 py-6 md:py-7">
+                            <div className="text-xs font-semibold tracking-[0.18em] uppercase text-ollin-black/45">
+                                {activeTrade.name}
+                            </div>
+                            <div className="mt-2 text-2xl md:text-3xl font-medium tracking-tight leading-[1.05]">
+                                {activeTrade.headline}
+                            </div>
+                            <div className="mt-2 text-sm md:text-base text-ollin-black/70 max-w-[560px]">
+                                {activeTrade.sub}
+                            </div>
 
-                            <span className="btnSecondary14Arrow" aria-hidden="true">
-                                <svg className="btnSecondary14ArrowLineSvg" viewBox="0 0 100 16" fill="none">
-                                    <line
-                                        x1="0"
-                                        y1="8"
-                                        x2="100"
-                                        y2="8"
+                            <button
+                                type="button"
+                                onClick={onCta}
+                                className="mt-6 text-sm font-semibold tracking-tight btnSecondary btnSecondary14"
+                            >
+                                <span className="btnSecondary14Text" data-text="Talk to us">
+                                    Talk to us
+                                </span>
+
+                                <span className="btnSecondary14Arrow" aria-hidden="true">
+                                    <svg className="btnSecondary14ArrowLineSvg" viewBox="0 0 100 16" fill="none">
+                                        <line
+                                            x1="0"
+                                            y1="8"
+                                            x2="100"
+                                            y2="8"
+                                            stroke="currentColor"
+                                            strokeWidth="1"
+                                            strokeLinecap="butt"
+                                            vectorEffect="non-scaling-stroke"
+                                        />
+                                    </svg>
+
+                                    <svg
+                                        className="btnSecondary14ArrowHeadSvg"
+                                        viewBox="0 0 18 16"
+                                        fill="none"
                                         stroke="currentColor"
                                         strokeWidth="1"
-                                        strokeLinecap="butt"
-                                        vectorEffect="non-scaling-stroke"
-                                    />
-                                </svg>
-
-                                <svg
-                                    className="btnSecondary14ArrowHeadSvg"
-                                    viewBox="0 0 18 16"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="1"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                >
-                                    <path d="M0 3 L12 8 L0 13" vectorEffect="non-scaling-stroke" />
-                                </svg>
-                            </span>
-                        </button>
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    >
+                                        <path d="M0 3 L12 8 L0 13" vectorEffect="non-scaling-stroke" />
+                                    </svg>
+                                </span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        );
+    };
+
+    return (
+        <>
+            {/* MOBILE/TABLET */}
+            <MobileTradePicker />
+
+            {/* DESKTOP (NO TOCAR NADA VISUAL) */}
+            <div className="mt-14 md:mt-16 grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-10 items-start hidden lg:grid">
+                {/* Left list */}
+                <div>
+                    <div className="text-xs font-semibold tracking-[0.18em] uppercase text-ollin-black/45">
+                        Built for your trade
+                    </div>
+                    <p className="mt-3 text-base md:text-lg leading-snug text-ollin-black/70 max-w-[520px]">
+                        Same system. Different trade. Same goal: more calls and more booked jobs.
+                    </p>
+
+                    <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-3 justify-items-start items-start">
+                        {trades.map((t, idx) => {
+                            const active = idx === activeTradeIdx;
+                            return (
+                                <button
+                                    key={t.name}
+                                    onMouseEnter={() => setActiveTradeIdx(idx)}
+                                    onFocus={() => setActiveTradeIdx(idx)}
+                                    className={[
+                                        "justify-self-start self-start",
+                                        "inline-flex w-fit",
+                                        "text-left",
+                                        "text-sm md:text-[15px]",
+                                        "tracking-tight",
+                                        "transition-colors duration-150",
+                                        active
+                                            ? "text-ollin-black"
+                                            : "text-ollin-black/55 hover:text-ollin-black/80",
+                                        "outline-none",
+                                    ].join(" ")}
+                                >
+                                    {t.name}
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                {/* Right preview panel */}
+                <div className="relative">
+                    <div className="relative overflow-visible rounded-none bg-transparent">
+                        {/* Image area */}
+                        <div className="relative z-0 h-[260px] sm:h-[300px] md:h-[340px] bg-ollin-bg overflow-visible">
+                            <LiquidImage
+                                key={activeTrade.img}
+                                src={activeTrade.img}
+                                alt={activeTrade.name}
+                                className="absolute inset-0 h-full w-full"
+                                overscan={22}
+                            />
+
+                            <div
+                                className="absolute inset-0 pointer-events-none"
+                                style={{
+                                    background:
+                                        "linear-gradient(to top, rgba(242,239,233,0.85), rgba(242,239,233,0.18), rgba(242,239,233,0.0))",
+                                }}
+                            />
+                        </div>
+
+                        {/* Text panel */}
+                        <div className="relative z-20 bg-white px-6 md:px-8 py-6 md:py-7">
+                            <div className="text-xs font-semibold tracking-[0.18em] uppercase text-ollin-black/45">
+                                {activeTrade.name}
+                            </div>
+                            <div className="mt-2 text-2xl md:text-3xl font-medium tracking-tight leading-[1.05]">
+                                {activeTrade.headline}
+                            </div>
+                            <div className="mt-2 text-sm md:text-base text-ollin-black/70 max-w-[560px]">
+                                {activeTrade.sub}
+                            </div>
+
+                            <button
+                                type="button"
+                                onClick={onCta}
+                                className="mt-6 text-sm font-semibold tracking-tight btnSecondary btnSecondary14"
+                            >
+                                <span className="btnSecondary14Text" data-text="Talk to us">
+                                    Talk to us
+                                </span>
+
+                                <span className="btnSecondary14Arrow" aria-hidden="true">
+                                    <svg className="btnSecondary14ArrowLineSvg" viewBox="0 0 100 16" fill="none">
+                                        <line
+                                            x1="0"
+                                            y1="8"
+                                            x2="100"
+                                            y2="8"
+                                            stroke="currentColor"
+                                            strokeWidth="1"
+                                            strokeLinecap="butt"
+                                            vectorEffect="non-scaling-stroke"
+                                        />
+                                    </svg>
+
+                                    <svg
+                                        className="btnSecondary14ArrowHeadSvg"
+                                        viewBox="0 0 18 16"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="1"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    >
+                                        <path d="M0 3 L12 8 L0 13" vectorEffect="non-scaling-stroke" />
+                                    </svg>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </>
     );
 };
 

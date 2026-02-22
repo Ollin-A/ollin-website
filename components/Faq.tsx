@@ -10,6 +10,7 @@ import {
     Zap,
     DollarSign,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 import Reveal from "./Reveal";
 
 // --- TYPES ---
@@ -270,9 +271,7 @@ const faqCategories: FaqCategory[] = [
 const OPEN_SCROLL_DELAY_MS = 340; // coincide con duration-300 + un colchón
 
 const Faq: React.FC = () => {
-    const [activeCategoryId, setActiveCategoryId] = useState<string>(
-        faqCategories[0].id
-    );
+    const [activeCategoryId, setActiveCategoryId] = useState<string>(faqCategories[0].id);
 
     // ✅ por default ninguna pregunta abierta
     const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -286,17 +285,13 @@ const Faq: React.FC = () => {
     const pendingScrollRef = useRef(false);
     const scrollTimerRef = useRef<number | null>(null);
 
-    const activeCategory =
-        faqCategories.find((c) => c.id === activeCategoryId) || faqCategories[0];
+    const activeCategory = faqCategories.find((c) => c.id === activeCategoryId) || faqCategories[0];
 
     const scrollToAccordion = () => {
         if (typeof window === "undefined" || !accordionRef.current) return;
 
         const yOffset = -96;
-        const y =
-            accordionRef.current.getBoundingClientRect().top +
-            window.pageYOffset +
-            yOffset;
+        const y = accordionRef.current.getBoundingClientRect().top + window.pageYOffset + yOffset;
 
         window.scrollTo({ top: y, behavior: "smooth" });
     };
@@ -356,10 +351,7 @@ const Faq: React.FC = () => {
     };
 
     return (
-        <section
-            id="faq"
-            className="relative w-full bg-ollin-bg text-ollin-black py-20 md:py-28"
-        >
+        <section id="faq" className="relative w-full bg-[#F2F2F2] text-ollin-black py-12 md:py-28">
             <div className="max-w-[1500px] mx-auto px-[5vw] w-full">
                 {/* Top copy */}
                 <Reveal>
@@ -367,7 +359,7 @@ const Faq: React.FC = () => {
                         <h3 className="text-3xl md:text-4xl lg:text-5xl tracking-tight leading-[1.02] font-medium">
                             FAQ. Straight answers for busy contractors.
                         </h3>
-                        <p className="mt-5 text-base md:text-lg leading-snug text-ollin-black/70 max-w-[760px]">
+                        <p className="mt-4 md:mt-5 text-base md:text-lg leading-snug text-ollin-black/70 max-w-[760px]">
                             No jargon. No fluff. Just clear explanations of how websites, Ads,
                             Maps, automation, tracking, reviews, and content actually work—
                             so you can pick the right next step with confidence.
@@ -376,7 +368,7 @@ const Faq: React.FC = () => {
                 </Reveal>
 
                 {/* Categories */}
-                <div className="mt-10 md:mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="mt-10 md:mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                     {faqCategories.map((cat, idx) => {
                         const isActive = activeCategoryId === cat.id;
 
@@ -385,7 +377,7 @@ const Faq: React.FC = () => {
                                 <button
                                     onClick={() => handleCategoryClick(cat.id)}
                                     className={[
-                                        "relative group w-full h-full text-left p-6 border transition-all duration-200",
+                                        "relative group w-full h-full text-left p-5 md:p-6 border transition-all duration-200",
                                         "bg-white",
                                         "border-black/10",
                                         "shadow-[0_8px_22px_rgba(0,0,0,0.06)]",
@@ -404,7 +396,7 @@ const Faq: React.FC = () => {
                                         aria-hidden="true"
                                     />
 
-                                    <div className="mb-4 w-10 h-10 border border-black/10 bg-black/[0.02] flex items-center justify-center">
+                                    <div className="mb-3 md:mb-4 w-10 h-10 border border-black/10 bg-black/[0.02] flex items-center justify-center">
                                         {cat.icon}
                                     </div>
 
@@ -448,9 +440,7 @@ const Faq: React.FC = () => {
                     <div
                         className={[
                             "grid transition-[grid-template-rows,opacity] duration-300 ease-in-out",
-                            accordionOpen
-                                ? "grid-rows-[1fr] opacity-100"
-                                : "grid-rows-[0fr] opacity-0",
+                            accordionOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0",
                         ].join(" ")}
                         aria-hidden={!accordionOpen}
                     >
@@ -462,7 +452,7 @@ const Faq: React.FC = () => {
                         >
                             <Reveal
                                 key={activeCategory.id}
-                                className="bg-white border border-black/10 shadow-[0_8px_22px_rgba(0,0,0,0.06)] p-8 md:p-10 rounded-none"
+                                className="bg-white border border-black/10 shadow-[0_8px_22px_rgba(0,0,0,0.06)] p-5 md:p-10 rounded-none"
                             >
                                 <div className="pb-5 border-b border-black/10 flex items-center gap-3">
                                     <div className="w-9 h-9 border border-black/10 bg-black/[0.02] flex items-center justify-center">
@@ -488,21 +478,16 @@ const Faq: React.FC = () => {
                                         const isOpen = openIndex === idx;
 
                                         return (
-                                            <div
-                                                key={item.id}
-                                                className="border-b border-black/10 last:border-0"
-                                            >
+                                            <div key={item.id} className="border-b border-black/10 last:border-0">
                                                 <button
                                                     onClick={() => toggleAccordionQuestion(idx)}
-                                                    className="w-full flex items-start justify-between py-5 text-left focus:outline-none"
+                                                    className="w-full flex items-start justify-between py-4 md:py-5 text-left focus:outline-none"
                                                     aria-expanded={isOpen}
                                                 >
                                                     <span
                                                         className={[
                                                             "text-[16px] md:text-[17px] font-medium pr-8 transition-colors",
-                                                            isOpen
-                                                                ? "text-ollin-black"
-                                                                : "text-ollin-black/80",
+                                                            isOpen ? "text-ollin-black" : "text-ollin-black/80",
                                                         ].join(" ")}
                                                     >
                                                         {item.question}
@@ -524,9 +509,7 @@ const Faq: React.FC = () => {
                                                 <div
                                                     className={[
                                                         "grid transition-[grid-template-rows,opacity,margin] duration-300 ease-in-out",
-                                                        isOpen
-                                                            ? "grid-rows-[1fr] opacity-100 mb-6"
-                                                            : "grid-rows-[0fr] opacity-0 mb-0",
+                                                        isOpen ? "grid-rows-[1fr] opacity-100 mb-6" : "grid-rows-[0fr] opacity-0 mb-0",
                                                     ].join(" ")}
                                                 >
                                                     <div className="overflow-hidden">
@@ -541,7 +524,7 @@ const Faq: React.FC = () => {
                                 </div>
 
                                 {/* tiny CTA row */}
-                                <div className="pt-6 border-t border-black/10 mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                                <div className="pt-5 md:pt-6 border-t border-black/10 mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                                     <div className="text-sm md:text-[15px] text-ollin-black/65">
                                         Still unsure? We’ll tell you the simplest next step—based on your
                                         business, not generic advice.
@@ -554,12 +537,14 @@ const Faq: React.FC = () => {
                                         >
                                             Get a quick plan
                                         </a>
-                                        <a
-                                            href="#pricing-preview"
+
+                                        {/* ✅ UPDATED: packages CTA */}
+                                        <Link
+                                            to="/packages"
                                             className="inline-flex items-center justify-center px-4 py-3 border border-black/10 bg-transparent text-ollin-black/70 text-sm font-medium hover:text-ollin-black transition"
                                         >
-                                            See pricing
-                                        </a>
+                                            See packages
+                                        </Link>
                                     </div>
                                 </div>
                             </Reveal>

@@ -1,16 +1,18 @@
-import React from 'react';
+import { Outlet } from "react-router-dom";
+import { Suspense } from "react";
+import PageLoader from "../components/PageLoader";
 
-const Blog: React.FC = () => {
-    return (
-        <div className="w-full min-h-screen pt-32 pb-20 px-[5vw]">
-            <div className="max-w-[1500px] mx-auto">
-                <h1 className="text-4xl md:text-6xl font-semibold mb-8 text-ollin-black">Blog</h1>
-                <p className="text-lg text-ollin-black opacity-70">
-                    Insights and updates from OLLIN. Content coming soon.
-                </p>
-            </div>
-        </div>
-    );
-};
-
-export default Blog;
+export default function Blog() {
+  return (
+    <div className="w-full min-h-screen pt-32 pb-20 px-[5vw]">
+      <div className="max-w-[1500px] mx-auto">
+        <h1 className="text-4xl md:text-6xl font-semibold mb-8 text-ollin-black">
+          Blogs
+        </h1>
+        <Suspense fallback={<PageLoader />}>
+          <Outlet />
+        </Suspense>
+      </div>
+    </div>
+  );
+}

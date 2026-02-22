@@ -1,27 +1,28 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-
-const TEASE_KEY = "ollin_pricing_cards_teased_v1";
+import { useLeadModal } from "./LeadModalContext";
 
 type Tile = {
   id: string;
   tag: "BASELINE" | "GROWTH";
-  title: string; // ✅ se queda para el BACK
+  title: string;
   desc: string;
   bullets: readonly string[];
   imageSrc: string;
   imageAlt: string;
+
+  mobPos?: string; 
 };
 
 const PricingSection: React.FC = () => {
-  const sectionRef = useRef<HTMLElement | null>(null);
+    const sectionRef = useRef<HTMLElement | null>(null);
+    const { openModal } = useLeadModal();
 
-  const goPricing = () => {
-    const el = document.getElementById("pricing");
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
-      return;
-    }
-    window.location.href = "/pricing";
+  const didIntroRef = useRef(false);
+
+  const reduceMotionRef = useRef(false);
+
+  const handleCTA = () => {
+    openModal();
   };
 
   const tiles = useMemo<Tile[]>(
@@ -34,6 +35,7 @@ const PricingSection: React.FC = () => {
         bullets: ["Clear services + photos", "Proof that builds trust", "Simple call / request flow"],
         imageSrc: "https://i.imgur.com/2MqLbtm.jpeg",
         imageAlt: "A laptop showing a website",
+        mobPos: "50% 50%",
       },
       {
         id: "social",
@@ -43,6 +45,7 @@ const PricingSection: React.FC = () => {
         bullets: ["Consistent posts that look professional", "Simple plan: what to post + when", "Turn DMs into inquiries"],
         imageSrc: "https://i.imgur.com/8xpnHT8.jpeg",
         imageAlt: "A phone showing social content",
+        mobPos: "50% 20%",
       },
       {
         id: "pipeline",
@@ -52,6 +55,7 @@ const PricingSection: React.FC = () => {
         bullets: ["Show up on Maps + run call ads", "Fast replies + follow-ups", "Weekly improvements based on results"],
         imageSrc: "https://i.imgur.com/4TypqoM.jpeg",
         imageAlt: "A map/location concept",
+        mobPos: "50% 45%",
       },
     ],
     []
@@ -66,6 +70,10 @@ const PricingSection: React.FC = () => {
   const [canHoverFine, setCanHoverFine] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
 
+  useEffect(() => {
+    reduceMotionRef.current = reduceMotion;
+  }, [reduceMotion]);
+
   const flipTile = (id: string) => {
     setAnimatingId(id);
     setOpenId((prev) => (prev === id ? null : id));
@@ -75,7 +83,6 @@ const PricingSection: React.FC = () => {
     }, 820);
   };
 
-  // Capabilities (mobile/tablet/desktop)
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -101,6 +108,56 @@ const PricingSection: React.FC = () => {
     };
   }, []);
 
+  // ✅ Tease + Hint cuando la sección entra al viewport (esto arregla mobile)
+  useEffect(() => {
+    const sec = sectionRef.current;
+    if (!sec || typeof window === "undefined") return;
+
+    const runIntro = () => {
+      if (didIntroRef.current) return;
+      didIntroRef.current = true;
+
+      // hint SIEMPRE
+      setShowHint(true);
+      window.setTimeout(() => setShowHint(false), 2600);
+
+      // micro-tease SOLO si no reduce motion
+      if (!reduceMotionRef.current) {
+        setTeaseOn(true);
+        window.setTimeout(() => setTeaseOn(false), 900);
+      }
+    };
+
+    // Si ya está visible de entrada (desktop), corre inmediato
+    const r = sec.getBoundingClientRect();
+    const vh = window.innerHeight || 0;
+    const initiallyVisible = r.top < vh * 0.85 && r.bottom > vh * 0.15;
+    if (initiallyVisible) {
+      // pequeño delay para evitar “flicker” al montar
+      const t = window.setTimeout(runIntro, 250);
+      return () => window.clearTimeout(t);
+    }
+
+    const obs = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (!entry) return;
+        if (entry.isIntersecting) {
+          runIntro();
+          obs.disconnect();
+        }
+      },
+      {
+        // entra “antes” para que en mobile lo alcances a ver
+        rootMargin: "-10% 0px -25% 0px",
+        threshold: [0, 0.1, 0.2],
+      }
+    );
+
+    obs.observe(sec);
+    return () => obs.disconnect();
+  }, []);
+
   // ESC closes
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -112,47 +169,6 @@ const PricingSection: React.FC = () => {
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
-
-  // Micro-flip teaser + hint (1x per session)
-  useEffect(() => {
-    const sec = sectionRef.current;
-    if (!sec || typeof window === "undefined") return;
-    if (reduceMotion) return;
-
-    let alreadyTeased = false;
-    try {
-      alreadyTeased = sessionStorage.getItem(TEASE_KEY) === "1";
-    } catch {
-      alreadyTeased = false;
-    }
-    if (alreadyTeased) return;
-
-    const obs = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        if (!entry) return;
-
-        if (entry.intersectionRatio >= 0.5) {
-          setTeaseOn(true);
-          setShowHint(true);
-
-          window.setTimeout(() => setTeaseOn(false), 900);
-          window.setTimeout(() => setShowHint(false), 2600);
-
-          try {
-            sessionStorage.setItem(TEASE_KEY, "1");
-          } catch {
-            // ignore
-          }
-          obs.disconnect();
-        }
-      },
-      { threshold: [0, 0.25, 0.5, 0.75, 1] }
-    );
-
-    obs.observe(sec);
-    return () => obs.disconnect();
-  }, [reduceMotion]);
 
   // Auto-close when leaving section
   useEffect(() => {
@@ -181,9 +197,9 @@ const PricingSection: React.FC = () => {
     const tile = e.currentTarget as HTMLElement;
     if (tile.getAttribute("data-open") === "true") return;
 
-    const r = tile.getBoundingClientRect();
-    const px = (e.clientX - r.left) / r.width;
-    const py = (e.clientY - r.top) / r.height;
+    const rr = tile.getBoundingClientRect();
+    const px = (e.clientX - rr.left) / rr.width;
+    const py = (e.clientY - rr.top) / rr.height;
     const ry = (px - 0.5) * 6;
     const rx = (0.5 - py) * 6;
 
@@ -205,7 +221,11 @@ const PricingSection: React.FC = () => {
   };
 
   return (
-    <section id="pricing-preview" ref={sectionRef} className="relative w-full bg-ollin-bg text-ollin-black py-20 md:py-28">
+    <section
+      id="pricing-preview"
+      ref={sectionRef}
+      className="relative w-full bg-[#F2F2F2] text-ollin-black py-20 md:py-28"
+    >
       <div className="max-w-[1500px] mx-auto px-[5vw] w-full">
         {/* Top copy */}
         <div className="max-w-[980px]">
@@ -231,7 +251,10 @@ const PricingSection: React.FC = () => {
                 data-open={isOpen ? "true" : "false"}
                 data-anim={isAnim ? "true" : "false"}
                 className={["ollinFlipTile", "relative", "min-h-[250px]", "outline-none"].join(" ")}
-                style={{ ["--delay" as any]: `${idx * 140}ms` }}
+                style={{
+                  ["--delay" as any]: `${idx * 140}ms`,
+                  ["--mobPos" as any]: t.mobPos ?? "50% 50%",
+                }}
                 role="button"
                 tabIndex={0}
                 aria-expanded={isOpen}
@@ -253,15 +276,19 @@ const PricingSection: React.FC = () => {
                     <div className="ollinTilt">
                       <div className={["ollinTease", teaseOn ? "isTeasing" : ""].join(" ")}>
                         <div className={["ollinFlipCore", isOpen ? "isFlipped" : ""].join(" ")}>
-                          {/* thickness — SOLO lados */}
                           <div className="ollinEdgeR" aria-hidden="true" />
                           <div className="ollinEdgeL" aria-hidden="true" />
 
                           {/* FRONT */}
                           <div className="ollinFace ollinFront">
-                            <img src={t.imageSrc} alt={t.imageAlt} className="absolute inset-0 h-full w-full object-cover" />
+                            <img
+                              src={t.imageSrc}
+                              alt={t.imageAlt}
+                              loading="lazy"
+                              decoding="async"
+                              className="ollinFrontImg absolute inset-0 h-full w-full object-cover"
+                            />
 
-                            {/* ✅ Overlay solo para el hint (sin título) */}
                             <div className="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-black/60 via-black/25 to-transparent">
                               <div className={["ollinHint", showHint ? "isShow" : ""].join(" ")}>
                                 {isTouchLike ? "Tap to flip" : "Click for details"}
@@ -313,14 +340,13 @@ const PricingSection: React.FC = () => {
         </div>
 
         {/* Bottom line + CTA */}
-        <div className="mt-10 md:mt-12 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+        <div className={["mt-10 md:mt-12", "flex flex-col", "lg:flex-row lg:items-center lg:justify-between", "gap-6"].join(" ")}>
           <div className="text-sm md:text-[15px] text-ollin-black/65">
             <span className="text-ollin-black/80 font-medium">Everything is modular.</span> Start Baseline. Add Growth when you want
             faster results.
           </div>
 
-          {/* ✅ Same animated secondary button (sheen + arrow) + shorter copy */}
-          <button type="button" onClick={goPricing} className="btnSecondary btnSecondary14">
+          <button type="button" onClick={handleCTA} className="btnSecondary btnSecondary14 self-center lg:self-auto">
             <span className="btnSecondary14Text" data-text="Build your plan">
               Build your plan
             </span>
@@ -361,8 +387,19 @@ const PricingSection: React.FC = () => {
           --ollin-thickness: 12px;
         }
 
+        /* ✅ Mobile/tablet: usa el focal point por tile
+           ✅ Desktop (lg+): vuelve a center (NO cambia tu estética desktop) */
+        .ollinFrontImg{
+          object-position: var(--mobPos, 50% 50%);
+        }
+        @media (min-width: 1024px){
+          .ollinFrontImg{
+            object-position: 50% 50%;
+          }
+        }
+
         /* =========================
-           Secondary Button v14 (same as Hero)
+           Secondary Button v14
            ========================= */
         .btnSecondary.btnSecondary14 {
           color: #6b6b6b;
@@ -382,7 +419,6 @@ const PricingSection: React.FC = () => {
           --arrowLen: var(--arrowLenHover);
         }
 
-        /* SHEEN */
         .btnSecondary14Text {
           position: relative;
           display: inline-block;
@@ -416,7 +452,6 @@ const PricingSection: React.FC = () => {
           animation: ollinSheenOnceLR 720ms ease-out 1;
         }
 
-        /* ARROW */
         .btnSecondary14Arrow {
           position: relative;
           display: inline-block;
@@ -467,7 +502,7 @@ const PricingSection: React.FC = () => {
           border-radius: 0 !important;
           outline: none;
 
-          background: transparent; /* CLAVE: nada de blanco “filtrándose” en el flip */
+          background: transparent;
           box-shadow: 0 8px 22px rgba(0,0,0,.06);
           transition: box-shadow 180ms ease;
 
@@ -481,18 +516,14 @@ const PricingSection: React.FC = () => {
           }
         }
 
-        /* Clipping separado (no rompe el 3D) */
         .ollinClip{
           position: absolute;
           inset: 0;
           overflow: hidden;
           border-radius: 0 !important;
-
-          /* Para que el “hueco” del flip sea EXACTAMENTE el fondo de la sección */
           background: transparent;
         }
 
-        /* Perspectiva en wrapper estable */
         .ollinStage{
           position: absolute;
           inset: 0;
@@ -501,7 +532,6 @@ const PricingSection: React.FC = () => {
           background: transparent;
         }
 
-        /* Tilt en wrapper separado */
         .ollinTilt{
           position: absolute;
           inset: 0;
@@ -511,7 +541,6 @@ const PricingSection: React.FC = () => {
           will-change: transform;
         }
 
-        /* Tease separado (no pelea con flip) */
         .ollinTease{
           position: absolute;
           inset: 0;
@@ -526,7 +555,6 @@ const PricingSection: React.FC = () => {
           100%{ transform: rotateY(0deg); }
         }
 
-        /* Flip REAL */
         .ollinFlipCore{
           position: absolute;
           inset: 0;
@@ -538,7 +566,6 @@ const PricingSection: React.FC = () => {
           transform: rotateY(180deg);
         }
 
-        /* Anti-espejo: backface oculto en caras + descendientes */
         .ollinFace,
         .ollinFace *{
           backface-visibility: hidden;
@@ -552,20 +579,17 @@ const PricingSection: React.FC = () => {
           border-radius: 0 !important;
         }
 
-        /* Front explícito en 0deg + translateZ */
         .ollinFront{
           transform: rotateY(0deg) translateZ(calc(var(--ollin-thickness) / 2));
-          background: #fff; /* la “card” se siente blanca */
+          background: #fff;
         }
 
-        /* Back blanco (como pediste) */
         .ollinBack{
           transform: rotateY(180deg) translateZ(calc(var(--ollin-thickness) / 2));
           background: #fff;
           padding: 24px 24px;
         }
 
-        /* Thickness SOLO lados, y SOLO mientras gira */
         .ollinEdgeR,
         .ollinEdgeL{
           position: absolute;

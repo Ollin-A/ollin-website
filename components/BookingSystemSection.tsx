@@ -45,7 +45,7 @@ const BookingSystemSection: React.FC = () => {
     };
 
     return (
-        <section id="system" className="relative w-full bg-ollin-bg text-ollin-black py-20 md:py-28">
+        <section id="system" className="relative w-full bg-[#F2F2F2] text-ollin-black py-20 md:py-28">
             <style>{`
         /* =========================
            Secondary Button v14 (same as Hero / PricingSection)
@@ -233,7 +233,7 @@ const BookingSystemSection: React.FC = () => {
                 </div>
 
                 {/* Separador “invisible” (mismo color del fondo) */}
-                <div className="my-16 md:my-20 h-px w-full bg-ollin-bg" />
+                <div className="my-16 md:my-20 h-px w-full bg-[#F2F2F2]" />
 
                 {/* ===== BOTTOM: Trades (migrado) ===== */}
                 <BookingSystemTrades onCta={goContact} />

@@ -62,7 +62,6 @@ const ApproachSection: React.FC = () => {
     const [active, setActive] = useState(0);
     const activeRef = useRef(0);
 
-    // Progress (0..1) across steps (index-based, stable)
     const progress = cards.length > 1 ? active / (cards.length - 1) : 0;
 
     const getItems = (track: HTMLDivElement) => {
@@ -79,7 +78,6 @@ const ApproachSection: React.FC = () => {
         const el = items[idx];
         if (!el) return;
 
-        // Make sure we always land on a clean left-edge position (one-by-one)
         track.scrollTo({
             left: el.offsetLeft,
             behavior: "smooth",
@@ -100,7 +98,6 @@ const ApproachSection: React.FC = () => {
         scrollToIndex(next);
     };
 
-    // Keep `active` synced to scroll position (buttons drive it, but this keeps it accurate)
     useEffect(() => {
         const track = trackRef.current;
         if (!track) return;
@@ -115,7 +112,6 @@ const ApproachSection: React.FC = () => {
 
             const x = track.scrollLeft;
 
-            // nearest card by left edge distance
             let bestIdx = 0;
             let bestDist = Number.POSITIVE_INFINITY;
 
@@ -147,13 +143,11 @@ const ApproachSection: React.FC = () => {
         };
     }, [cards.length]);
 
-    // Prevent mouse-wheel / trackpad horizontal scrolling (buttons-only on desktop behavior)
     useEffect(() => {
         const track = trackRef.current;
         if (!track) return;
 
         const onWheel = (e: WheelEvent) => {
-            // block horizontal intent (shift-wheel or deltaX)
             const horizontalIntent = e.shiftKey || Math.abs(e.deltaX) > 0;
             if (horizontalIntent) e.preventDefault();
         };
@@ -198,7 +192,7 @@ const ApproachSection: React.FC = () => {
     );
 
     return (
-        <section id="approach" className="relative w-full bg-ollin-bg text-ollin-black py-20 md:py-28">
+        <section id="approach" className="relative w-full bg-[#F2F2F2] text-ollin-black py-20 md:py-28">
             <style>{`
         #approach ._hideScroll::-webkit-scrollbar{ display:none; }
 
@@ -255,7 +249,7 @@ const ApproachSection: React.FC = () => {
                     <h3 className="text-3xl md:text-4xl lg:text-5xl tracking-tight leading-[1.02] font-medium">
                         <span className="text-ollin-black">Your</span>{" "}
                         <span className="text-ollin-black">first</span>{" "}
-                        <span className="text-ollin-black/65">14 days.</span>
+                        <span className="text-ollin-black/65">2 weeks.</span>
                     </h3>
 
                     <p className="mt-5 text-base md:text-lg leading-snug text-ollin-black/70 max-w-[820px]">
@@ -360,7 +354,9 @@ const ApproachSection: React.FC = () => {
                                             "inline-flex items-center gap-2",
                                             "px-2.5 py-1",
                                             "border",
-                                            c.lane === "Growth" ? "border-black/15 text-ollin-black/70" : "border-black/10 text-ollin-black/55",
+                                            c.lane === "Growth"
+                                                ? "border-black/15 text-ollin-black/70"
+                                                : "border-black/10 text-ollin-black/55",
                                         ].join(" ")}
                                     >
                                         <span

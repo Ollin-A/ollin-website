@@ -1,28 +1,55 @@
-import React, { useState, useEffect, useRef, CSSProperties } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import GrowthModal from './GrowthModal';
+import { useLeadModal } from './LeadModalContext';
 
 const Navbar: React.FC = () => {
   const [isVisible, setIsVisible] = useState(true);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const [isGrowthModalOpen, setIsGrowthModalOpen] = useState(false);
+  
+  const { openModal } = useLeadModal();
+
+  // NEW: hide navbar while Services pinned section is active
+  const [isServicesPinned, setIsServicesPinned] = useState(false);
+
   const lastScrollY = useRef(0);
   const navigate = useNavigate();
+
+  // Listen to Services pinned state
+  useEffect(() => {
+    const init = () => {
+      const pinned = document.documentElement.getAttribute('data-services-pinned') === 'true';
+      setIsServicesPinned(pinned);
+    };
+
+    const handler = (e: Event) => {
+      const ce = e as CustomEvent<{ pinned?: boolean }>;
+      const pinned = !!ce.detail?.pinned;
+      setIsServicesPinned(pinned);
+
+      // If pinned, close overlays so nothing feels "stuck"
+      if (pinned) {
+        setIsMobileOpen(false);
+      }
+    };
+
+    init();
+    window.addEventListener('services:pinned', handler as EventListener);
+
+    return () => {
+      window.removeEventListener('services:pinned', handler as EventListener);
+    };
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
-      // Smart Hide/Show Logic
       if (currentScrollY < 40) {
         setIsVisible(true);
       } else {
-        // Hide if scrolling down significantly (>80px total) and moving down
         if (currentScrollY > lastScrollY.current && currentScrollY > 80) {
           setIsVisible(false);
-        }
-        // Show if scrolling up
-        else if (currentScrollY < lastScrollY.current) {
+        } else if (currentScrollY < lastScrollY.current) {
           setIsVisible(true);
         }
       }
@@ -34,37 +61,35 @@ const Navbar: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Lock body scroll when mobile menu OR modal is open
+  // Lock body scroll when mobile menu is open
   useEffect(() => {
-    if (isMobileOpen || isGrowthModalOpen) {
+    if (isMobileOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
     }
-  }, [isMobileOpen, isGrowthModalOpen]);
+  }, [isMobileOpen]);
 
   // Keyboard support for closing modal (Esc)
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        if (isGrowthModalOpen) setIsGrowthModalOpen(false);
         if (isMobileOpen) setIsMobileOpen(false);
       }
     };
     window.addEventListener('keydown', handleEsc);
     return () => window.removeEventListener('keydown', handleEsc);
-  }, [isGrowthModalOpen, isMobileOpen]);
+  }, [isMobileOpen]);
 
   const handleNavigation = (path: string) => {
     setIsMobileOpen(false);
-    setIsGrowthModalOpen(false);
     navigate(path);
     window.scrollTo({ top: 0, behavior: 'auto' });
   };
 
-  const openModal = () => {
-    setIsMobileOpen(false); // Close mobile menu if open
-    setIsGrowthModalOpen(true);
+  const handleOpenModal = () => {
+    setIsMobileOpen(false);
+    openModal();
   };
 
   const navLinks = [
@@ -73,21 +98,23 @@ const Navbar: React.FC = () => {
     { name: 'Packages', path: '/packages' },
   ];
 
-  // Wrapper style for black text
   const navTextStyle: React.CSSProperties = {
     color: '#000000',
   };
 
-  // Hover effect
   const navHoverClass = "hover:opacity-80 transition-opacity duration-300";
+
+  // Forced hide during Services pinned section
+  const forceHide = isServicesPinned;
 
   return (
     <>
       <header
-        // Using 'top' for show/hide avoids transform on the parent, which preserves blending context.
-        className="fixed left-0 w-full z-50 transition-[top] duration-[450ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+        className="fixed left-0 w-full z-50 transition-[top,opacity] duration-[450ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
         style={{
-          top: isVisible ? '0' : '-6rem', // Hide by moving up
+          top: forceHide ? '-6rem' : (isVisible ? '0' : '-6rem'),
+          opacity: forceHide ? 0 : 1,
+          pointerEvents: forceHide ? 'none' : 'auto',
           backgroundColor: 'transparent',
           backdropFilter: 'none',
           WebkitBackdropFilter: 'none',
@@ -99,7 +126,6 @@ const Navbar: React.FC = () => {
           className="w-full max-w-[1500px] mx-auto px-[5vw] h-16 md:h-16 grid grid-cols-2 md:grid-cols-[1fr_auto_1fr] items-center"
           style={navTextStyle}
         >
-
           {/* LEFT: Logo */}
           <div className="flex justify-start">
             <button
@@ -120,20 +146,14 @@ const Navbar: React.FC = () => {
                 className={`text-[13px] font-medium tracking-[0.15em] uppercase relative group text-current ${navHoverClass}`}
               >
                 {link.name}
-                {/* Underline */}
-                <span
-                  className="absolute -bottom-1 left-0 w-0 h-[1px] bg-current transition-all duration-300 group-hover:w-full"
-                />
+                <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-current transition-all duration-300 group-hover:w-full" />
               </button>
             ))}
           </nav>
 
-          {/* RIGHT: Actions & Mobile Toggle */}
+            {/* RIGHT: Actions & Mobile Toggle */}
           <div className="flex justify-end items-center">
-
-            {/* Desktop Actions */}
             <div className="hidden md:flex items-center gap-6">
-              {/* Contact Link */}
               <button
                 onClick={() => handleNavigation('/contact')}
                 className={`text-[13px] font-medium tracking-[0.15em] uppercase text-current ${navHoverClass}`}
@@ -141,16 +161,14 @@ const Navbar: React.FC = () => {
                 Contact
               </button>
 
-              {/* CTA Button - NOT Blended (Solid) */}
               <button
-                onClick={openModal}
+                onClick={handleOpenModal}
                 className="bg-ollin-black text-white text-[13px] font-medium tracking-wide px-5 py-2.5 rounded-[12px] hover:translate-y-[-1px] hover:shadow-lg transition-transform duration-300 ease-[cubic-bezier(0.33,1,0.68,1)]"
               >
                 Get a Free Growth Plan
               </button>
             </div>
 
-            {/* Mobile Toggle */}
             <button
               className={`md:hidden p-2 -mr-2 focus:outline-none text-current`}
               onClick={() => setIsMobileOpen(!isMobileOpen)}
@@ -169,7 +187,6 @@ const Navbar: React.FC = () => {
               </div>
             </button>
           </div>
-
         </div>
       </header>
 
@@ -197,9 +214,12 @@ const Navbar: React.FC = () => {
             Contact
           </button>
 
-          <div className={`mt-8 transition-all duration-500 delay-200 ${isMobileOpen ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
+          <div
+            className={`mt-8 transition-all duration-500 delay-200 ${isMobileOpen ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+              }`}
+          >
             <button
-              onClick={openModal}
+              onClick={handleOpenModal}
               className="bg-ollin-black text-white text-base font-medium px-8 py-4 rounded-[12px] w-full max-w-xs"
             >
               Get a Free Growth Plan
@@ -207,13 +227,6 @@ const Navbar: React.FC = () => {
           </div>
         </div>
       </div>
-
-      {/* Growth Modal Portal/Overlay */}
-      <GrowthModal
-        isOpen={isGrowthModalOpen}
-        onClose={() => setIsGrowthModalOpen(false)}
-      />
-
     </>
   );
 };

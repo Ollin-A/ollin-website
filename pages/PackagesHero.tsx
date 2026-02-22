@@ -17,18 +17,18 @@ export default function PackagesHero({ muted }: Props) {
     }, []);
 
     return (
-        <section className="relative pt-14 md:pt-16 lg:pt-20 pb-10 md:pb-14">
-            {/* This wrapper creates the “hero canvas” like 14islands */}
-            <div className="relative min-h-[64vh] md:min-h-[70vh] lg:min-h-[78vh]">
-                {/* MICROCOPY BLOCK (positioned like 14islands: upper/mid area, separate from title) */}
+        <section className="relative pt-4 md:pt-16 lg:pt-20 pb-10 md:pb-14 flex justify-center w-full">
+            <div
+                className={cx(
+                    "relative min-h-[30vh] md:min-h-[70vh] lg:min-h-[78vh] w-full max-w-7xl mx-auto flex flex-col justify-center lg:block"
+                )}
+            >
                 <div
                     className={cx(
-                        // mobile: centered, in flow
                         "max-w-[380px] mx-auto text-center",
-                        "mt-6 md:mt-10",
-                        // desktop: placed upper-right-ish (inside container), left-aligned
+                        "mb-6 lg:mb-0",
                         "lg:mx-0 lg:text-left lg:absolute",
-                        "lg:top-[18%] lg:left-[56%]",
+                        "lg:top-[25%] lg:left-[56%]",
                         "transition-all duration-[1000ms] delay-[120ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
                         introIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
                     )}
@@ -40,15 +40,14 @@ export default function PackagesHero({ muted }: Props) {
                     </p>
                 </div>
 
-                {/* DISPLAY TYPE (anchored low like 14islands) */}
                 <div
                     className={cx(
-                        "absolute inset-x-0",
-                        // pushes the big type down (key difference vs what you had)
-                        "bottom-6 md:bottom-10 lg:bottom-14"
+                        "relative w-full text-center",
+                        "lg:absolute lg:inset-x-0 lg:text-left",
+                        "lg:bottom-[25%]",
+                        "px-5 sm:px-6 lg:px-10"
                     )}
                 >
-                    {/* LINE 1: Packages (left) */}
                     <h1
                         className={cx(
                             "font-[Montserrat] font-normal tracking-tight",
@@ -63,16 +62,10 @@ export default function PackagesHero({ muted }: Props) {
                         </span>
                     </h1>
 
-                    {/* LINE 2: & Plans (right, staggered down) */}
-                    <div
-                        className={cx(
-                            "mt-8 md:mt-10 lg:mt-12",
-                            "flex justify-end"
-                        )}
-                    >
+                    <div className={cx("mt-4 md:mt-8 lg:mt-12", "flex justify-center lg:justify-end")}>
                         <div
                             className={cx(
-                                "flex items-baseline justify-end",
+                                "flex items-baseline justify-center lg:justify-end",
                                 "gap-4 md:gap-7",
                                 "transition-all duration-[1100ms] delay-[90ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
                                 introIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"

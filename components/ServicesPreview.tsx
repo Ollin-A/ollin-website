@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { useLeadModal } from "./LeadModalContext";
 
 type Headline = { muted: string; strong: string };
 
 type ServiceGroup = {
     key: string;
-    title: string; // SOLO texto (sin ">"), se scramblea
+    title: string; // SOLO texto (sin ">"), se anima
     subtitle: string; // línea corta (más chica)
     items: string[]; // lista larga (fade hacia abajo)
     ctaLabel: string;
@@ -17,54 +18,171 @@ function scrollToId(id: string) {
 }
 
 /**
- * Scramble (tipo “código”) que ACTUALIZA el mismo texto y regresa a su forma final.
- * No pone overlay encima.
+ * DecryptedText (misma lógica/feel del snippet que mandaste),
+ * pero renderizando el texto como STRING (1 nodo) para NO romper tracking-widest / uppercase.
+ *
+ * - Hover: empieza
+ * - Mouse leave: se resetea (se apaga) y queda normal
+ * - Sequential + revealDirection start (por default) = “decrypt” real
  */
-function ScrambleText({
+function DecryptedTitleText({
     text,
-    triggerKey,
-    durationMs = 1100,
+    isHovering,
+    speed = 50,
+    maxIterations = 10,
+    sequential = true,
+    revealDirection = "start",
+    useOriginalCharsOnly = false,
+    characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*()_+",
+    wrapperClassName = "inline-block whitespace-nowrap",
 }: {
     text: string;
-    triggerKey: number;
-    durationMs?: number;
+    isHovering: boolean;
+    speed?: number;
+    maxIterations?: number;
+    sequential?: boolean;
+    revealDirection?: "start" | "end" | "center";
+    useOriginalCharsOnly?: boolean;
+    characters?: string;
+    wrapperClassName?: string;
 }) {
-    const [display, setDisplay] = useState(text);
+    const [displayText, setDisplayText] = useState<string>(text);
+    const [isScrambling, setIsScrambling] = useState<boolean>(false);
+    const [revealedIndices, setRevealedIndices] = useState<Set<number>>(new Set());
+
+    // Keep display in sync if text changes.
+    useEffect(() => {
+        if (!isHovering) setDisplayText(text);
+    }, [text, isHovering]);
 
     useEffect(() => {
-        let raf = 0;
-        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/_-+.:" as const;
-        const start = performance.now();
+        let interval: ReturnType<typeof setInterval> | undefined;
+        let currentIteration = 0;
 
-        const tick = (now: number) => {
-            const elapsed = now - start;
-            const t = Math.min(1, elapsed / durationMs);
-            const revealCount = Math.floor(t * text.length);
+        const getNextIndex = (revealedSet: Set<number>): number => {
+            const textLength = text.length;
 
-            let out = "";
-            for (let i = 0; i < text.length; i++) {
-                const original = text[i];
-                if (i < revealCount) out += original;
-                else {
-                    if (original === " ") out += " ";
-                    else out += chars[Math.floor(Math.random() * chars.length)];
+            switch (revealDirection) {
+                case "start":
+                    return revealedSet.size;
+
+                case "end":
+                    return textLength - 1 - revealedSet.size;
+
+                case "center": {
+                    const middle = Math.floor(textLength / 2);
+                    const offset = Math.floor(revealedSet.size / 2);
+                    const nextIndex = revealedSet.size % 2 === 0 ? middle + offset : middle - offset - 1;
+
+                    if (nextIndex >= 0 && nextIndex < textLength && !revealedSet.has(nextIndex)) return nextIndex;
+
+                    for (let i = 0; i < textLength; i++) {
+                        if (!revealedSet.has(i)) return i;
+                    }
+                    return 0;
                 }
+
+                default:
+                    return revealedSet.size;
             }
-
-            setDisplay(out);
-
-            if (t < 1) raf = requestAnimationFrame(tick);
-            else setDisplay(text);
         };
 
-        setDisplay(text.replace(/[A-Za-z0-9]/g, () => chars[Math.floor(Math.random() * chars.length)]));
-        raf = requestAnimationFrame(tick);
+        const availableChars = useOriginalCharsOnly
+            ? Array.from(new Set(text.split(""))).filter((char) => char !== " ")
+            : characters.split("");
 
-        return () => cancelAnimationFrame(raf);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [triggerKey]);
+        const shuffleText = (originalText: string, currentRevealed: Set<number>): string => {
+            if (useOriginalCharsOnly) {
+                const positions = originalText.split("").map((char, i) => ({
+                    char,
+                    isSpace: char === " ",
+                    index: i,
+                    isRevealed: currentRevealed.has(i),
+                }));
 
-    return <span>{display}</span>;
+                const nonSpaceChars = positions
+                    .filter((p) => !p.isSpace && !p.isRevealed)
+                    .map((p) => p.char);
+
+                for (let i = nonSpaceChars.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [nonSpaceChars[i], nonSpaceChars[j]] = [nonSpaceChars[j], nonSpaceChars[i]];
+                }
+
+                let charIndex = 0;
+                return positions
+                    .map((p) => {
+                        if (p.isSpace) return " ";
+                        if (p.isRevealed) return originalText[p.index];
+                        return nonSpaceChars[charIndex++] ?? "";
+                    })
+                    .join("");
+            }
+
+            return originalText
+                .split("")
+                .map((char, i) => {
+                    if (char === " ") return " ";
+                    if (currentRevealed.has(i)) return originalText[i];
+                    return availableChars[Math.floor(Math.random() * availableChars.length)];
+                })
+                .join("");
+        };
+
+        // If not hovering: reset exactly like the snippet.
+        if (!isHovering) {
+            setDisplayText(text);
+            setRevealedIndices(new Set());
+            setIsScrambling(false);
+            return () => {
+                if (interval) clearInterval(interval);
+            };
+        }
+
+        // Hovering: start scrambling exactly like the snippet.
+        setIsScrambling(true);
+
+        interval = setInterval(() => {
+            setRevealedIndices((prevRevealed) => {
+                if (sequential) {
+                    if (prevRevealed.size < text.length) {
+                        const nextIndex = getNextIndex(prevRevealed);
+                        const newRevealed = new Set(prevRevealed);
+                        newRevealed.add(nextIndex);
+                        setDisplayText(shuffleText(text, newRevealed));
+                        return newRevealed;
+                    } else {
+                        if (interval) clearInterval(interval);
+                        setIsScrambling(false);
+                        setDisplayText(text);
+                        return prevRevealed;
+                    }
+                } else {
+                    setDisplayText(shuffleText(text, prevRevealed));
+                    currentIteration += 1;
+
+                    if (currentIteration >= maxIterations) {
+                        if (interval) clearInterval(interval);
+                        setIsScrambling(false);
+                        setDisplayText(text);
+                    }
+
+                    return prevRevealed;
+                }
+            });
+        }, speed);
+
+        return () => {
+            if (interval) clearInterval(interval);
+        };
+    }, [isHovering, text, speed, maxIterations, sequential, revealDirection, characters, useOriginalCharsOnly]);
+
+    return (
+        <span className={wrapperClassName}>
+            <span className="sr-only">{text}</span>
+            <span aria-hidden="true">{isScrambling ? displayText : text}</span>
+        </span>
+    );
 }
 
 function RotatingHeadline({
@@ -133,7 +251,7 @@ function BlobCTA({
             className={[
                 "group/cta relative isolate overflow-hidden",
                 "rounded-full",
-                "bg-ollin-bg",
+                "bg-[#F2F2F2]", // ✅ antes: bg-ollin-bg
                 "border border-black/15",
                 "text-ollin-black",
                 "flex items-center justify-center",
@@ -162,24 +280,14 @@ function BlobCTA({
     );
 }
 
-function ServiceCard({ group }: { group: ServiceGroup }) {
-    const [scrambleKey, setScrambleKey] = useState(0);
+function ServiceCardContent({ group, openModal }: { group: ServiceGroup; openModal: () => void }) {
+    const [isHovering, setIsHovering] = useState(false);
 
     return (
         <div
-            className={[
-                "group relative",
-                "rounded-none",
-                "border border-black/10",
-                "bg-ollin-bg",
-                "text-ollin-black",
-                "overflow-hidden",
-                "h-[330px] md:h-[380px]",
-                "p-7 md:p-8",
-                "transition-all duration-300",
-                "hover:border-black/20",
-            ].join(" ")}
-            onMouseEnter={() => setScrambleKey((k) => k + 1)}
+            className="w-full h-full"
+            onMouseEnter={() => setIsHovering(true)}
+            onMouseLeave={() => setIsHovering(false)}
         >
             {/* Header */}
             <div className="mb-4">
@@ -189,7 +297,15 @@ function ServiceCard({ group }: { group: ServiceGroup }) {
                     </span>
 
                     <div className="text-[14px] md:text-sm font-bold tracking-widest uppercase text-ollin-black/60 leading-none">
-                        <ScrambleText text={group.title} triggerKey={scrambleKey} />
+                        <DecryptedTitleText
+                            text={group.title}
+                            isHovering={isHovering}
+                            speed={50}
+                            sequential
+                            revealDirection="start"
+                            useOriginalCharsOnly={false}
+                            characters="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*()_+"
+                        />
                     </div>
                 </div>
 
@@ -221,7 +337,7 @@ function ServiceCard({ group }: { group: ServiceGroup }) {
             {/* ✅ CTA SUBIDO (más aire) */}
             <BlobCTA
                 label={group.ctaLabel}
-                onClick={() => scrollToId(group.ctaTargetId)}
+                onClick={openModal}
                 className={[
                     "absolute left-7 md:left-8",
                     "bottom-10 md:bottom-11", // 👈 antes: bottom-7 (muy pegado)
@@ -237,6 +353,8 @@ function ServiceCard({ group }: { group: ServiceGroup }) {
 }
 
 const ServicesPreview: React.FC = () => {
+    const { openModal } = useLeadModal();
+
     const headlines: Headline[] = useMemo(
         () => [
             { muted: "Brand + website + ads.", strong: "More calls. More booked jobs." },
@@ -374,8 +492,11 @@ const ServicesPreview: React.FC = () => {
         []
     );
 
+    // ✅ hover state SOLO para el callout (para no tocar nada más)
+    const [isAuditHovering, setIsAuditHovering] = useState(false);
+
     return (
-        <section id="services" className="relative w-full bg-ollin-bg text-ollin-black py-20 md:py-28">
+        <section id="services" className="relative w-full bg-[#F2F2F2] text-ollin-black py-20 md:py-28">
             {/* ✅ Botón 14islands (versión compacta para "Explore services") */}
             <style>{`
         .btnSecondary.btnSecondary14 {
@@ -535,10 +656,7 @@ const ServicesPreview: React.FC = () => {
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
                                 >
-                                    <path
-                                        d="M0 3 L12 8 L0 13"
-                                        vectorEffect="non-scaling-stroke"
-                                    />
+                                    <path d="M0 3 L12 8 L0 13" vectorEffect="non-scaling-stroke" />
                                 </svg>
                             </span>
                         </button>
@@ -548,7 +666,25 @@ const ServicesPreview: React.FC = () => {
                 {/* CARDS */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {groups.map((g) => (
-                        <ServiceCard key={g.key} group={g} />
+                        <div
+                            key={g.key}
+                            className={[
+                                "group relative",
+                                "rounded-none",
+                                "border border-black/10",
+                                "bg-[#F2F2F2]", // ✅ antes: bg-ollin-bg
+                                "text-ollin-black",
+                                "overflow-hidden",
+                                "h-[330px] md:h-[380px]",
+                                "p-7 md:p-8",
+                                "transition-all duration-300",
+                                "hover:border-black/20",
+                            ].join(" ")}
+                            onMouseEnter={() => {}} 
+                            onMouseLeave={() => {}}
+                        >
+                            <ServiceCardContent group={g} openModal={openModal} />
+                        </div>
                     ))}
                 </div>
 
@@ -563,12 +699,25 @@ const ServicesPreview: React.FC = () => {
                         "flex flex-col md:flex-row items-center justify-between gap-6",
                         "bg-white/0",
                     ].join(" ")}
+                    onMouseEnter={() => setIsAuditHovering(true)}
+                    onMouseLeave={() => setIsAuditHovering(false)}
                 >
-                    <span className="text-lg md:text-2xl font-medium tracking-tight">Start with the 360&deg; Revenue Leak Audit.</span>
+                    <span className="text-lg md:text-2xl font-medium tracking-tight">
+                        <DecryptedTitleText
+                            text="Start with the 360° Revenue Leak Audit."
+                            isHovering={isAuditHovering}
+                            speed={50}
+                            sequential
+                            revealDirection="start"
+                            useOriginalCharsOnly={false}
+                            characters="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*()_+"
+                            wrapperClassName="inline-block whitespace-normal"
+                        />
+                    </span>
 
                     <BlobCTA
                         label="Get the Audit"
-                        onClick={() => scrollToId("contact")}
+                        onClick={openModal}
                         className={[
                             "w-[220px] h-[52px]",
                             "opacity-0 translate-y-2",
