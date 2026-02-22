@@ -104,7 +104,7 @@ function Chevron({ open, reducedMotion }: { open: boolean; reducedMotion: boolea
             )}
             aria-hidden="true"
         >
-            <svg viewBox="0 0 16 16" width="16" height="16" fill="none">
+            <svg className="block" viewBox="0 0 16 16" width="16" height="16" fill="none">
                 <path
                     d="M3.5 6.25L8 10.25L12.5 6.25"
                     stroke="currentColor"

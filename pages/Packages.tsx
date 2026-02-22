@@ -16,8 +16,11 @@ import ComparisonSection from "./ComparisonSection";
 import ComparisonSectionMobile from "./ComparisonSectionMobile";
 import CustomPlanCTASection from "./CustomPlanCTASection";
 
+import { useLeadModal } from "../components/LeadModalContext";
+
 export default function PackagesPage() {
     const navigate = useNavigate();
+    const { openModal } = useLeadModal();
 
     // arranca cerrado
     const [activeId, setActiveId] = useState<string | null>(null);
@@ -85,7 +88,7 @@ export default function PackagesPage() {
                     outerRef={panelOuterRef}
                     activeId={activeId}
                     panelPkg={panelPkg}
-                    onRequestScope={(packageId) => goContactWith({ package: packageId })}
+                    onRequestScope={(packageId) => openModal()}
                     onBuildYourOwnPlan={handleBuildYourOwnPlan}
                 />
 
@@ -109,13 +112,17 @@ export default function PackagesPage() {
                 <div className="hidden md:block">
                     <SingleServicesSection
                         services={SINGLE_SERVICES}
-                        onRequestScope={(serviceId) => goContactWith({ type: "single", service: serviceId })}
+                        onRequestScope={(serviceId) => {
+                            openModal();
+                        }}
                     />
                 </div>
                 <div className="md:hidden">
                     <SingleServicesSectionMobile
                         services={SINGLE_SERVICES}
-                        onRequestScope={(serviceId) => goContactWith({ type: "single", service: serviceId })}
+                        onRequestScope={(serviceId) => {
+                            openModal();
+                        }}
                     />
                 </div>
 
