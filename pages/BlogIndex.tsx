@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Search, Tag } from "lucide-react";
+import { useHead } from "@unhead/react";
 import { supabase } from "../lib/supabase";
 
 type BlogPostRow = {
@@ -43,7 +44,6 @@ function clampText(text: string, max = 140) {
 
 // --- helpers to safely upsert head tags without any library ---
 
-
 function upsertCanonical(href: string) {
   let el = document.querySelector(
     'link[rel="canonical"]',
@@ -78,7 +78,7 @@ export default function BlogIndex() {
     /\/$/,
     "",
   );
-  const pageTitle = `Blog — ${siteName}`;
+  const pageTitle = `${siteName} - Blog`;
   const pageDescription =
     "Insights, playbooks, and updates on systems that help service businesses grow calmly — and scale deliberately.";
   const canonical = baseUrl ? `${baseUrl}/blog` : "/blog";
@@ -168,17 +168,29 @@ export default function BlogIndex() {
     };
   }, [filtered, baseUrl, canonical]);
 
-  // SEO side-effects (safe + no libs)
-  useEffect(() => {
-    upsertCanonical(canonical);
-    upsertJsonLd("jsonld-blog", jsonLd);
-
-    return () => {
-      // optional cleanup: remove json-ld when leaving the page
-      const el = document.getElementById("jsonld-blog");
-      if (el) el.remove();
-    };
-  }, [pageTitle, pageDescription, canonical, jsonLd]);
+  useHead({
+    title: pageTitle,
+    meta: [
+      { name: "description", content: pageDescription },
+      { property: "og:title", content: pageTitle },
+      { property: "og:description", content: pageDescription },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: canonical },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: pageTitle },
+      { name: "twitter:description", content: pageDescription },
+    ],
+    link: [
+      { rel: "canonical", href: canonical }
+    ],
+    script: [
+      {
+        id: "jsonld-blog",
+        type: "application/ld+json",
+        innerHTML: JSON.stringify(jsonLd)
+      }
+    ]
+  });
 
   return (
     <div className="space-y-10">

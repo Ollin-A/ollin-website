@@ -1,6 +1,7 @@
 // App.tsx
 import React, { useEffect, Suspense, lazy } from "react";
 import { LeadModalProvider } from "./components/LeadModalContext";
+import AIAssistant from "./components/AIAssistant";
 import Navbar from "./components/Navbar";
 import SiteOutro from "./components/SiteOutro";
 import ScrollToTop from "./components/ScrollToTop";
@@ -28,6 +29,7 @@ const App: React.FC = () => {
 
   const isContact = path.startsWith("/contact");
   const isHome = path === "/";
+  const isChat = path === "/chat";
   const needsXClip = isHome;
 
   // 3) Safety net: re-apply the global title on any route changes
@@ -76,15 +78,16 @@ const App: React.FC = () => {
 
   return (
     <LeadModalProvider>
-      <ScrollToTop />
-      <Navbar />
-      <main
+        <ScrollToTop />
+        {!isChat && <Navbar />}
+        <main
         className={`w-full min-h-screen ${mainBgClass} text-ollin-black relative selection:bg-black selection:text-white`}
       >
         <div className={needsXClip ? "overflow-x-hidden" : ""}>
           <Suspense fallback={<PageLoader />}>
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/chat" element={<AIAssistant />} />
 
               <Route path="/services" element={<Services />} />
               <Route
@@ -114,7 +117,7 @@ const App: React.FC = () => {
         </div>
       </main>
 
-      {!isContact && <SiteOutro />}
+      {!isContact && !isChat && <SiteOutro />}
     </LeadModalProvider>
   );
 };

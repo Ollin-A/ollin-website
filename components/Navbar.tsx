@@ -8,13 +8,11 @@ const Navbar: React.FC = () => {
   
   const { openModal } = useLeadModal();
 
-  // NEW: hide navbar while Services pinned section is active
   const [isServicesPinned, setIsServicesPinned] = useState(false);
 
   const lastScrollY = useRef(0);
   const navigate = useNavigate();
 
-  // Listen to Services pinned state
   useEffect(() => {
     const init = () => {
       const pinned = document.documentElement.getAttribute('data-services-pinned') === 'true';
@@ -26,7 +24,6 @@ const Navbar: React.FC = () => {
       const pinned = !!ce.detail?.pinned;
       setIsServicesPinned(pinned);
 
-      // If pinned, close overlays so nothing feels "stuck"
       if (pinned) {
         setIsMobileOpen(false);
       }
@@ -61,7 +58,6 @@ const Navbar: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Lock body scroll when mobile menu is open
   useEffect(() => {
     if (isMobileOpen) {
       document.body.style.overflow = 'hidden';
@@ -70,7 +66,6 @@ const Navbar: React.FC = () => {
     }
   }, [isMobileOpen]);
 
-  // Keyboard support for closing modal (Esc)
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -104,13 +99,12 @@ const Navbar: React.FC = () => {
 
   const navHoverClass = "hover:opacity-80 transition-opacity duration-300";
 
-  // Forced hide during Services pinned section
   const forceHide = isServicesPinned;
 
   return (
     <>
       <header
-        className="fixed left-0 w-full z-50 transition-[top,opacity] duration-[450ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+        className="fixed left-0 w-full z-50 transition-[top,opacity] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
         style={{
           top: forceHide ? '-6rem' : (isVisible ? '0' : '-6rem'),
           opacity: forceHide ? 0 : 1,
@@ -146,7 +140,7 @@ const Navbar: React.FC = () => {
                 className={`text-[13px] font-medium tracking-[0.15em] uppercase relative group text-current ${navHoverClass}`}
               >
                 {link.name}
-                <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-current transition-all duration-300 group-hover:w-full" />
+                <span className="absolute -bottom-1 left-0 w-0 h-px bg-current transition-all duration-300 group-hover:w-full" />
               </button>
             ))}
           </nav>
@@ -154,6 +148,13 @@ const Navbar: React.FC = () => {
             {/* RIGHT: Actions & Mobile Toggle */}
           <div className="flex justify-end items-center">
             <div className="hidden md:flex items-center gap-6">
+              <button
+                onClick={() => handleNavigation('/chat')}
+                className={`text-[13px] font-medium tracking-[0.15em] uppercase text-current ${navHoverClass}`}
+              >
+                AI
+              </button>
+
               <button
                 onClick={() => handleNavigation('/contact')}
                 className={`text-[13px] font-medium tracking-[0.15em] uppercase text-current ${navHoverClass}`}
@@ -163,7 +164,7 @@ const Navbar: React.FC = () => {
 
               <button
                 onClick={handleOpenModal}
-                className="bg-ollin-black text-white text-[13px] font-medium tracking-wide px-5 py-2.5 rounded-[12px] hover:translate-y-[-1px] hover:shadow-lg transition-transform duration-300 ease-[cubic-bezier(0.33,1,0.68,1)]"
+                className="bg-ollin-black text-white text-[13px] font-medium tracking-wide px-5 py-2.5 rounded-[12px] hover:-translate-y-px hover:shadow-lg transition-transform duration-300 ease-[cubic-bezier(0.33,1,0.68,1)]"
               >
                 Get a Free Growth Plan
               </button>
@@ -206,6 +207,13 @@ const Navbar: React.FC = () => {
               {link.name}
             </button>
           ))}
+          <button
+            onClick={() => handleNavigation('/chat')}
+            className={`text-3xl font-light text-ollin-black tracking-tight transition-all duration-500 delay-100 ${isMobileOpen ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+              }`}
+          >
+            Ask AI
+          </button>
           <button
             onClick={() => handleNavigation('/contact')}
             className={`text-3xl font-light text-ollin-black tracking-tight transition-all duration-500 delay-150 ${isMobileOpen ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
