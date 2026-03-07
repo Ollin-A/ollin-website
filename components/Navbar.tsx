@@ -2,10 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLeadModal } from './LeadModalContext';
 
-const Navbar: React.FC = () => {
+interface NavbarProps {
+  theme?: 'light' | 'dark';
+}
+
+const Navbar: React.FC<NavbarProps> = ({ theme = 'light' }) => {
   const [isVisible, setIsVisible] = useState(true);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-  
+
   const { openModal } = useLeadModal();
 
   const [isServicesPinned, setIsServicesPinned] = useState(false);
@@ -93,8 +97,10 @@ const Navbar: React.FC = () => {
     { name: 'Packages', path: '/packages' },
   ];
 
+  const isDark = theme === 'dark';
+
   const navTextStyle: React.CSSProperties = {
-    color: '#000000',
+    color: isDark ? '#ffffff' : '#000000',
   };
 
   const navHoverClass = "hover:opacity-80 transition-opacity duration-300";
@@ -145,7 +151,7 @@ const Navbar: React.FC = () => {
             ))}
           </nav>
 
-            {/* RIGHT: Actions & Mobile Toggle */}
+          {/* RIGHT: Actions & Mobile Toggle */}
           <div className="flex justify-end items-center">
             <div className="hidden md:flex items-center gap-6">
               <button
@@ -164,7 +170,7 @@ const Navbar: React.FC = () => {
 
               <button
                 onClick={handleOpenModal}
-                className="bg-ollin-black text-white text-[13px] font-medium tracking-wide px-5 py-2.5 rounded-[12px] hover:-translate-y-px hover:shadow-lg transition-transform duration-300 ease-[cubic-bezier(0.33,1,0.68,1)]"
+                className={`${isDark ? 'bg-white text-ollin-black hover:bg-white/90' : 'bg-ollin-black text-white'} text-[13px] font-medium tracking-wide px-5 py-2.5 rounded-[12px] hover:-translate-y-px hover:shadow-lg transition-transform duration-300 ease-[cubic-bezier(0.33,1,0.68,1)]`}
               >
                 Get a Free Growth Plan
               </button>
@@ -193,7 +199,7 @@ const Navbar: React.FC = () => {
 
       {/* Mobile Menu Overlay */}
       <div
-        className={`fixed inset-0 bg-[#f2efe9] z-40 flex flex-col justify-center items-center transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${isMobileOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
+        className={`fixed inset-0 ${isDark ? 'bg-ollin-black text-white' : 'bg-[#f2efe9] text-ollin-black'} z-40 flex flex-col justify-center items-center transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${isMobileOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
           }`}
       >
         <div className="flex flex-col items-center gap-8 text-center">
@@ -201,7 +207,7 @@ const Navbar: React.FC = () => {
             <button
               key={link.name}
               onClick={() => handleNavigation(link.path)}
-              className={`text-3xl font-light text-ollin-black tracking-tight transition-all duration-500 delay-[${idx * 50}ms] ${isMobileOpen ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+              className={`text-3xl font-light tracking-tight transition-all duration-500 delay-[${idx * 50}ms] ${isMobileOpen ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
                 }`}
             >
               {link.name}
@@ -209,14 +215,14 @@ const Navbar: React.FC = () => {
           ))}
           <button
             onClick={() => handleNavigation('/chat')}
-            className={`text-3xl font-light text-ollin-black tracking-tight transition-all duration-500 delay-100 ${isMobileOpen ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+            className={`text-3xl font-light tracking-tight transition-all duration-500 delay-100 ${isMobileOpen ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
               }`}
           >
             Ask AI
           </button>
           <button
             onClick={() => handleNavigation('/contact')}
-            className={`text-3xl font-light text-ollin-black tracking-tight transition-all duration-500 delay-150 ${isMobileOpen ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+            className={`text-3xl font-light tracking-tight transition-all duration-500 delay-150 ${isMobileOpen ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
               }`}
           >
             Contact
@@ -228,7 +234,7 @@ const Navbar: React.FC = () => {
           >
             <button
               onClick={handleOpenModal}
-              className="bg-ollin-black text-white text-base font-medium px-8 py-4 rounded-[12px] w-full max-w-xs"
+              className={`${isDark ? 'bg-white text-ollin-black hover:bg-white/90' : 'bg-ollin-black text-white'} text-base font-medium px-8 py-4 rounded-[12px] w-full max-w-xs`}
             >
               Get a Free Growth Plan
             </button>

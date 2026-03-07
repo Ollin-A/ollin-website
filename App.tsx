@@ -78,9 +78,9 @@ const App: React.FC = () => {
 
   return (
     <LeadModalProvider>
-        <ScrollToTop />
-        {!isChat && <Navbar />}
-        <main
+      <ScrollToTop />
+      <Navbar theme={isChat ? 'dark' : 'light'} />
+      <main
         className={`w-full min-h-screen ${mainBgClass} text-ollin-black relative selection:bg-black selection:text-white`}
       >
         <div className={needsXClip ? "overflow-x-hidden" : ""}>

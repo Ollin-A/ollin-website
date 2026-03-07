@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Send, Bot, ArrowLeft } from 'lucide-react';
+import { Send } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 
 interface Message {
@@ -22,31 +22,40 @@ const generateId = () => {
     : Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
 };
 
-const TypingIndicator = () => (
-  <div className="flex space-x-1.5 items-center h-6 px-2">
-    <motion.div className="w-2 h-2 bg-ollin-black/50 rounded-full" animate={{ y: [0, -5, 0] }} transition={{ duration: 0.6, repeat: Infinity, ease: "easeInOut", delay: 0 }} />
-    <motion.div className="w-2 h-2 bg-ollin-black/50 rounded-full" animate={{ y: [0, -5, 0] }} transition={{ duration: 0.6, repeat: Infinity, ease: "easeInOut", delay: 0.2 }} />
-    <motion.div className="w-2 h-2 bg-ollin-black/50 rounded-full" animate={{ y: [0, -5, 0] }} transition={{ duration: 0.6, repeat: Infinity, ease: "easeInOut", delay: 0.4 }} />
+const AillinSymbol = ({ size = 24, animated = false }: { size?: number, animated?: boolean }) => (
+  <div className="relative flex items-center justify-center shrink-0" style={{ width: size, height: size }}>
+    {/* Core signal dot */}
+    <motion.div
+      className="absolute w-[20%] h-[20%] bg-[#F2EFE9] rounded-full"
+      animate={animated ? { scale: [1, 1.2, 1], opacity: [0.8, 1, 0.8] } : {}}
+      transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+    />
+    {/* Orbital ring 1 */}
+    <motion.div
+      className="absolute w-[50%] h-[50%] border border-[#F2EFE9]/30 rounded-full"
+      animate={animated ? { scale: [1, 1.1, 1], opacity: [0.3, 0.6, 0.3], rotate: 180 } : {}}
+      transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+    />
+    {/* Orbital ring 2 */}
+    <motion.div
+      className="absolute w-[90%] h-[90%] border border-[#F2EFE9]/10 rounded-full"
+      animate={animated ? { scale: [1, 1.05, 1], opacity: [0.1, 0.3, 0.1], rotate: -180 } : {}}
+      transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+    />
   </div>
 );
 
 const AIAssistant: React.FC = () => {
   const navigate = useNavigate();
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      role: 'assistant',
-      content: "Hello! I'm the Ollin Strategic Assistant. How can I help you grow your business today?",
-    },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); 
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   useEffect(() => {
@@ -55,14 +64,26 @@ const AIAssistant: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    scrollToBottom();
+    if (isLoading) {
+      setTimeout(() => scrollToBottom(), 100);
+    } else if (messages.length > 0) {
+      const lastMsg = messages[messages.length - 1];
+      if (lastMsg.role === 'assistant') {
+        setTimeout(() => {
+          const el = document.getElementById(`message-${lastMsg.id}`);
+          el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+      } else {
+        setTimeout(() => scrollToBottom(), 100);
+      }
+    }
   }, [messages, isLoading]);
 
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value);
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 120)}px`;
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 160)}px`;
     }
   };
 
@@ -80,11 +101,11 @@ const AIAssistant: React.FC = () => {
 
     const userMessage: Message = { id: generateId(), role: 'user', content: messageText };
     setMessages((prev) => [...prev, userMessage]);
-    
+
     if (!promptOverride) {
       resetInput();
     }
-    
+
     setIsLoading(true);
 
     try {
@@ -114,109 +135,116 @@ const AIAssistant: React.FC = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.4, ease: "easeOut" }} 
-      className="fixed inset-0 z-50 flex flex-col overflow-hidden"
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className="fixed inset-0 flex flex-col overflow-hidden bg-[#050505] z-0"
     >
       <div
-        className="absolute inset-0 z-0"
-        style={{
-          backgroundImage: `url('/media/background.png')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
+        className={`absolute -bottom-[20vh] left-1/2 -translate-x-1/2 w-[120vw] h-[40vh] bg-[#F2EFE9] blur-[120px] rounded-[100%] mix-blend-screen transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-none ${isLoading ? 'opacity-[0.14] scale-110' : 'opacity-[0.05] scale-100'}`}
       />
-      <div className="absolute inset-0 z-0 bg-white/10 backdrop-blur-2xl pointer-events-none" />
 
-      <div className="relative z-10 w-full flex items-center justify-between p-6 md:p-8 shrink-0">
-        <button
-          onClick={() => navigate(-1)}
-          className="flex items-center gap-2 px-4 py-2 text-ollin-black/60 hover:text-ollin-black bg-white/20 hover:bg-white/40 backdrop-blur-md transition-all rounded-full"
-        >
-          <ArrowLeft size={20} />
-          <span className="font-medium text-sm">Back</span>
-        </button>
+      <div
+        id="chat-scroll-container"
+        className="relative z-10 flex-1 w-full overflow-y-auto custom-scrollbar scroll-smooth flex flex-col"
+      >
+        {/* Top safe area inside the scroll flow */}
+        <div className="shrink-0 w-full h-[100px] md:h-[120px]" />
+
+        <div className="flex-1 w-full max-w-4xl mx-auto flex flex-col px-4 md:px-8 pb-4">
+          {messages.length === 0 ? (
+            <div className="flex-1 flex flex-col items-center justify-center w-full min-h-0 pb-10">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="flex flex-col items-center mb-16"
+              >
+                <div className="mb-10">
+                  <AillinSymbol size={48} animated />
+                </div>
+                <h1 className="font-montserrat text-[#F2EFE9] text-3xl md:text-[40px] tracking-tight font-light">
+                  Hi, I'm Aillin. Let's chat.
+                </h1>
+              </motion.div>
+            </div>
+          ) : (
+            <div className="flex-1 w-full flex flex-col gap-8 md:gap-10 pb-6 pt-2">
+              {messages.map((msg) => (
+                <motion.div
+                  key={msg.id}
+                  id={`message-${msg.id}`}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className={`flex w-full scroll-mt-[100px] md:scroll-mt-[120px] ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                >
+                  <div className={`w-fit max-w-[95%] md:max-w-[85%] text-[15px] md:text-[16px] leading-relaxed ${msg.role === 'user'
+                    ? 'py-3 px-1 text-[#F2EFE9]/90 font-light'
+                    : 'bg-[#080808] border border-white/5 px-6 md:px-10 py-7 md:py-10 rounded-sm shadow-2xl'
+                    }`}>
+                    {msg.role === 'assistant' ? (
+                      <div className="flex flex-col gap-2">
+                        <div className="flex items-center gap-3 mb-5 border-b border-white/5 pb-5">
+                          <AillinSymbol size={16} />
+                          <span className="text-[11px] uppercase tracking-[0.2em] text-[#F2EFE9]/40 font-medium pt-[2px]">Aillin</span>
+                        </div>
+                        <ReactMarkdown
+                          components={{
+                            p: ({ children }) => <p className="mb-5 last:mb-0 text-[#F2EFE9]/80 font-light leading-[1.8]">{children}</p>,
+                            ul: ({ children }) => <ul className="list-disc ml-5 mb-5 space-y-3">{children}</ul>,
+                            ol: ({ children }) => <ol className="list-decimal ml-5 mb-5 space-y-3">{children}</ol>,
+                            li: ({ children }) => <li className="pl-2 text-[#F2EFE9]/80 font-light leading-[1.8]">{children}</li>,
+                            strong: ({ children }) => <strong className="font-medium text-[#F2EFE9]">{children}</strong>,
+                            h1: ({ children }) => <h1 className="text-xl font-medium text-white mb-4 mt-8 first:mt-0 tracking-tight">{children}</h1>,
+                            h2: ({ children }) => <h2 className="text-lg font-medium text-white mb-3 mt-6 first:mt-0 tracking-tight">{children}</h2>,
+                            h3: ({ children }) => <h3 className="text-base font-medium text-white mb-3 mt-5 first:mt-0 tracking-tight">{children}</h3>,
+                          }}
+                        >
+                          {msg.content}
+                        </ReactMarkdown>
+                      </div>
+                    ) : (
+                      msg.content
+                    )}
+                  </div>
+                </motion.div>
+              ))}
+
+              {isLoading && (
+                <motion.div id="thinking-indicator" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex w-full justify-start mt-2 scroll-mt-[100px] md:scroll-mt-[120px]">
+                  <div className="w-fit max-w-[95%] md:max-w-[85%] bg-[#080808] border border-white/5 px-6 md:px-10 py-6 md:py-8 rounded-sm shadow-2xl flex items-center gap-5">
+                    <AillinSymbol size={18} animated={true} />
+                    <span className="font-light tracking-wide text-[15px] text-[#F2EFE9]/60">Thinking...</span>
+                  </div>
+                </motion.div>
+              )}
+
+              <div ref={messagesEndRef} className="h-4 shrink-0 mt-4 md:mt-8" />
+            </div>
+          )}
+
+        </div>
       </div>
 
-      <div className="relative z-10 flex-1 w-full max-w-6xl mx-auto flex flex-col px-4 md:px-8 mt-4 md:mt-12 overflow-hidden">
-        
-        <div className="flex flex-col items-center justify-center mb-12 shrink-0">
-          <div className="w-16 h-16 rounded-full bg-ollin-black flex items-center justify-center text-white mb-4 shadow-lg">
-            <Bot size={32} />
-          </div>
-          <h2 className="font-montserrat font-semibold text-ollin-black text-2xl md:text-3xl">Ollin AI</h2>
-          <p className="text-sm text-ollin-black/60 uppercase tracking-[0.2em] font-medium mt-2">Strategic Assistant</p>
-        </div>
-
-        <div className="flex-1 w-full overflow-y-auto flex flex-col gap-8 custom-scrollbar pb-8 px-2">
-          {messages.map((msg) => (
-            <motion.div
-              key={msg.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-              className={`flex w-full ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-            >
-              {msg.role === 'assistant' && (
-                <div className="w-8 h-8 rounded-full bg-ollin-black/10 flex items-center justify-center text-ollin-black mr-4 shrink-0 mt-1">
-                  <Bot size={16} />
-                </div>
-              )}
-              <div className={`max-w-[90%] md:max-w-[85%] px-6 py-4 rounded-3xl text-[16px] md:text-lg ${
-                msg.role === 'user' ? 'bg-ollin-black text-white rounded-br-md' : 'bg-white/60 backdrop-blur-xl text-ollin-black/90 rounded-bl-md border border-black/5'
-              }`}>
-                {msg.role === 'assistant' ? (
-                  <div className="flex flex-col gap-3">
-                    <ReactMarkdown 
-                      components={{
-                        p: ({ children }) => <p className="leading-relaxed">{children}</p>,
-                        ul: ({ children }) => <ul className="list-disc ml-5 space-y-1">{children}</ul>,
-                        ol: ({ children }) => <ol className="list-decimal ml-5 space-y-1">{children}</ol>,
-                        li: ({ children }) => <li className="pl-1">{children}</li>,
-                        strong: ({ children }) => <strong className="font-semibold text-ollin-black">{children}</strong>,
-                      }}
-                    >
-                      {msg.content}
-                    </ReactMarkdown>
-                  </div>
-                ) : (
-                  msg.content
-                )}
-              </div>
-            </motion.div>
-          ))}
-
-          {isLoading && (
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex w-full justify-start">
-              <div className="w-8 h-8 rounded-full bg-ollin-black/10 flex items-center justify-center text-ollin-black mr-4 shrink-0 mt-1">
-                <Bot size={16} />
-              </div>
-              <div className="px-6 py-5 rounded-3xl bg-white/60 backdrop-blur-xl text-ollin-black/90 rounded-bl-md border border-black/5">
-                <TypingIndicator />
-              </div>
-            </motion.div>
+      <div className="relative z-20 shrink-0 w-full bg-[#050505] border-t border-white/5 pt-5 pb-6 px-4 md:px-8 shadow-[0_-20px_40px_rgba(0,0,0,0.6)]">
+        <div className="w-full max-w-4xl mx-auto">
+          {messages.length === 0 && (
+            <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
+              {SUGGESTED_PROMPTS.map((prompt, index) => (
+                <motion.button
+                  key={prompt}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 + index * 0.1 }}
+                  onClick={() => handleSubmit(undefined, prompt)}
+                  className="px-5 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-sm text-sm font-medium text-[#F2EFE9]/80 transition-colors text-left"
+                >
+                  {prompt}
+                </motion.button>
+              ))}
+            </div>
           )}
-          
-          <div ref={messagesEndRef} className="h-4" />
-        </div>
 
-        <div className="shrink-0 w-full pb-8 pt-4">
-          <div className="flex flex-wrap items-center justify-center gap-2 mb-6">
-            {messages.length === 1 && SUGGESTED_PROMPTS.map((prompt, index) => (
-              <motion.button
-                key={prompt}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.2 + index * 0.1 }}
-                onClick={() => handleSubmit(undefined, prompt)}
-                className="px-4 py-2 bg-white/40 hover:bg-white/70 backdrop-blur-md border border-white/50 rounded-full text-sm font-medium text-ollin-black/80 transition-colors"
-              >
-                {prompt}
-              </motion.button>
-            ))}
-          </div>
-
-          <form onSubmit={(e) => handleSubmit(e)} className="flex gap-4 items-end relative w-full">
-            <div className="flex-1 bg-white/80 backdrop-blur-2xl rounded-3xl border border-white overflow-hidden shadow-sm flex items-center">
+          <form onSubmit={(e) => handleSubmit(e)} className="flex flex-col gap-3 w-full max-w-3xl mx-auto relative">
+            <div className="flex items-end bg-[#0A0A0A] rounded-sm border border-white/10 overflow-hidden focus-within:border-white/20 transition-colors shadow-2xl">
               <textarea
                 ref={textareaRef}
                 value={input}
@@ -228,18 +256,21 @@ const AIAssistant: React.FC = () => {
                   }
                 }}
                 placeholder="Ask about design, systems, or growth..."
-                className="w-full bg-transparent text-ollin-black py-5 px-6 resize-none outline-none custom-scrollbar"
+                className="w-full bg-transparent text-[#F2EFE9] py-4 px-5 resize-none outline-none custom-scrollbar placeholder:text-white/30"
                 rows={1}
-                style={{ minHeight: '64px' }}
+                style={{ minHeight: '56px' }}
               />
+              <button
+                type="submit"
+                disabled={!input.trim() || isLoading}
+                className="shrink-0 w-[56px] h-[56px] text-[#F2EFE9]/50 hover:text-white flex items-center justify-center disabled:opacity-30 disabled:hover:text-[#F2EFE9]/50 transition-all hover:bg-white/5"
+              >
+                <Send size={20} />
+              </button>
             </div>
-            <button
-              type="submit"
-              disabled={!input.trim() || isLoading}
-              className="shrink-0 w-[64px] h-[64px] md:w-[72px] md:h-[72px] rounded-3xl bg-ollin-black text-white flex items-center justify-center disabled:opacity-50 transition-all shadow-xl hover:bg-ollin-black/90"
-            >
-              <Send size={24} className="ml-1" />
-            </button>
+            <p className="text-center text-xs text-white/40 tracking-wide font-medium">
+              Built by Ollin for clearer business decisions.
+            </p>
           </form>
         </div>
       </div>
