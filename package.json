@@ -4,9 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-  "dev": "vite",
-  "build": "node generate-sitemap.js && vite build && npx puppeteer browsers install chrome && node prerender.mjs"    
-  "preview": "vite preview"
+    "dev": "vite",
+    "build": "node generate-sitemap.js && vite build && npx puppeteer browsers install chrome && node prerender.mjs",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
