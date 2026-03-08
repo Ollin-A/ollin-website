@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { useHead } from "@unhead/react";
 import { supabase } from "../lib/supabase";
 
 type BlogPostRecord = {
@@ -42,59 +43,6 @@ function estimateReadingMinutes(markdown: string | null) {
   return Math.max(1, Math.round(words / 220));
 }
 
-// --- helpers (same idea as BlogIndex) ---
-
-
-function upsertCanonical(href: string) {
-  let el = document.querySelector(
-    'link[rel="canonical"]',
-  ) as HTMLLinkElement | null;
-  if (!el) {
-    el = document.createElement("link");
-    el.setAttribute("rel", "canonical");
-    document.head.appendChild(el);
-  }
-  el.setAttribute("href", href);
-}
-
-function upsertMetaProperty(property: string, content: string) {
-  let el = document.querySelector(
-    `meta[property="${property}"]`,
-  ) as HTMLMetaElement | null;
-  if (!el) {
-    el = document.createElement("meta");
-    el.setAttribute("property", property);
-    document.head.appendChild(el);
-  }
-  el.setAttribute("content", content);
-}
-
-function upsertMetaName(name: string, content: string) {
-  let el = document.querySelector(
-    `meta[name="${name}"]`,
-  ) as HTMLMetaElement | null;
-  if (!el) {
-    el = document.createElement("meta");
-    el.setAttribute("name", name);
-    document.head.appendChild(el);
-  }
-  el.setAttribute("content", content);
-}
-
-function upsertJsonLd(id: string, json: unknown) {
-  const existing = document.getElementById(id) as HTMLScriptElement | null;
-  const el = existing ?? document.createElement("script");
-  el.type = "application/ld+json";
-  el.id = id;
-  el.textContent = JSON.stringify(json);
-  if (!existing) document.head.appendChild(el);
-}
-
-function removeHeadNode(selector: string) {
-  const el = document.querySelector(selector);
-  if (el) el.remove();
-}
-
 async function fetchPostBySlug(slug: string): Promise<BlogPostRecord | null> {
   const { data, error } = await supabase
     .from("blog_posts")
@@ -119,7 +67,6 @@ async function fetchPublishedSlugs(): Promise<SlugRow[]> {
 
   if (error) {
     console.error("[blog] fetchPublishedSlugs error:", error);
-    // list is non-critical; return empty instead of throwing
     return [];
   }
   return (data ?? []) as SlugRow[];
@@ -134,17 +81,14 @@ export default function BlogPost() {
   const [notFound, setNotFound] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // Load post + list
   useEffect(() => {
     let alive = true;
-
     async function run() {
       if (!slug) {
         setNotFound(true);
         setLoading(false);
         return;
       }
-
       setLoading(true);
       setErrorMsg(null);
       setNotFound(false);
@@ -155,43 +99,31 @@ export default function BlogPost() {
           fetchPostBySlug(slug),
           fetchPublishedSlugs(),
         ]);
-
         if (!alive) return;
-
         if (!p) {
           setNotFound(true);
           setList(l);
           setLoading(false);
           return;
         }
-
         setPost(p);
         setList(l);
         setLoading(false);
       } catch (e: any) {
         if (!alive) return;
-        const msg =
-          (e?.code ? `${e.code} ` : "") + (e?.message || "Unknown error");
+        const msg = (e?.code ? `${e.code} ` : "") + (e?.message || "Unknown error");
         console.error("[blog] load error:", e);
         setErrorMsg(msg.trim());
         setNotFound(true);
         setLoading(false);
       }
     }
-
     run();
-    return () => {
-      alive = false;
-    };
+    return () => { alive = false; };
   }, [slug]);
 
-  // Newer/older
   const { newerPost, olderPost } = useMemo(() => {
-    if (!slug || !list.length)
-      return {
-        newerPost: null as SlugRow | null,
-        olderPost: null as SlugRow | null,
-      };
+    if (!slug || !list.length) return { newerPost: null, olderPost: null };
     const idx = list.findIndex((p) => p.slug === slug);
     if (idx === -1) return { newerPost: null, olderPost: null };
     return {
@@ -200,27 +132,15 @@ export default function BlogPost() {
     };
   }, [slug, list]);
 
-  // SEO values
   const siteName = "OLLIN";
-  const siteUrl = String(import.meta.env.VITE_SITE_URL || "").replace(
-    /\/$/,
-    "",
-  );
-
+  const siteUrl = String(import.meta.env.VITE_SITE_URL || "").replace(/\/$/, "");
   const canonicalPath = useMemo(() => {
     const path = post?.slug ? `/blog/${post.slug}` : "/blog";
     return siteUrl ? `${siteUrl}${path}` : path;
   }, [post?.slug, siteUrl]);
 
-  const seoTitle = (
-    post?.seo_title?.trim() ||
-    post?.title?.trim() ||
-    "Blog"
-  ).trim();
-  const seoDescription =
-    post?.seo_description?.trim() ||
-    "Insights, playbooks, and updates from OLLIN on building calm systems that grow service businesses.";
-
+  const seoTitle = (post?.seo_title?.trim() || post?.title?.trim() || "Blog").trim();
+  const seoDescription = post?.seo_description?.trim() || "Insights, playbooks, and updates from OLLIN on building calm systems that grow service businesses.";
   const readMins = estimateReadingMinutes(post?.content_md ?? null);
 
   const jsonLdPost = useMemo(() => {
@@ -239,53 +159,31 @@ export default function BlogPost() {
     };
   }, [post, canonicalPath]);
 
-  // Apply SEO to head (no libs)
-  useEffect(() => {
-    // Canonical even while loading
-    upsertCanonical(canonicalPath);
-
-    // OpenGraph + Twitter basics
-    upsertMetaProperty("og:site_name", siteName);
-    upsertMetaProperty("og:type", "article");
-    upsertMetaProperty("og:url", canonicalPath);
-
-    const hasImg = !!post?.cover_image_url;
-    if (hasImg) {
-      upsertMetaProperty("og:image", post!.cover_image_url!);
-    } else {
-      // remove if previously set by another page
-      removeHeadNode('meta[property="og:image"]');
-    }
-
-    upsertMetaName("twitter:card", hasImg ? "summary_large_image" : "summary");
-
-    if (hasImg) {
-      upsertMetaName("twitter:image", post!.cover_image_url!);
-    } else {
-      removeHeadNode('meta[name="twitter:image"]');
-    }
-
-    // JSON-LD
-    if (jsonLdPost) {
-      upsertJsonLd("jsonld-blogpost", jsonLdPost);
-    } else {
-      const el = document.getElementById("jsonld-blogpost");
-      if (el) el.remove();
-    }
-
-    return () => {
-      // optional cleanup on unmount
-      const el = document.getElementById("jsonld-blogpost");
-      if (el) el.remove();
-    };
-  }, [
-    seoTitle,
-    seoDescription,
-    canonicalPath,
-    siteName,
-    post?.cover_image_url,
-    jsonLdPost,
-  ]);
+  // Manejo de SEO limpio con unhead
+  useHead({
+    title: seoTitle,
+    meta: [
+      { name: "description", content: seoDescription },
+      { property: "og:title", content: seoTitle },
+      { property: "og:description", content: seoDescription },
+      { property: "og:site_name", content: siteName },
+      { property: "og:type", content: "article" },
+      { property: "og:url", content: canonicalPath },
+      ...(post?.cover_image_url ? [{ property: "og:image", content: post.cover_image_url }] : []),
+      { name: "twitter:card", content: post?.cover_image_url ? "summary_large_image" : "summary" },
+      { name: "twitter:title", content: seoTitle },
+      { name: "twitter:description", content: seoDescription },
+      ...(post?.cover_image_url ? [{ name: "twitter:image", content: post.cover_image_url }] : []),
+    ],
+    link: [{ rel: "canonical", href: canonicalPath }],
+    script: jsonLdPost ? [
+      {
+        id: "jsonld-blogpost",
+        type: "application/ld+json",
+        innerHTML: JSON.stringify(jsonLdPost)
+      }
+    ] : []
+  });
 
   if (loading) {
     return (
@@ -305,26 +203,17 @@ export default function BlogPost() {
   if (notFound || !post) {
     return (
       <div className="max-w-[900px] mx-auto">
-        {errorMsg ? (
+        {errorMsg && (
           <div className="mb-6 border border-black/10 bg-white/40 p-6 text-sm text-black/70">
             <div className="font-semibold text-black">Blog error</div>
             <div className="mt-1">{errorMsg}</div>
           </div>
-        ) : null}
-
-        <Link
-          to="/blog"
-          className="inline-flex items-center gap-2 text-sm text-black/70 hover:text-black"
-        >
+        )}
+        <Link to="/blog" className="inline-flex items-center gap-2 text-sm text-black/70 hover:text-black">
           <span aria-hidden>←</span> Back to blog
         </Link>
-
-        <h2 className="text-2xl md:text-3xl font-semibold mt-8 text-ollin-black">
-          Post not found
-        </h2>
-        <p className="text-ollin-black/70 mt-2">
-          The post may have been moved, unpublished, or the link is incorrect.
-        </p>
+        <h2 className="text-2xl md:text-3xl font-semibold mt-8 text-ollin-black">Post not found</h2>
+        <p className="text-ollin-black/70 mt-2">The post may have been moved, unpublished, or the link is incorrect.</p>
       </div>
     );
   }
@@ -332,10 +221,7 @@ export default function BlogPost() {
   return (
     <div className="max-w-[900px] mx-auto">
       <div className="pt-8">
-        <Link
-          to="/blog"
-          className="inline-flex items-center gap-2 text-sm text-black/70 hover:text-black"
-        >
+        <Link to="/blog" className="inline-flex items-center gap-2 text-sm text-black/70 hover:text-black">
           <span aria-hidden>←</span> Back to blog
         </Link>
       </div>
@@ -350,12 +236,7 @@ export default function BlogPost() {
             <span className="opacity-40">•</span>
             <div className="flex flex-wrap gap-2">
               {post.tags.slice(0, 6).map((t) => (
-                <span
-                  key={t}
-                  className="inline-flex items-center border border-black/10 bg-white/40 px-2.5 py-1 text-[11px] text-black/70"
-                >
-                  {t}
-                </span>
+                <span key={t} className="inline-flex items-center border border-black/10 bg-white/40 px-2.5 py-1 text-[11px] text-black/70">{t}</span>
               ))}
             </div>
           </>
@@ -368,59 +249,19 @@ export default function BlogPost() {
 
       {post.cover_image_url && (
         <div className="mt-10 overflow-hidden border border-black/10 bg-white/40">
-          <img
-            src={post.cover_image_url}
-            alt={post.title}
-            className="w-full h-auto object-cover"
-          />
+          <img src={post.cover_image_url} alt={post.title} className="w-full h-auto object-cover" />
         </div>
       )}
 
-      <article
-        className="
-          mt-10 pb-10
-          prose prose-lg max-w-none
-          prose-headings:font-semibold
-          prose-headings:tracking-tight
-          prose-headings:text-ollin-black
-          prose-h2:mt-10 prose-h2:mb-3
-          prose-h3:mt-8  prose-h3:mb-2
-          prose-p:leading-relaxed prose-p:my-4
-          prose-blockquote:border-l prose-blockquote:border-black/10 prose-blockquote:pl-4 prose-blockquote:text-black/70
-          prose-a:text-ollin-black
-          prose-a:underline
-          prose-a:decoration-black/20
-          hover:prose-a:decoration-black/40
-          prose-strong:text-ollin-black
-          prose-ul:pl-6 prose-ul:my-4 prose-ul:list-disc
-          prose-ol:pl-6 prose-ol:my-4 prose-ol:list-decimal
-          prose-li:my-1
-          prose-pre:bg-black/5
-          prose-pre:border prose-pre:border-black/10
-          prose-pre:rounded-none
-          prose-pre:p-4
-          prose-code:bg-black/5
-          prose-code:px-1
-          prose-code:py-0.5
-          prose-code:rounded-none
-        "
-      >
+      <article className="mt-10 pb-10 prose prose-lg max-w-none prose-headings:font-semibold prose-headings:tracking-tight prose-headings:text-ollin-black prose-h2:mt-10 prose-h2:mb-3 prose-h3:mt-8 prose-h3:mb-2 prose-p:leading-relaxed prose-p:my-4 prose-blockquote:border-l prose-blockquote:border-black/10 prose-blockquote:pl-4 prose-blockquote:text-black/70 prose-a:text-ollin-black prose-a:underline prose-a:decoration-black/20 hover:prose-a:decoration-black/40 prose-strong:text-ollin-black prose-ul:pl-6 prose-ul:my-4 prose-ul:list-disc prose-ol:pl-6 prose-ol:my-4 prose-ol:list-decimal prose-li:my-1 prose-pre:bg-black/5 prose-pre:border prose-pre:border-black/10 prose-pre:rounded-none prose-pre:p-4 prose-code:bg-black/5 prose-code:px-1 prose-code:py-0.5 prose-code:rounded-none">
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
           components={{
-            a: ({ node, ...props }) => (
-              <a {...props} target="_blank" rel="noopener noreferrer" />
-            ),
-            ul: ({ node, ...props }) => (
-              <ul {...props} className="list-disc pl-6 my-4" />
-            ),
-            ol: ({ node, ...props }) => (
-              <ol {...props} className="list-decimal pl-6 my-4" />
-            ),
+            a: ({ node, ...props }) => <a {...props} target="_blank" rel="noopener noreferrer" />,
+            ul: ({ node, ...props }) => <ul {...props} className="list-disc pl-6 my-4" />,
+            ol: ({ node, ...props }) => <ol {...props} className="list-decimal pl-6 my-4" />,
             li: ({ node, ...props }) => <li {...props} className="my-1" />,
-            p: ({ node, ...props }) => (
-              <p {...props} className="my-4 leading-relaxed" />
-            ),
+            p: ({ node, ...props }) => <p {...props} className="my-4 leading-relaxed" />,
           }}
         >
           {post.content_md ?? ""}
@@ -429,81 +270,37 @@ export default function BlogPost() {
 
       <div className="mt-10 mb-16 grid grid-cols-1 md:grid-cols-2 gap-6">
         {newerPost ? (
-          <Link
-            to={`/blog/${newerPost.slug}`}
-            className="
-              group border border-black/10 bg-white/35 px-6 py-5
-              hover:bg-white/55 transition
-              focus:outline-none focus-visible:ring-2 focus-visible:ring-black/20
-            "
-            rel="prev"
-            aria-label="Newer post"
-          >
+          <Link to={`/blog/${newerPost.slug}`} className="group border border-black/10 bg-white/35 px-6 py-5 hover:bg-white/55 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-black/20" rel="prev" aria-label="Newer post">
             <div className="text-[11px] text-black/55 mb-2 inline-flex items-center gap-2">
-              <span
-                className="transition-transform duration-200 group-hover:-translate-x-1"
-                aria-hidden
-              >
-                ←
-              </span>
+              <span className="transition-transform duration-200 group-hover:-translate-x-1" aria-hidden>←</span>
               <span>Newer</span>
             </div>
-            <div className="text-base font-semibold text-ollin-black group-hover:underline decoration-black/20">
-              {newerPost.title}
-            </div>
-            {newerPost.published_at && (
-              <div className="mt-2 text-xs text-black/55">
-                {formatDate(newerPost.published_at)}
-              </div>
-            )}
+            <div className="text-base font-semibold text-ollin-black group-hover:underline decoration-black/20">{newerPost.title}</div>
+            {newerPost.published_at && <div className="mt-2 text-xs text-black/55">{formatDate(newerPost.published_at)}</div>}
           </Link>
         ) : (
           <div className="border border-black/10 bg-white/15 px-6 py-5">
             <div className="text-[11px] text-black/55 inline-flex items-center gap-2">
-              <span className="opacity-70" aria-hidden>
-                ←
-              </span>
+              <span className="opacity-70" aria-hidden>←</span>
               <span>No newer post</span>
             </div>
           </div>
         )}
 
         {olderPost ? (
-          <Link
-            to={`/blog/${olderPost.slug}`}
-            className="
-              group border border-black/10 bg-white/35 px-6 py-5
-              hover:bg-white/55 transition md:text-right
-              focus:outline-none focus-visible:ring-2 focus-visible:ring-black/20
-            "
-            rel="next"
-            aria-label="Older post"
-          >
+          <Link to={`/blog/${olderPost.slug}`} className="group border border-black/10 bg-white/35 px-6 py-5 hover:bg-white/55 transition md:text-right focus:outline-none focus-visible:ring-2 focus-visible:ring-black/20" rel="next" aria-label="Older post">
             <div className="text-[11px] text-black/55 mb-2 inline-flex items-center gap-2 md:justify-end w-full">
               <span>Older</span>
-              <span
-                className="transition-transform duration-200 group-hover:translate-x-1"
-                aria-hidden
-              >
-                →
-              </span>
+              <span className="transition-transform duration-200 group-hover:translate-x-1" aria-hidden>→</span>
             </div>
-            <div className="text-base font-semibold text-ollin-black group-hover:underline decoration-black/20">
-              {olderPost.title}
-            </div>
-            {olderPost.published_at && (
-              <div className="mt-2 text-xs text-black/55">
-                {formatDate(olderPost.published_at)}
-              </div>
-            )}
+            <div className="text-base font-semibold text-ollin-black group-hover:underline decoration-black/20">{olderPost.title}</div>
+            {olderPost.published_at && <div className="mt-2 text-xs text-black/55">{formatDate(olderPost.published_at)}</div>}
           </Link>
         ) : (
           <div className="border border-black/10 bg-white/15 px-6 py-5 md:text-right">
             <div className="text-[11px] text-black/55 inline-flex items-center gap-2 md:justify-end w-full">
               <span>No older post</span>
-              <span className="opacity-70" aria-hidden>
-                →
-              </span>
+              <span className="opacity-70" aria-hidden>→</span>
             </div>
           </div>
         )}

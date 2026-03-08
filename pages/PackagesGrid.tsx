@@ -31,7 +31,6 @@ const DETAILS_CTA_CSS = `
     --arrowLen: var(--arrowLenHover);
   }
 
-  /* sheen (igual que tu ejemplo) */
   .packagesGridCtas .btnSecondary14Text {
     position: relative;
     display: inline-block;
@@ -65,11 +64,10 @@ const DETAILS_CTA_CSS = `
     animation: ollinSheenOnceLR 720ms ease-out 1;
   }
 
-  /* arrow (igual que tu ejemplo) */
   .packagesGridCtas .btnSecondary14Arrow {
     position: relative;
     display: inline-block;
-    width: 56px; /* compact */
+    width: 56px;
     height: 11px;
     margin-left: 6px;
     pointer-events: none;
@@ -96,7 +94,6 @@ const DETAILS_CTA_CSS = `
     will-change: transform;
   }
 
-  /* details variant (para que se vea como “View details”) */
   .packagesGridCtas .btnSecondary14--details {
     font-size: 11px;
     letter-spacing: 0.22em;
@@ -125,8 +122,6 @@ export default function PackagesGrid({
       {packages.map((p) => {
         const isActive = p.id === activeId;
         const isDimmed = anySelected && !isActive;
-
-        // 👇 esto hace que la flecha se quede “larga” cuando está activo
         const arrowLen = isActive ? "46px" : "18px";
 
         return (
@@ -144,10 +139,8 @@ export default function PackagesGrid({
               "hover:-translate-y-1",
             )}
             style={{
-              // ✅ NO cambia color por estar activo
               borderColor: LINE,
               background: PALETTE.paper,
-              // ✅ “selección” solo por sombra (sin “wash”)
               boxShadow: isActive
                 ? "0 18px 55px rgba(0,0,0,0.10)"
                 : "0 10px 35px rgba(0,0,0,0.06)",
@@ -188,13 +181,9 @@ export default function PackagesGrid({
               className="mt-8 pt-5 border-t"
               style={{ borderColor: LINE_SOFT }}
             >
-              {/* ✅ “View details” con flecha estilo tu botón */}
-              <button
-                type="button"
+              <div
                 className="btnSecondary btnSecondary14 btnSecondary14--details"
-                // IMPORTANT: no cambia color al estar activo; solo fija la longitud del arrow
                 style={{ ["--arrowLen" as any]: arrowLen }}
-                tabIndex={-1}
                 aria-hidden="true"
               >
                 <span className="btnSecondary14Text" data-text="VIEW DETAILS">
@@ -234,7 +223,7 @@ export default function PackagesGrid({
                     />
                   </svg>
                 </span>
-              </button>
+              </div>
             </div>
           </button>
         );

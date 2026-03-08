@@ -24,19 +24,16 @@ const generateId = () => {
 
 const AillinSymbol = ({ size = 24, animated = false }: { size?: number, animated?: boolean }) => (
   <div className="relative flex items-center justify-center shrink-0" style={{ width: size, height: size }}>
-    {/* Core signal dot */}
     <motion.div
       className="absolute w-[20%] h-[20%] bg-[#F2EFE9] rounded-full"
       animate={animated ? { scale: [1, 1.2, 1], opacity: [0.8, 1, 0.8] } : {}}
       transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
     />
-    {/* Orbital ring 1 */}
     <motion.div
       className="absolute w-[50%] h-[50%] border border-[#F2EFE9]/30 rounded-full"
       animate={animated ? { scale: [1, 1.1, 1], opacity: [0.3, 0.6, 0.3], rotate: 180 } : {}}
       transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
     />
-    {/* Orbital ring 2 */}
     <motion.div
       className="absolute w-[90%] h-[90%] border border-[#F2EFE9]/10 rounded-full"
       animate={animated ? { scale: [1, 1.05, 1], opacity: [0.1, 0.3, 0.1], rotate: -180 } : {}}
@@ -51,46 +48,49 @@ const AIAssistant: React.FC = () => {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  // Generamos un ID único para TODA la sesión del chat desde que se abre.
+  const [sessionId] = useState(() => generateId());
+
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const scrollContainer = document.getElementById('chat-scroll-container');
+    if (scrollContainer) {
+      scrollContainer.scrollTo({
+        top: scrollContainer.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
   };
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = ''; };
+    document.documentElement.style.overflow = 'hidden';
+    return () => { 
+      document.body.style.overflow = ''; 
+      document.documentElement.style.overflow = ''; 
+    };
   }, []);
 
   useEffect(() => {
-    if (isLoading) {
+    if (messages.length > 0 || isLoading) {
       setTimeout(() => scrollToBottom(), 100);
-    } else if (messages.length > 0) {
-      const lastMsg = messages[messages.length - 1];
-      if (lastMsg.role === 'assistant') {
-        setTimeout(() => {
-          const el = document.getElementById(`message-${lastMsg.id}`);
-          el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 100);
-      } else {
-        setTimeout(() => scrollToBottom(), 100);
-      }
     }
   }, [messages, isLoading]);
 
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value);
     if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 160)}px`;
+      textareaRef.current.style.height = '56px';
+      const scrollHeight = textareaRef.current.scrollHeight;
+      textareaRef.current.style.height = `${Math.min(scrollHeight, 160)}px`;
     }
   };
 
   const resetInput = () => {
     setInput('');
     if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = '56px';
     }
   };
 
@@ -113,7 +113,10 @@ const AIAssistant: React.FC = () => {
       const response = await fetch(`${baseUrl}/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: userMessage.content }),
+        body: JSON.stringify({ 
+          message: userMessage.content,
+          sessionId: sessionId 
+        }),
       });
 
       const data = await response.json();
@@ -138,18 +141,17 @@ const AIAssistant: React.FC = () => {
       transition={{ duration: 0.4, ease: "easeOut" }}
       className="fixed inset-0 flex flex-col overflow-hidden bg-[#050505] z-0"
     >
+      <div className="w-full h-[80px] md:h-[100px] shrink-0 pointer-events-none bg-transparent" />
+
       <div
         className={`absolute -bottom-[20vh] left-1/2 -translate-x-1/2 w-[120vw] h-[40vh] bg-[#F2EFE9] blur-[120px] rounded-[100%] mix-blend-screen transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-none ${isLoading ? 'opacity-[0.14] scale-110' : 'opacity-[0.05] scale-100'}`}
       />
 
       <div
         id="chat-scroll-container"
-        className="relative z-10 flex-1 w-full overflow-y-auto custom-scrollbar scroll-smooth flex flex-col"
+        className="relative z-10 flex-1 min-h-0 w-full overflow-y-auto custom-scrollbar flex flex-col"
       >
-        {/* Top safe area inside the scroll flow */}
-        <div className="shrink-0 w-full h-[100px] md:h-[120px]" />
-
-        <div className="flex-1 w-full max-w-4xl mx-auto flex flex-col px-4 md:px-8 pb-4">
+        <div className="flex-1 w-full max-w-5xl mx-auto flex flex-col px-4 md:px-8 pb-4 pt-4">
           {messages.length === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center w-full min-h-0 pb-10">
               <motion.div
@@ -160,7 +162,7 @@ const AIAssistant: React.FC = () => {
                 <div className="mb-10">
                   <AillinSymbol size={48} animated />
                 </div>
-                <h1 className="font-montserrat text-[#F2EFE9] text-3xl md:text-[40px] tracking-tight font-light">
+                <h1 className="font-montserrat text-[#F2EFE9] text-3xl md:text-[40px] tracking-tight font-light text-center">
                   Hi, I'm Aillin. Let's chat.
                 </h1>
               </motion.div>
@@ -170,11 +172,10 @@ const AIAssistant: React.FC = () => {
               {messages.map((msg) => (
                 <motion.div
                   key={msg.id}
-                  id={`message-${msg.id}`}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
-                  className={`flex w-full scroll-mt-[100px] md:scroll-mt-[120px] ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  className={`flex w-full ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div className={`w-fit max-w-[95%] md:max-w-[85%] text-[15px] md:text-[16px] leading-relaxed ${msg.role === 'user'
                     ? 'py-3 px-1 text-[#F2EFE9]/90 font-light'
@@ -209,23 +210,20 @@ const AIAssistant: React.FC = () => {
               ))}
 
               {isLoading && (
-                <motion.div id="thinking-indicator" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex w-full justify-start mt-2 scroll-mt-[100px] md:scroll-mt-[120px]">
+                <motion.div id="thinking-indicator" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex w-full justify-start mt-2">
                   <div className="w-fit max-w-[95%] md:max-w-[85%] bg-[#080808] border border-white/5 px-6 md:px-10 py-6 md:py-8 rounded-sm shadow-2xl flex items-center gap-5">
                     <AillinSymbol size={18} animated={true} />
                     <span className="font-light tracking-wide text-[15px] text-[#F2EFE9]/60">Thinking...</span>
                   </div>
                 </motion.div>
               )}
-
-              <div ref={messagesEndRef} className="h-4 shrink-0 mt-4 md:mt-8" />
             </div>
           )}
-
         </div>
       </div>
 
       <div className="relative z-20 shrink-0 w-full bg-[#050505] border-t border-white/5 pt-5 pb-6 px-4 md:px-8 shadow-[0_-20px_40px_rgba(0,0,0,0.6)]">
-        <div className="w-full max-w-4xl mx-auto">
+        <div className="w-full max-w-5xl mx-auto">
           {messages.length === 0 && (
             <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
               {SUGGESTED_PROMPTS.map((prompt, index) => (
@@ -234,7 +232,7 @@ const AIAssistant: React.FC = () => {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 + index * 0.1 }}
-                  onClick={() => handleSubmit(undefined, prompt)}
+                  onClick={(e) => { e.preventDefault(); handleSubmit(undefined, prompt); }}
                   className="px-5 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-sm text-sm font-medium text-[#F2EFE9]/80 transition-colors text-left"
                 >
                   {prompt}
@@ -243,7 +241,7 @@ const AIAssistant: React.FC = () => {
             </div>
           )}
 
-          <form onSubmit={(e) => handleSubmit(e)} className="flex flex-col gap-3 w-full max-w-3xl mx-auto relative">
+          <form onSubmit={(e) => handleSubmit(e)} className="flex flex-col gap-3 w-full mx-auto relative">
             <div className="flex items-end bg-[#0A0A0A] rounded-sm border border-white/10 overflow-hidden focus-within:border-white/20 transition-colors shadow-2xl">
               <textarea
                 ref={textareaRef}
@@ -256,9 +254,12 @@ const AIAssistant: React.FC = () => {
                   }
                 }}
                 placeholder="Ask about design, systems, or growth..."
-                className="w-full bg-transparent text-[#F2EFE9] py-4 px-5 resize-none outline-none custom-scrollbar placeholder:text-white/30"
+                className="w-full bg-transparent text-[#F2EFE9] py-4 px-5 resize-none outline-none custom-scrollbar placeholder:text-white/30 transition-[height] duration-75 ease-out"
                 rows={1}
-                style={{ minHeight: '56px' }}
+                style={{ 
+                  minHeight: '56px',
+                  overflowY: input.length > 0 && textareaRef.current && textareaRef.current.scrollHeight > 160 ? 'auto' : 'hidden'
+                }}
               />
               <button
                 type="submit"
