@@ -22,6 +22,8 @@ const Blog = lazy(() => import("./pages/Blog"));
 const BlogIndex = lazy(() => import("./pages/BlogIndex"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
 const Privacy = lazy(() => import("./pages/Privacy"));
+const Terms = lazy(() => import("./pages/Terms"));
+const DataDeletion = lazy(() => import("./pages/DataDeletion"));
 
 const App: React.FC = () => {
   const location = useLocation();
@@ -112,6 +114,8 @@ const App: React.FC = () => {
 
               <Route path="/contact" element={<Contact />} />
               <Route path="/privacy" element={<Privacy />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/data-deletion" element={<DataDeletion />} />
             </Routes>
           </Suspense>
         </div>

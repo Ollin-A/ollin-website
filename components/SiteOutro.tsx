@@ -4,13 +4,18 @@ import { useInView } from "framer-motion";
 import SplashCursor from "./SplashCursor";
 import { useDesktopFinePointerLg } from "../hooks/useDesktopFinePointerLg";
 
-const links = [
+const socialLinks = [
   { label: "Instagram", href: "https://www.instagram.com/ollinagency/" },
   { label: "X / Twitter", href: "https://x.com/OLLINAGENCY" },
   { label: "Facebook", href: "https://www.facebook.com/ollin.agency" },
   { label: "Threads", href: "https://www.threads.com/@ollinagency" },
   { label: "LinkedIn", href: "https://www.linkedin.com/company/ollinagency/" },
-  { label: "Privacy", href: "/privacy" },
+];
+
+const legalLinks = [
+  { label: "Privacy Policy", href: "/privacy" },
+  { label: "Terms of Service", href: "/terms" },
+  { label: "Data Deletion", href: "/data-deletion" },
 ];
 
 export default function SiteOutro() {
@@ -69,18 +74,39 @@ export default function SiteOutro() {
           <div className="flex-1" />
 
           <div className="px-6 sm:px-10 pb-10 sm:pb-12">
-            <div className="grid grid-cols-2 gap-x-14 gap-y-6 justify-items-center sm:justify-items-start mb-10">
-              {links.map((l) => (
-                <a
-                  key={l.label}
-                  href={l.href}
-                  className="text-[12px] sm:text-[13px] tracking-[0.22em] uppercase text-black/70 hover:text-black transition-colors"
-                  target={l.href.startsWith("http") ? "_blank" : undefined}
-                  rel={l.href.startsWith("http") ? "noreferrer" : undefined}
-                >
-                  {l.label}
-                </a>
-              ))}
+            <div className="grid grid-cols-2 gap-x-10 mb-10">
+              <div>
+                <h3 className="text-[10px] uppercase tracking-[0.2em] text-black/30 mb-5 font-semibold">Social</h3>
+                <div className="flex flex-col gap-y-5">
+                  {socialLinks.map((l) => (
+                    <a
+                      key={l.label}
+                      href={l.href}
+                      className="text-[12px] sm:text-[13px] tracking-[0.22em] uppercase text-black/70 hover:text-black transition-colors"
+                      target={l.href.startsWith("http") ? "_blank" : undefined}
+                      rel={l.href.startsWith("http") ? "noreferrer" : undefined}
+                    >
+                      {l.label}
+                    </a>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <h3 className="text-[10px] uppercase tracking-[0.2em] text-black/30 mb-5 font-semibold">Legal</h3>
+                <div className="flex flex-col gap-y-5">
+                  {legalLinks.map((l) => (
+                    <a
+                      key={l.label}
+                      href={l.href}
+                      className="text-[12px] sm:text-[13px] tracking-[0.22em] uppercase text-black/70 hover:text-black transition-colors"
+                      target={l.href.startsWith("http") ? "_blank" : undefined}
+                      rel={l.href.startsWith("http") ? "noreferrer" : undefined}
+                    >
+                      {l.label}
+                    </a>
+                  ))}
+                </div>
+              </div>
             </div>
 
             <div className="h-px bg-black/10 w-full mb-6" />
@@ -121,26 +147,45 @@ export default function SiteOutro() {
           </div>
 
           {/* Footer inferior */}
-          <div className="w-full max-w-[1400px] mx-auto px-10 pb-10 relative">
-            <div className="absolute left-10 bottom-10 text-[12px] tracking-[0.22em] uppercase text-black/10 select-none">
-              © {year} OLLIN
-            </div>
+          <div className="w-full max-w-[1400px] mx-auto px-10 pb-10 mt-auto">
+            <div className="h-px bg-black/5 w-full mb-8" />
+            
+            <div className="flex justify-between items-end">
+              <div className="text-[12px] tracking-[0.22em] uppercase text-black/10 select-none">
+                © {year} OLLIN
+              </div>
 
-            <div className="flex justify-end gap-x-8">
-              {links.map((l) => (
-                <a
-                  key={l.label}
-                  href={l.href}
-                  className="text-[12px] tracking-[0.22em] uppercase text-black/65 hover:text-black transition-colors"
-                  target={l.href.startsWith("http") ? "_blank" : undefined}
-                  rel={l.href.startsWith("http") ? "noreferrer" : undefined}
-                >
-                  {l.label}
-                </a>
-              ))}
+              <div className="flex gap-x-20">
+                <div className="flex flex-col gap-y-3">
+                  <h3 className="text-[10px] tracking-[0.22em] uppercase text-black/30 font-medium mb-1">Legal</h3>
+                  {legalLinks.map((l) => (
+                    <a
+                      key={l.label}
+                      href={l.href}
+                      className="text-[12px] tracking-[0.22em] uppercase text-black/65 hover:text-black transition-colors"
+                      target={l.href.startsWith("http") ? "_blank" : undefined}
+                      rel={l.href.startsWith("http") ? "noreferrer" : undefined}
+                    >
+                      {l.label}
+                    </a>
+                  ))}
+                </div>
+                <div className="flex flex-col gap-y-3">
+                  <h3 className="text-[10px] tracking-[0.22em] uppercase text-black/30 font-medium mb-1">Social</h3>
+                  {socialLinks.map((l) => (
+                    <a
+                      key={l.label}
+                      href={l.href}
+                      className="text-[12px] tracking-[0.22em] uppercase text-black/65 hover:text-black transition-colors"
+                      target={l.href.startsWith("http") ? "_blank" : undefined}
+                      rel={l.href.startsWith("http") ? "noreferrer" : undefined}
+                    >
+                      {l.label}
+                    </a>
+                  ))}
+                </div>
+              </div>
             </div>
-
-            <div className="absolute bottom-20 left-10 right-10 h-px bg-black/5" />
           </div>
 
         </div>
