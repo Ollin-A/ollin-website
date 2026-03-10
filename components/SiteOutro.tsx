@@ -73,45 +73,40 @@ export default function SiteOutro() {
 
           <div className="flex-1" />
 
+          {/* Updated Mobile Footer */}
           <div className="px-6 sm:px-10 pb-10 sm:pb-12">
-            <div className="grid grid-cols-2 gap-x-10 mb-10">
-              <div>
-                <h3 className="text-[10px] uppercase tracking-[0.2em] text-black/30 mb-5 font-semibold">Social</h3>
-                <div className="flex flex-col gap-y-5">
-                  {socialLinks.map((l) => (
-                    <a
-                      key={l.label}
-                      href={l.href}
-                      className="text-[12px] sm:text-[13px] tracking-[0.22em] uppercase text-black/70 hover:text-black transition-colors"
-                      target={l.href.startsWith("http") ? "_blank" : undefined}
-                      rel={l.href.startsWith("http") ? "noreferrer" : undefined}
-                    >
-                      {l.label}
-                    </a>
-                  ))}
-                </div>
+            <div className="flex flex-col gap-y-6 mb-8">
+              <div className="flex flex-wrap gap-x-6 gap-y-3">
+                {legalLinks.map((l) => (
+                  <a
+                    key={l.label}
+                    href={l.href}
+                    className="text-[11px] sm:text-[12px] tracking-[0.22em] uppercase text-black/70 hover:text-black transition-colors whitespace-nowrap"
+                    target={l.href.startsWith("http") ? "_blank" : undefined}
+                    rel={l.href.startsWith("http") ? "noreferrer" : undefined}
+                  >
+                    {l.label}
+                  </a>
+                ))}
               </div>
-              <div>
-                <h3 className="text-[10px] uppercase tracking-[0.2em] text-black/30 mb-5 font-semibold">Legal</h3>
-                <div className="flex flex-col gap-y-5">
-                  {legalLinks.map((l) => (
-                    <a
-                      key={l.label}
-                      href={l.href}
-                      className="text-[12px] sm:text-[13px] tracking-[0.22em] uppercase text-black/70 hover:text-black transition-colors"
-                      target={l.href.startsWith("http") ? "_blank" : undefined}
-                      rel={l.href.startsWith("http") ? "noreferrer" : undefined}
-                    >
-                      {l.label}
-                    </a>
-                  ))}
-                </div>
+              <div className="flex flex-wrap gap-x-6 gap-y-3">
+                {socialLinks.map((l) => (
+                  <a
+                    key={l.label}
+                    href={l.href}
+                    className="text-[11px] sm:text-[12px] tracking-[0.22em] uppercase text-black/70 hover:text-black transition-colors whitespace-nowrap"
+                    target={l.href.startsWith("http") ? "_blank" : undefined}
+                    rel={l.href.startsWith("http") ? "noreferrer" : undefined}
+                  >
+                    {l.label}
+                  </a>
+                ))}
               </div>
             </div>
 
             <div className="h-px bg-black/10 w-full mb-6" />
 
-            <div className="text-center text-[12px] tracking-[0.22em] uppercase text-black/25">
+            <div className="text-[12px] tracking-[0.22em] uppercase text-black/25">
               © {year} OLLIN
             </div>
           </div>
@@ -122,7 +117,6 @@ export default function SiteOutro() {
           
           <div className="flex-1 w-full max-w-[1400px] mx-auto px-10 pt-24 flex flex-col">
             
-            {/* Hero limitado */}
             <div className="max-w-[980px]">
               <h2 className="font-normal text-[clamp(3.2rem,6.2vw,6.1rem)] leading-[0.92] tracking-[-0.04em]">
                 <span className="block">Let’s make something</span>
@@ -130,7 +124,6 @@ export default function SiteOutro() {
               </h2>
             </div>
 
-            {/* Email alineado totalmente a la derecha */}
             <div className="mt-24 w-full flex justify-end">
               <a
                 href="mailto:contact@ollin.agency"
@@ -146,44 +139,42 @@ export default function SiteOutro() {
 
           </div>
 
-          {/* Footer inferior */}
-          <div className="w-full max-w-[1400px] mx-auto px-10 pb-10 mt-auto">
-            <div className="h-px bg-black/5 w-full mb-8" />
+          {/* Updated Desktop Footer */}
+          <div className="w-full max-w-[1400px] mx-auto px-10 pb-8 mt-auto">
+            <div className="h-px bg-black/10 w-full mb-6" />
             
-            <div className="flex justify-between items-end">
-              <div className="text-[12px] tracking-[0.22em] uppercase text-black/10 select-none">
+            <div className="flex justify-between items-center w-full">
+              <div className="text-[12px] tracking-[0.22em] uppercase text-black/25 select-none shrink-0">
                 © {year} OLLIN
               </div>
 
-              <div className="flex gap-x-20">
-                <div className="flex flex-col gap-y-3">
-                  <h3 className="text-[10px] tracking-[0.22em] uppercase text-black/30 font-medium mb-1">Legal</h3>
-                  {legalLinks.map((l) => (
-                    <a
-                      key={l.label}
-                      href={l.href}
-                      className="text-[12px] tracking-[0.22em] uppercase text-black/65 hover:text-black transition-colors"
-                      target={l.href.startsWith("http") ? "_blank" : undefined}
-                      rel={l.href.startsWith("http") ? "noreferrer" : undefined}
-                    >
-                      {l.label}
-                    </a>
-                  ))}
-                </div>
-                <div className="flex flex-col gap-y-3">
-                  <h3 className="text-[10px] tracking-[0.22em] uppercase text-black/30 font-medium mb-1">Social</h3>
-                  {socialLinks.map((l) => (
-                    <a
-                      key={l.label}
-                      href={l.href}
-                      className="text-[12px] tracking-[0.22em] uppercase text-black/65 hover:text-black transition-colors"
-                      target={l.href.startsWith("http") ? "_blank" : undefined}
-                      rel={l.href.startsWith("http") ? "noreferrer" : undefined}
-                    >
-                      {l.label}
-                    </a>
-                  ))}
-                </div>
+              <div className="flex flex-wrap justify-end items-center gap-x-8 gap-y-3">
+                {legalLinks.map((l) => (
+                  <a
+                    key={l.label}
+                    href={l.href}
+                    className="text-[11px] tracking-[0.22em] uppercase text-black/65 hover:text-black transition-colors whitespace-nowrap"
+                    target={l.href.startsWith("http") ? "_blank" : undefined}
+                    rel={l.href.startsWith("http") ? "noreferrer" : undefined}
+                  >
+                    {l.label}
+                  </a>
+                ))}
+                
+                {/* Subtle vertical divider between Legal and Social */}
+                <div className="w-px h-3 bg-black/20 hidden xl:block mx-2" />
+
+                {socialLinks.map((l) => (
+                  <a
+                    key={l.label}
+                    href={l.href}
+                    className="text-[11px] tracking-[0.22em] uppercase text-black/65 hover:text-black transition-colors whitespace-nowrap"
+                    target={l.href.startsWith("http") ? "_blank" : undefined}
+                    rel={l.href.startsWith("http") ? "noreferrer" : undefined}
+                  >
+                    {l.label}
+                  </a>
+                ))}
               </div>
             </div>
           </div>
