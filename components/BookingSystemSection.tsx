@@ -144,9 +144,9 @@ const BookingSystemSection: React.FC = () => {
       `}</style>
 
             <div className="max-w-[1500px] mx-auto px-[5vw] w-full">
-                {/* ===== TOP: Pipeline ===== */}
+
                 <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-12 items-start">
-                    {/* Left copy */}
+
                     <div>
                         <h3 className="text-3xl md:text-4xl lg:text-5xl tracking-tight leading-[1.02] font-medium">
                             How jobs get booked.
@@ -155,7 +155,6 @@ const BookingSystemSection: React.FC = () => {
                             A clear system that turns demand into booked work.
                         </p>
 
-                        {/* ✅ Get a quick breakdown (same button style) */}
                         <button
                             type="button"
                             onClick={() => navigate("/services/retention")}
@@ -194,9 +193,8 @@ const BookingSystemSection: React.FC = () => {
                         </button>
                     </div>
 
-                    {/* Right: steps list */}
                     <div className="relative">
-                        {/* rail line */}
+
                         <div className="pointer-events-none absolute left-[14px] top-0 bottom-0 w-px bg-black/10" />
 
                         <div className="space-y-6">
@@ -205,7 +203,7 @@ const BookingSystemSection: React.FC = () => {
                                     key={s.title}
                                     className={["group relative pl-10 pr-4 py-4", "transition-colors duration-200"].join(" ")}
                                 >
-                                    {/* Node */}
+
                                     <span
                                         className={[
                                             "absolute left-[9px] top-[26px]",
@@ -230,10 +228,8 @@ const BookingSystemSection: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Separador “invisible” (mismo color del fondo) */}
                 <div className="my-16 md:my-20 h-px w-full bg-[#F2F2F2]" />
 
-                {/* ===== BOTTOM: Trades (migrado) ===== */}
                 <BookingSystemTrades />
             </div>
         </section>

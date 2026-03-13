@@ -1,4 +1,4 @@
-// PersonalizedPackage_Builder.tsx
+
 import React from "react";
 import { ChevronDown, ChevronUp, X, Check, Trash2 } from "lucide-react";
 import { FieldControl, type Field } from "./PersonalizedPackage_FieldControls";
@@ -70,7 +70,7 @@ const PersonalizedPackageBuilder: React.FC<Props> = ({
   return (
     <>
       <section className="mt-10 grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6 lg:items-start">
-        {/* Left: Services */}
+
         <div className="space-y-3 pb-24 lg:pb-0">
           <div className="flex items-end justify-between">
             <div>
@@ -97,7 +97,7 @@ const PersonalizedPackageBuilder: React.FC<Props> = ({
               >
                 <div className="p-4 md:p-5">
                   <div className="flex items-start gap-4">
-                    {/* Checkbox */}
+
                     <button
                       type="button"
                       onClick={() => {
@@ -119,13 +119,13 @@ const PersonalizedPackageBuilder: React.FC<Props> = ({
                       <div className="flex items-start justify-between gap-3">
                         <div>
                           <h3 className="text-[15px] md:text-[16px] font-semibold leading-tight">
-                            {/* Mobile/Tablet (< lg): Always clean title, no parentheses */}
+
                             <span className="lg:hidden">
                               {service.title
                                 .replace(/\s*\([^)]*\)\s*/g, "")
                                 .trim()}
                             </span>
-                            {/* Desktop (>= lg): Always full title */}
+
                             <span className="hidden lg:inline">
                               {service.title}
                             </span>
@@ -136,7 +136,6 @@ const PersonalizedPackageBuilder: React.FC<Props> = ({
                           </p>
                         </div>
 
-                        {/* Expand */}
                         <button
                           type="button"
                           onClick={() => {
@@ -165,7 +164,6 @@ const PersonalizedPackageBuilder: React.FC<Props> = ({
                         </button>
                       </div>
 
-                      {/* Expanded body */}
                       <div
                         className={cx(
                           "grid transition-all duration-300 ease-out",
@@ -177,7 +175,7 @@ const PersonalizedPackageBuilder: React.FC<Props> = ({
                         <div className="overflow-hidden">
                           <div className="pt-2 border-t border-black/10">
                             <div className="mt-4 space-y-5">
-                              {/* Mobile/Tablet: Description moves here */}
+
                               <div className="lg:hidden text-sm text-black/65 leading-relaxed">
                                 {service.blurb}
                               </div>
@@ -214,7 +212,7 @@ const PersonalizedPackageBuilder: React.FC<Props> = ({
                               ))}
 
                               <div className="flex items-center justify-end pt-2">
-                                {/* Mobile: Trash Icon */}
+
                                 <button
                                   type="button"
                                   onClick={() => {
@@ -227,7 +225,6 @@ const PersonalizedPackageBuilder: React.FC<Props> = ({
                                   <Trash2 size={22} />
                                 </button>
 
-                                {/* Desktop: Text Link */}
                                 <button
                                   type="button"
                                   onClick={() => {
@@ -243,7 +240,7 @@ const PersonalizedPackageBuilder: React.FC<Props> = ({
                           </div>
                         </div>
                       </div>
-                      {/* end expanded body */}
+
                     </div>
                   </div>
                 </div>
@@ -252,11 +249,10 @@ const PersonalizedPackageBuilder: React.FC<Props> = ({
           })}
         </div>
 
-        {/* Right: Summary Panel (Desktop) */}
         <aside className="hidden lg:block lg:sticky lg:top-24 lg:self-start lg:z-20">
           <div className="rounded-3xl border border-black/10 bg-black text-white overflow-hidden h-[calc(100vh-6rem)]">
             <div className="p-5 h-full flex flex-col">
-              {/* Header */}
+
               <div className="flex items-center justify-between">
                 <div className="text-[12px] tracking-[0.22em] uppercase text-white/70">
                   Your Plan
@@ -266,9 +262,8 @@ const PersonalizedPackageBuilder: React.FC<Props> = ({
                 </div>
               </div>
 
-              {/* Scroll area (only this scrolls) */}
               <div className="relative flex-1 min-h-0 mt-5">
-                {/* Fades */}
+
                 <div className="pointer-events-none absolute top-0 left-0 right-0 h-6 bg-gradient-to-b from-black to-transparent z-10" />
                 <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-black to-transparent z-10" />
                 <div className="ollinScrollbar relative z-0 h-full overflow-auto pr-2 pt-2 pb-3 space-y-3">
@@ -324,7 +319,6 @@ const PersonalizedPackageBuilder: React.FC<Props> = ({
                 </div>
               </div>
 
-              {/* Footer pinned */}
               <div className="mt-4 pt-4 border-t border-white/10">
                 <button
                   type="button"
@@ -349,9 +343,8 @@ const PersonalizedPackageBuilder: React.FC<Props> = ({
         </aside>
       </section>
 
-      {/* Mobile */}
       <div className="lg:hidden">
-        {/* Backdrop */}
+
         {mobileOpen && (
           <button
             type="button"
@@ -361,7 +354,6 @@ const PersonalizedPackageBuilder: React.FC<Props> = ({
           />
         )}
 
-        {/* Collapsed bar */}
         {!mobileOpen && (
           <div className="fixed bottom-6 left-4 right-4 z-30 pb-[env(safe-area-inset-bottom)] transition-transform duration-300">
             <button
@@ -391,11 +383,10 @@ const PersonalizedPackageBuilder: React.FC<Props> = ({
           </div>
         )}
 
-        {/* Drawer */}
         {mobileOpen && (
           <div className="fixed bottom-0 left-0 right-0 z-30">
             <div className="rounded-t-[32px] border-t border-white/10 bg-black text-white px-5 pt-5 pb-6 shadow-[0_-20px_60px_rgba(0,0,0,0.35)] h-[85vh] flex flex-col">
-              {/* Header */}
+
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <div className="text-[11px] tracking-[0.22em] uppercase text-white/70">
@@ -418,7 +409,6 @@ const PersonalizedPackageBuilder: React.FC<Props> = ({
                 </button>
               </div>
 
-              {/* Scroll area */}
               <div className="relative flex-1 min-h-0 mt-4">
                 <div className="pointer-events-none absolute top-0 left-0 right-0 h-6 bg-gradient-to-b from-black to-transparent z-10" />
                 <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-black to-transparent z-10" />
@@ -475,7 +465,6 @@ const PersonalizedPackageBuilder: React.FC<Props> = ({
                 </div>
               </div>
 
-              {/* Footer pinned */}
               <div className="mt-4 pt-4 border-t border-white/10 pb-[env(safe-area-inset-bottom)]">
                 <button
                   type="button"
@@ -500,7 +489,6 @@ const PersonalizedPackageBuilder: React.FC<Props> = ({
         )}
       </div>
 
-      {/* Scrollbar styling */}
       <style>{`
                 .ollinScrollbar {
                     scrollbar-width: thin;

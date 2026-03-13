@@ -39,17 +39,14 @@ function SectionTitle({
                 {title}
             </h2>
 
-            {/* Desktop copy (INTACT) */}
             <p className="hidden md:block text-[15px] md:text-[17px] leading-relaxed text-ollin-black/70 max-w-[70ch] max-md:max-w-[46ch]">
                 {subtitle}
             </p>
 
-            {/* Tablet copy (sm.. <md) */}
             <p className="hidden sm:block md:hidden text-[14px] leading-relaxed text-ollin-black/70 max-w-[58ch] break-words hyphens-auto max-md:[overflow-wrap:anywhere]">
                 {subtitleTablet ?? subtitle}
             </p>
 
-            {/* Mobile copy (<sm) */}
             <p className="sm:hidden text-[14px] leading-relaxed text-ollin-black/70 max-w-[46ch] break-words hyphens-auto max-md:[overflow-wrap:anywhere]">
                 {subtitleMobile ?? subtitleTablet ?? subtitle}
             </p>
@@ -76,7 +73,7 @@ function Card({
         <div
             className={cx(
                 `rounded-none border border-black/10 ${bg} p-6 sm:p-7 md:p-9`,
-                // mobile safety (does not touch desktop)
+
                 "max-md:max-w-full max-md:box-border max-md:overflow-hidden",
                 className
             )}
@@ -149,14 +146,13 @@ function BulletList({
 
     return (
         <>
-            {/* Desktop list (INTACT look) */}
+
             <div className="hidden md:block space-y-3 text-[14px] md:text-[15px] leading-relaxed text-ollin-black/70 max-md:text-[13.5px]">
                 {items.map((t, i) => (
                     <p key={i}>• {t}</p>
                 ))}
             </div>
 
-            {/* Tablet list (sm.. <md) */}
             <div className="hidden sm:block md:hidden text-ollin-black/70">
                 <div className="space-y-3 text-[13.5px] leading-relaxed">
                     {tablet.map((t, i) => (
@@ -208,7 +204,6 @@ function BulletList({
                 ) : null}
             </div>
 
-            {/* Mobile list (<sm) */}
             <div className="sm:hidden text-ollin-black/70">
                 <div className="space-y-3 text-[13.5px] leading-relaxed">
                     {mobile.map((t, i) => (
@@ -352,16 +347,16 @@ function LeadPathRail({ steps }: { steps: string[] }) {
 
     return (
         <div ref={ref} className="mt-5 md:mt-6">
-            {/* MOBILE: vertical stepper */}
+
             <div className="md:hidden relative">
                 <div className="relative pl-8">
-                    {/* main vertical rail */}
+
                     <div className="absolute left-[6px] top-[6px] bottom-[6px] w-px bg-black/20" />
 
                     <div className="space-y-6">
                         {steps.map((label) => (
                             <div key={label} className="relative" style={{ minHeight: `${MOBILE_ROW_MINH}px` }}>
-                                {/* Dot */}
+
                                 <div
                                     className="absolute left-[0px] top-[2px] rounded-full"
                                     style={{
@@ -371,10 +366,8 @@ function LeadPathRail({ steps }: { steps: string[] }) {
                                     }}
                                 />
 
-                                {/* Tick */}
                                 <div className="absolute left-[12px] top-[7px] h-px w-[16px] bg-black/15" />
 
-                                {/* Label */}
                                 <p
                                     className="text-[13.5px] font-medium text-ollin-black/80 max-w-[34ch]"
                                     style={{ paddingLeft: `${MOBILE_LABEL_PADLEFT}px`, lineHeight: 1.25 }}
@@ -385,7 +378,6 @@ function LeadPathRail({ steps }: { steps: string[] }) {
                         ))}
                     </div>
 
-                    {/* Curtain wipe */}
                     {!reducedMotion && (
                         <div
                             aria-hidden
@@ -405,10 +397,9 @@ function LeadPathRail({ steps }: { steps: string[] }) {
                 </div>
             </div>
 
-            {/* DESKTOP/TABLET: horizontal stepper */}
             <div className="hidden md:block relative">
                 <div className="relative">
-                    {/* rail */}
+
                     <div className="absolute left-0 right-0" style={{ top: `${RAIL_Y}px` }}>
                         <div className="h-px w-full bg-black/20" />
                     </div>
@@ -416,7 +407,7 @@ function LeadPathRail({ steps }: { steps: string[] }) {
                     <div className="grid grid-cols-4">
                         {steps.map((label) => (
                             <div key={label} className="relative flex flex-col items-center">
-                                {/* Dot */}
+
                                 <div
                                     className="rounded-full"
                                     style={{
@@ -426,10 +417,8 @@ function LeadPathRail({ steps }: { steps: string[] }) {
                                     }}
                                 />
 
-                                {/* Tick */}
                                 <div className="mt-3 h-7 w-px bg-black/15" />
 
-                                {/* Label */}
                                 <p
                                     className="text-center text-[14px] font-medium text-ollin-black/80 max-w-[22ch]"
                                     style={{ marginTop: `${TEXT_GAP_DESKTOP}px`, lineHeight: TEXT_LINE_HEIGHT_DESKTOP }}
@@ -440,7 +429,6 @@ function LeadPathRail({ steps }: { steps: string[] }) {
                         ))}
                     </div>
 
-                    {/* Curtain wipe */}
                     {!reducedMotion && (
                         <div
                             aria-hidden
@@ -469,7 +457,6 @@ export default function ServicesDemand() {
         return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     }, []);
 
-    // ✅ Stepper content (replacing the two “arrow text” strips)
     const weeklyOperatingLoopSteps = useMemo(
         () => ["Review", "Fix waste", "Refresh creatives", "Reallocate"],
         []
@@ -481,7 +468,7 @@ export default function ServicesDemand() {
 
     return (
         <main className="w-full max-md:overflow-x-hidden">
-            {/* ✅ Landscape phone (wide but short) safety — keeps hero breathing without touching desktop rules */}
+
             <style>{`
         @media (max-height: 520px){
           .demandHero{
@@ -512,7 +499,6 @@ export default function ServicesDemand() {
         }
       `}</style>
 
-            {/* HERO */}
             <section className="demandSafeX demandHero w-full max-w-[1500px] mx-auto px-[5vw] pt-28 md:pt-32 pb-10 md:pb-14">
                 <Link
                     to="/services"
@@ -534,7 +520,6 @@ export default function ServicesDemand() {
                         Turn searches into booked calls.
                     </p>
 
-                    {/* Desktop paragraphs (INTACT) */}
                     <div className="hidden md:block mt-4 space-y-3 max-w-[80ch] max-md:max-w-[48ch]">
                         <p className="text-[15px] md:text-[17px] leading-relaxed text-ollin-black/70">
                             Demand is how you get steady opportunities: ads, Google Maps visibility, and tracking that shows what’s
@@ -546,7 +531,6 @@ export default function ServicesDemand() {
                         </p>
                     </div>
 
-                    {/* Tablet paragraphs (sm.. <md) */}
                     <div className="hidden sm:block md:hidden mt-4 space-y-3 max-w-[60ch]">
                         <p className="text-[14px] leading-relaxed text-ollin-black/70 break-words hyphens-auto max-md:[overflow-wrap:anywhere]">
                             Demand means showing up when intent is high—Ads, Google Maps, and clean tracking.
@@ -556,7 +540,6 @@ export default function ServicesDemand() {
                         </p>
                     </div>
 
-                    {/* Mobile paragraphs (<sm) */}
                     <div className="sm:hidden mt-4 space-y-3 max-w-[46ch]">
                         <p className="text-[14px] leading-relaxed text-ollin-black/70 break-words hyphens-auto max-md:[overflow-wrap:anywhere]">
                             Show up when intent is high.
@@ -572,7 +555,6 @@ export default function ServicesDemand() {
                         <Chip href="#analytics">Tracking That Proves It</Chip>
                     </div>
 
-                    {/* 3 Proof Tiles */}
                     <div className="demandHeroTiles mt-10 md:mt-12 grid grid-cols-12 gap-8 max-md:mt-9 max-md:gap-6">
                         <div className="col-span-12 md:col-span-4">
                             <Card tone="soft">
@@ -638,7 +620,7 @@ export default function ServicesDemand() {
             </section>
 
             <section className="demandSafeX w-full max-w-[1500px] mx-auto px-[5vw] pb-20 md:pb-28 space-y-16 md:space-y-20">
-                {/* ADS */}
+
                 <div id="ads" className="scroll-mt-28">
                     <SectionTitle
                         kicker="Pay for attention, with control"
@@ -648,7 +630,6 @@ export default function ServicesDemand() {
                         subtitleMobile="Campaigns for calls—operated weekly to cut waste."
                     />
 
-                    {/* ✅ Replaced: ugly arrow strip -> same stepper as Foundation (NO background card) */}
                     <div className="mt-10 max-md:mt-8">
                         <Label>THE WEEKLY OPERATING LOOP</Label>
                         <LeadPathRail steps={weeklyOperatingLoopSteps} />
@@ -752,7 +733,6 @@ export default function ServicesDemand() {
 
                 <Divider />
 
-                {/* LOCAL SEO */}
                 <div id="localseo" className="scroll-mt-28">
                     <SectionTitle
                         kicker="Show up on “near me”"
@@ -762,7 +742,6 @@ export default function ServicesDemand() {
                         subtitleMobile="A clean, active profile that shows up—and looks legit."
                     />
 
-                    {/* ✅ Replaced: ugly arrow strip -> same stepper as Foundation (NO background card) */}
                     <div className="mt-10 max-md:mt-8">
                         <Label>MOMENTUM SYSTEM</Label>
                         <LeadPathRail steps={momentumSystemSteps} />
@@ -863,7 +842,6 @@ export default function ServicesDemand() {
 
                 <Divider />
 
-                {/* ANALYTICS */}
                 <div id="analytics" className="scroll-mt-28">
                     <SectionTitle
                         kicker="No guessing"
@@ -976,13 +954,11 @@ export default function ServicesDemand() {
                     </div>
                 </div>
 
-                {/* CTA */}
                 <div className="pt-4">
                     <div className="rounded-none border border-black/10 bg-white/30 p-7 sm:p-8 md:p-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
                         <div>
                             <p className="text-[11px] md:text-[12px] tracking-[0.28em] uppercase text-ollin-black/45 mb-3">NEXT STEP</p>
 
-                            {/* Desktop headline/body (INTACT) */}
                             <div className="hidden md:block">
                                 <p className="text-[18px] md:text-[22px] font-medium text-ollin-black/85 max-md:max-w-[30ch]">
                                     Want demand that doesn’t fall apart?
@@ -993,7 +969,6 @@ export default function ServicesDemand() {
                                 </p>
                             </div>
 
-                            {/* Tablet headline/body (sm.. <md) */}
                             <div className="hidden sm:block md:hidden">
                                 <p className="text-[18px] font-medium text-ollin-black/85 max-w-[44ch] leading-snug">
                                     Want demand that doesn’t fall apart?
@@ -1004,7 +979,6 @@ export default function ServicesDemand() {
                                 </p>
                             </div>
 
-                            {/* Mobile headline/body (<sm) */}
                             <div className="sm:hidden">
                                 <p className="text-[18px] font-medium text-ollin-black/85 max-w-[30ch] leading-snug">
                                     Want demand that holds up?

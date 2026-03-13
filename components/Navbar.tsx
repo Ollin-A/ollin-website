@@ -126,7 +126,7 @@ const Navbar: React.FC<NavbarProps> = ({ theme = 'light' }) => {
           className="w-full max-w-[1500px] mx-auto px-[5vw] h-16 md:h-16 grid grid-cols-2 md:grid-cols-[1fr_auto_1fr] items-center"
           style={navTextStyle}
         >
-          {/* LEFT: Logo */}
+
           <div className="flex justify-start">
             <button
               onClick={() => handleNavigation('/')}
@@ -137,7 +137,6 @@ const Navbar: React.FC<NavbarProps> = ({ theme = 'light' }) => {
             </button>
           </div>
 
-          {/* CENTER: Nav Links */}
           <nav className="hidden md:flex justify-center items-center gap-8">
             {navLinks.map((link) => (
               <button
@@ -151,7 +150,6 @@ const Navbar: React.FC<NavbarProps> = ({ theme = 'light' }) => {
             ))}
           </nav>
 
-          {/* RIGHT: Actions & Mobile Toggle */}
           <div className="flex justify-end items-center">
             <div className="hidden md:flex items-center gap-6">
               <button
@@ -197,7 +195,6 @@ const Navbar: React.FC<NavbarProps> = ({ theme = 'light' }) => {
         </div>
       </header>
 
-      {/* Mobile Menu Overlay */}
       <div
         className={`fixed inset-0 ${isDark ? 'bg-ollin-black text-white' : 'bg-[#f2efe9] text-ollin-black'} z-40 flex flex-col justify-center items-center transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${isMobileOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
           }`}

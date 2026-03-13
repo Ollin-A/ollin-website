@@ -12,7 +12,7 @@ import {
 type Props = {
   row1: string[];
   row2: string[];
-  velocity?: number; // velocidad base
+  velocity?: number;
   className?: string;
 };
 
@@ -27,7 +27,6 @@ function useElementWidth<T extends HTMLElement>(
     };
     update();
 
-    // por si cargan fuentes tarde:
     const t = window.setTimeout(update, 50);
 
     window.addEventListener("resize", update);
@@ -60,7 +59,6 @@ const VelocityLine: React.FC<{
     stiffness: 400,
   });
 
-  // Ajuste: que no se vuelva loco con scroll fuerte
   const velocityFactor = useTransform(smoothVelocity, [0, 1200], [0, 3.5], {
     clamp: false,
   });
@@ -76,17 +74,14 @@ const VelocityLine: React.FC<{
   const directionFactor = useRef<number>(reverse ? -1 : 1);
 
   useAnimationFrame((_t, delta) => {
-    // delta en ms -> segundos
+
     const dt = delta / 1000;
 
-    // movimiento base
     let moveBy = directionFactor.current * baseVelocity * dt;
 
-    // si el scroll va negativo, invierte
     if (velocityFactor.get() < 0) directionFactor.current = reverse ? 1 : -1;
     if (velocityFactor.get() > 0) directionFactor.current = reverse ? -1 : 1;
 
-    // suma efecto velocity (suave)
     moveBy += directionFactor.current * Math.abs(moveBy) * velocityFactor.get();
 
     baseX.set(baseX.get() + moveBy);
@@ -124,14 +119,12 @@ const HeroScrollVelocity: React.FC<Props> = ({
   return (
     <div className={`hvWrap ${className}`}>
       <style>{`
-        /* ====== WRAP: el fade en orillas (lo que te gustó) ====== */
         .hvWrap{
           position: relative;
           width: 100%;
-          margin-top: 22px; /* ajusta si lo quieres 1-2px arriba/abajo */
+          margin-top: 22px; 
         }
 
-        /* Banda con máscara (fade izquierda/derecha) */
         .hvBand{
           position: relative;
           overflow: hidden;
@@ -152,7 +145,6 @@ const HeroScrollVelocity: React.FC<Props> = ({
           );
         }
 
-        /* Cada línea */
         .hvLine{
           position: relative;
           width: 100%;
@@ -160,7 +152,6 @@ const HeroScrollVelocity: React.FC<Props> = ({
           padding: 6px 0;
         }
 
-        /* Scroller */
         .hvScroller{
           display: flex;
           align-items: center;
@@ -168,17 +159,14 @@ const HeroScrollVelocity: React.FC<Props> = ({
           will-change: transform;
         }
 
-        /* Un “copy” completo (se repite varias veces) */
         .hvCopy{
           display: inline-flex;
           align-items: center;
           flex: 0 0 auto;
-          /* 🔥 aquí va el “mucho espacio” entre items */
           gap: 56px;
-          padding-right: 56px; /* asegura gap también entre copias */
+          padding-right: 56px; 
         }
 
-        /* Un item */
         .hvItem{
           flex: 0 0 auto;
           font-size: 12px;
@@ -187,12 +175,10 @@ const HeroScrollVelocity: React.FC<Props> = ({
           color: rgba(0,0,0,0.26);
         }
 
-        /* Segunda fila un toque más suave (premium) */
         .hvRow2 .hvItem{
           color: rgba(0,0,0,0.20);
         }
 
-        /* Responsive refinado */
         @media (max-width: 1024px){
           .hvCopy{ gap: 44px; padding-right: 44px; }
           .hvItem{ font-size: 11.5px; letter-spacing: 0.17em; }
@@ -210,10 +196,9 @@ const HeroScrollVelocity: React.FC<Props> = ({
       `}</style>
 
       <div className="hvBand" aria-label="Scrolling services">
-        {/* Fila 1 (más “curada”) */}
+
         <VelocityLine items={row1} baseVelocity={velocity} reverse={false} />
 
-        {/* Fila 2 (más larga) */}
         <div className="hvRow2">
           <VelocityLine
             items={row2}

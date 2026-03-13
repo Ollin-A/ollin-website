@@ -5,7 +5,10 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Base “premium” */
+html {
+  scrollbar-gutter: stable;
+}
+
 html, body {
   background: #f2efe9;
 }

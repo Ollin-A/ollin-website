@@ -18,5 +18,5 @@ export type CompareRow = {
     key: string;
     label: string;
     hint?: string;
-    values: Record<string, boolean>; // packageId -> included?
+    values: Record<string, boolean>;
 };

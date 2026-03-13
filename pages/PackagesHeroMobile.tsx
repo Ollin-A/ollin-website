@@ -19,11 +19,10 @@ export default function PackagesHeroMobile({ muted }: Props) {
     return (
         <section className="relative pt-6 pb-4">
             <div className="relative flex flex-col justify-end px-4">
-                
-                {/* MICROCOPY */}
+
                 <div
                     className={cx(
-                        "text-center mb-6", 
+                        "text-center mb-6",
                         "transition-all duration-[1000ms] delay-[120ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
                         introIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
                     )}
@@ -36,7 +35,6 @@ export default function PackagesHeroMobile({ muted }: Props) {
                     </p>
                 </div>
 
-                {/* DISPLAY TYPE */}
                 <div className="text-center">
                     <h1
                         className={cx(
@@ -54,7 +52,7 @@ export default function PackagesHeroMobile({ muted }: Props) {
 
                     <div
                         className={cx(
-                            "mt-1 flex items-baseline justify-center gap-3", 
+                            "mt-1 flex items-baseline justify-center gap-3",
                             "transition-all duration-[1100ms] delay-[90ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
                             introIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
                         )}

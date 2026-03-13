@@ -39,17 +39,14 @@ function SectionTitle({
                 {title}
             </h2>
 
-            {/* Desktop copy (INTACT) */}
             <p className="hidden md:block text-[15px] md:text-[17px] leading-relaxed text-ollin-black/70 max-w-[70ch] max-md:max-w-[46ch]">
                 {subtitle}
             </p>
 
-            {/* Tablet copy (sm.. <md) */}
             <p className="hidden sm:block md:hidden text-[14px] leading-relaxed text-ollin-black/70 max-w-[58ch] break-words hyphens-auto max-md:[overflow-wrap:anywhere]">
                 {subtitleTablet ?? subtitle}
             </p>
 
-            {/* Mobile copy (<sm) */}
             <p className="sm:hidden text-[14px] leading-relaxed text-ollin-black/70 max-w-[46ch] break-words hyphens-auto max-md:[overflow-wrap:anywhere]">
                 {subtitleMobile ?? subtitleTablet ?? subtitle}
             </p>
@@ -76,7 +73,7 @@ function Card({
         <div
             className={cx(
                 `rounded-none border border-black/10 ${bg} p-6 sm:p-7 md:p-9`,
-                // mobile safety (does not touch desktop)
+
                 "max-md:max-w-full max-md:box-border max-md:overflow-hidden",
                 className
             )}
@@ -149,14 +146,13 @@ function BulletList({
 
     return (
         <>
-            {/* Desktop list (INTACT look) */}
+
             <div className="hidden md:block space-y-3 text-[14px] md:text-[15px] leading-relaxed text-ollin-black/70 max-md:text-[13.5px]">
                 {items.map((t, i) => (
                     <p key={i}>• {t}</p>
                 ))}
             </div>
 
-            {/* Tablet list (sm.. <md) */}
             <div className="hidden sm:block md:hidden text-ollin-black/70">
                 <div className="space-y-3 text-[13.5px] leading-relaxed">
                     {tablet.map((t, i) => (
@@ -214,7 +210,6 @@ function BulletList({
                 ) : null}
             </div>
 
-            {/* Mobile list (<sm) */}
             <div className="sm:hidden text-ollin-black/70">
                 <div className="space-y-3 text-[13.5px] leading-relaxed">
                     {mobile.map((t, i) => (
@@ -290,13 +285,6 @@ function StepList({ steps }: { steps: string[] }) {
     );
 }
 
-/* -----------------------------
-   Process Stepper Rail (same as Demand/Foundation)
-   - Mobile: vertical
-   - Desktop/Tablet: horizontal
-   - No background box
--------------------------------- */
-
 function useRevealOnEnter(threshold = 0.35) {
     const ref = useRef<HTMLDivElement | null>(null);
     const [revealed, setRevealed] = useState(false);
@@ -337,26 +325,20 @@ function ProcessRail({
     const { ref, revealed } = useRevealOnEnter(0.35);
     const showNow = reducedMotion ? true : revealed;
 
-    // Slower, appreciable
     const DURATION_MS = 2800;
     const DELAY_MS = 140;
     const EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
 
-    // Background must match page
     const curtainColorClass = "bg-ollin-bg";
 
-    // Dots
     const DOT_SIZE = 12;
     const DOT_COLOR = "#7A7A7A";
 
-    // Geometry
     const RAIL_Y = 6;
 
-    // Label spacing under tick (desktop/tablet)
     const TEXT_GAP_DESKTOP = 14;
     const TEXT_LINE_HEIGHT_DESKTOP = 1.15;
 
-    // Mobile layout
     const MOBILE_LABEL_PADLEFT = 36;
     const MOBILE_ROW_MINH = 26;
 
@@ -364,16 +346,16 @@ function ProcessRail({
 
     return (
         <div ref={ref} className="mt-5 md:mt-6">
-            {/* MOBILE: vertical stepper */}
+
             <div className="md:hidden relative">
                 <div className="relative pl-8">
-                    {/* main vertical rail */}
+
                     <div className="absolute left-[6px] top-[6px] bottom-[6px] w-px bg-black/20" />
 
                     <div className="space-y-6">
                         {steps.map((label) => (
                             <div key={label} className="relative" style={{ minHeight: `${MOBILE_ROW_MINH}px` }}>
-                                {/* Dot */}
+
                                 <div
                                     className="absolute left-[0px] top-[2px] rounded-full"
                                     style={{
@@ -383,10 +365,8 @@ function ProcessRail({
                                     }}
                                 />
 
-                                {/* Tick */}
                                 <div className="absolute left-[12px] top-[7px] h-px w-[16px] bg-black/15" />
 
-                                {/* Label */}
                                 <p
                                     className="text-[13.5px] font-medium text-ollin-black/80 max-w-[34ch]"
                                     style={{
@@ -400,7 +380,6 @@ function ProcessRail({
                         ))}
                     </div>
 
-                    {/* Curtain wipe */}
                     {!reducedMotion && (
                         <div
                             aria-hidden
@@ -420,10 +399,9 @@ function ProcessRail({
                 </div>
             </div>
 
-            {/* DESKTOP/TABLET: horizontal stepper */}
             <div className="hidden md:block relative">
                 <div className="relative">
-                    {/* rail */}
+
                     <div className="absolute left-0 right-0" style={{ top: `${RAIL_Y}px` }}>
                         <div className="h-px w-full bg-black/20" />
                     </div>
@@ -431,7 +409,7 @@ function ProcessRail({
                     <div className="grid" style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }}>
                         {steps.map((label) => (
                             <div key={label} className="relative flex flex-col items-center">
-                                {/* Dot */}
+
                                 <div
                                     className="rounded-full"
                                     style={{
@@ -441,10 +419,8 @@ function ProcessRail({
                                     }}
                                 />
 
-                                {/* Tick */}
                                 <div className="mt-3 h-7 w-px bg-black/15" />
 
-                                {/* Label */}
                                 <p
                                     className="text-center text-[14px] font-medium text-ollin-black/80"
                                     style={{
@@ -459,7 +435,6 @@ function ProcessRail({
                         ))}
                     </div>
 
-                    {/* Curtain wipe */}
                     {!reducedMotion && (
                         <div
                             aria-hidden
@@ -500,7 +475,7 @@ export default function ServicesRetention() {
 
     return (
         <main className="w-full max-md:overflow-x-hidden">
-            {/* ✅ Landscape phone (wide but short) safety — fixes “everything drops down” without altering desktop */}
+
             <style>{`
         @media (max-height: 520px){
           .retentionHero{
@@ -531,7 +506,6 @@ export default function ServicesRetention() {
         }
       `}</style>
 
-            {/* HERO */}
             <section className="retentionSafeX retentionHero w-full max-w-[1500px] mx-auto px-[5vw] pt-28 md:pt-32 pb-10 md:pb-14">
                 <Link
                     to="/services"
@@ -545,7 +519,6 @@ export default function ServicesRetention() {
                         FOLLOW-UPS + 5-STARS
                     </p>
 
-                    {/* ✅ Mobile clamp reduced to prevent cropping; md (desktop/tablet) stays identical */}
                     <h1 className="retentionHeroTitle font-[Montserrat] font-normal tracking-tight leading-[0.85] text-[clamp(44px,12.6vw,92px)] md:text-[clamp(64px,9vw,140px)]">
                         RETENTION
                     </h1>
@@ -554,7 +527,6 @@ export default function ServicesRetention() {
                         Make revenue compound.
                     </p>
 
-                    {/* Desktop paragraphs (INTACT) */}
                     <div className="hidden md:block mt-4 space-y-3 max-w-[82ch] max-md:max-w-[48ch]">
                         <p className="text-[15px] md:text-[17px] leading-relaxed text-ollin-black/70">
                             Retention is where growth becomes durable: leads don’t get wasted, jobs turn into reviews, and past customers
@@ -565,7 +537,6 @@ export default function ServicesRetention() {
                         </p>
                     </div>
 
-                    {/* Tablet paragraphs (sm.. <md) */}
                     <div className="hidden sm:block md:hidden mt-4 space-y-3 max-w-[60ch]">
                         <p className="text-[14px] leading-relaxed text-ollin-black/70 break-words hyphens-auto max-md:[overflow-wrap:anywhere]">
                             Retention makes growth durable: faster follow-up, more reviews, and repeat work when seasonality hits.
@@ -575,7 +546,6 @@ export default function ServicesRetention() {
                         </p>
                     </div>
 
-                    {/* Mobile paragraphs (<sm) */}
                     <div className="sm:hidden mt-4 space-y-3 max-w-[46ch]">
                         <p className="text-[14px] leading-relaxed text-ollin-black/70 break-words hyphens-auto max-md:[overflow-wrap:anywhere]">
                             Stop losing leads after the click.
@@ -590,7 +560,6 @@ export default function ServicesRetention() {
                         <Chip href="#reviews">Reviews &amp; Repeat Jobs Engine</Chip>
                     </div>
 
-                    {/* 3 Proof Tiles */}
                     <div className="retentionHeroTiles mt-10 md:mt-12 grid grid-cols-12 gap-8 max-md:mt-9 max-md:gap-6">
                         <div className="col-span-12 md:col-span-4">
                             <Card tone="soft">
@@ -674,7 +643,7 @@ export default function ServicesRetention() {
             </section>
 
             <section className="retentionSafeX w-full max-w-[1500px] mx-auto px-[5vw] pb-20 md:pb-28 space-y-16 md:space-y-20">
-                {/* DIGITAL SECRETARY */}
+
                 <div id="secretary" className="scroll-mt-28">
                     <SectionTitle
                         kicker="Speed wins deals"
@@ -684,7 +653,6 @@ export default function ServicesRetention() {
                         subtitleMobile="Intake + follow-up that turns conversations into booked estimates."
                     />
 
-                    {/* ✅ Stepper (NO BOX) */}
                     <div className="mt-10 max-md:mt-8">
                         <Label>THE INTAKE PATH</Label>
                         <ProcessRail steps={intakeSteps} reducedMotion={prefersReducedMotion} />
@@ -787,7 +755,6 @@ export default function ServicesRetention() {
                         </div>
                     </div>
 
-                    {/* Pairs with strip */}
                     <div className="mt-8 max-md:mt-7">
                         <Card tone="soft">
                             <Label>PAIRS WITH</Label>
@@ -814,7 +781,6 @@ export default function ServicesRetention() {
 
                 <Divider />
 
-                {/* REVIEWS + REPEAT */}
                 <div id="reviews" className="scroll-mt-28">
                     <SectionTitle
                         kicker="Reputation + reactivation"
@@ -824,7 +790,6 @@ export default function ServicesRetention() {
                         subtitleMobile="Turn jobs into reviews + repeat work—without reputation damage."
                     />
 
-                    {/* ✅ Stepper (NO BOX) */}
                     <div className="mt-10 max-md:mt-8">
                         <Label>THE THREE FLOWS</Label>
                         <ProcessRail steps={threeFlowSteps} reducedMotion={prefersReducedMotion} />
@@ -927,23 +892,19 @@ export default function ServicesRetention() {
                         </div>
                     </div>
 
-                    {/* Micro callout */}
                     <div className="mt-8 max-md:mt-7">
                         <Card tone="soft">
                             <Label>REPUTATION PROTECTION</Label>
 
-                            {/* Desktop (INTACT) */}
                             <p className="hidden md:block text-[14px] md:text-[15px] leading-relaxed text-ollin-black/70 max-w-[95ch] max-md:max-w-[52ch]">
                                 The system routes unhappy customers to a private resolution path first—so issues get handled before they
                                 turn into public 1-star damage.
                             </p>
 
-                            {/* Tablet */}
                             <p className="hidden sm:block md:hidden text-[14px] leading-relaxed text-ollin-black/70 max-w-[64ch] break-words hyphens-auto max-md:[overflow-wrap:anywhere]">
                                 Unhappy customers route to a private resolution path first—so issues get handled before public damage.
                             </p>
 
-                            {/* Mobile */}
                             <p className="sm:hidden text-[14px] leading-relaxed text-ollin-black/70 max-w-[46ch] break-words hyphens-auto max-md:[overflow-wrap:anywhere]">
                                 Fix issues privately before they become public damage.
                             </p>
@@ -951,7 +912,6 @@ export default function ServicesRetention() {
                     </div>
                 </div>
 
-                {/* CTA */}
                 <div className="pt-4">
                     <div className="rounded-none border border-black/10 bg-white/30 p-7 sm:p-8 md:p-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
                         <div>
@@ -959,7 +919,6 @@ export default function ServicesRetention() {
                                 NEXT STEP
                             </p>
 
-                            {/* Desktop headline/body (INTACT) */}
                             <div className="hidden md:block">
                                 <p className="text-[18px] md:text-[22px] font-medium text-ollin-black/85 max-md:max-w-[30ch]">
                                     Want leads to stop leaking?
@@ -970,7 +929,6 @@ export default function ServicesRetention() {
                                 </p>
                             </div>
 
-                            {/* Tablet headline/body (sm.. <md) */}
                             <div className="hidden sm:block md:hidden">
                                 <p className="text-[18px] font-medium text-ollin-black/85 max-w-[44ch] leading-snug">
                                     Want leads to stop leaking?
@@ -981,7 +939,6 @@ export default function ServicesRetention() {
                                 </p>
                             </div>
 
-                            {/* Mobile headline/body (<sm) */}
                             <div className="sm:hidden">
                                 <p className="text-[18px] font-medium text-ollin-black/85 max-w-[30ch] leading-snug">
                                     Want leaks to stop?

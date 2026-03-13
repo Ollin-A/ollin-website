@@ -28,12 +28,10 @@ function CheckCell({ on }: { on: boolean }) {
 export default function ComparisonSectionMobile({ packages, rows }: Props) {
     const [isOpen, setIsOpen] = useState(false);
 
-    // Text colors
     const textMain = "rgba(0,0,0,0.86)";
     const textSub = "rgba(0,0,0,0.55)";
     const textMicro = "rgba(0,0,0,0.46)";
 
-    // Lock body scroll
     useEffect(() => {
         if (!isOpen) return;
         const prev = document.body.style.overflow;
@@ -45,7 +43,7 @@ export default function ComparisonSectionMobile({ packages, rows }: Props) {
 
     return (
         <div className="mt-8 mb-8">
-            {/* Trigger (Same style as Desktop) */}
+
             <button
                 type="button"
                 onClick={() => setIsOpen(true)}
@@ -67,10 +65,9 @@ export default function ComparisonSectionMobile({ packages, rows }: Props) {
                 </div>
             </button>
 
-            {/* Mobile Fullscreen Drawer */}
             {isOpen && (
                 <div className="fixed inset-0 z-[100] bg-[#fdfdfd] flex flex-col">
-                    {/* Header */}
+
                     <div className="flex-none px-5 py-4 border-b flex items-start justify-between gap-4 sticky top-0 bg-[#fdfdfd] z-20" style={{ borderColor: LINE_SOFT }}>
                         <div>
                             <div className="text-[10px] uppercase tracking-[0.22em]" style={{ color: textMicro }}>
@@ -88,16 +85,15 @@ export default function ComparisonSectionMobile({ packages, rows }: Props) {
                         </button>
                     </div>
 
-                    {/* Scrollable Table Area */}
                     <div className="flex-1 overflow-auto relative bg-[#fdfdfd]">
                         <div className="min-w-fit pb-10">
-                            {/* Table Header */}
+
                             <div className="flex sticky top-0 bg-[#fdfdfd] z-10 border-b" style={{ borderColor: LINE_SOFT }}>
-                                {/* Sticky Col Header */}
+
                                 <div className="sticky left-0 w-[140px] bg-[#fdfdfd] p-3 text-xs uppercase tracking-wider font-semibold border-r border-[#f0f0f0] shadow-[2px_0_10px_rgba(0,0,0,0.03)] z-20 flex items-end pb-3 text-black/40">
                                     Feature
                                 </div>
-                                {/* Package Headers */}
+
                                 {packages.map((p) => (
                                     <div
                                         key={p.id}
@@ -110,11 +106,10 @@ export default function ComparisonSectionMobile({ packages, rows }: Props) {
                                 ))}
                             </div>
 
-                            {/* Table Body */}
                             <div className="divide-y" style={{ borderColor: LINE_SOFT }}>
                                 {rows.map((row) => (
                                     <div key={row.key} className="flex">
-                                        {/* Sticky Label */}
+
                                         <div className="sticky left-0 w-[140px] bg-[#fdfdfd] p-3 border-r border-[#f0f0f0] shadow-[2px_0_10px_rgba(0,0,0,0.03)] z-10 flex flex-col justify-center shrink-0">
                                             <span className="text-xs font-medium leading-snug text-[#111]">
                                                 {row.label}
@@ -126,7 +121,6 @@ export default function ComparisonSectionMobile({ packages, rows }: Props) {
                                             )}
                                         </div>
 
-                                        {/* Cells */}
                                         {packages.map((p) => (
                                             <div
                                                 key={`${row.key}-${p.id}`}

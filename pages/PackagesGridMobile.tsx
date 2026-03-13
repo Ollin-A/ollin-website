@@ -14,7 +14,7 @@ const CHECK_SIZE = 16;
 export default function PackagesGridMobile({ packages, onSelect }: Props) {
     return (
         <div className="mt-2 mb-8">
-            {/* Scroll Container */}
+
             <div
                 className="flex overflow-x-auto snap-x snap-mandatory gap-4 px-6 pb-8 -mx-6 scrollbar-hide"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
@@ -74,7 +74,6 @@ export default function PackagesGridMobile({ packages, onSelect }: Props) {
                     </div>
                 ))}
 
-                {/* Spacer for right edge padding */}
                 <div className="w-2 flex-none" />
             </div>
         </div>

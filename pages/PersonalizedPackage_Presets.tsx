@@ -1,4 +1,4 @@
-// PersonalizedPackage_Presets.tsx
+
 import React from "react";
 import { Check } from "lucide-react";
 
@@ -56,7 +56,7 @@ const PersonalizedPackagePresets: React.FC<Props> = ({
                                     : "border-black/10 bg-white/50 hover:bg-white hover:border-black/20"
                             )}
                         >
-                            {/* Icon */}
+
                             <span
                                 className={cx(
                                     "w-10 h-10 rounded-2xl border flex items-center justify-center transition",
@@ -68,12 +68,10 @@ const PersonalizedPackagePresets: React.FC<Props> = ({
                                 {p.icon}
                             </span>
 
-                            {/* Title */}
                             <span className="text-[11px] md:text-[13px] tracking-[0.14em] text-black/70 uppercase font-medium">
                                 {p.title}
                             </span>
 
-                            {/* Selected indicator (no text) */}
                             {active && (
                                 <span className="absolute top-3 right-3 inline-flex items-center justify-center w-6 h-6 rounded-full border border-black bg-white text-black">
                                     <Check size={14} />

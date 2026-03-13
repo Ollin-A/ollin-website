@@ -10,7 +10,6 @@ const PersonalizedPackageHero: React.FC = () => {
     const current = WORDS[index];
     const next = WORDS[(index + 1) % WORDS.length];
 
-    // Respect prefers-reduced-motion
     useEffect(() => {
         const mq = window.matchMedia?.("(prefers-reduced-motion: reduce)");
         if (!mq) return;
@@ -23,8 +22,8 @@ const PersonalizedPackageHero: React.FC = () => {
     useEffect(() => {
         if (reduceMotion) return;
 
-        const DURATION = 320; // animation duration (ms)
-        const INTERVAL = 1600; // faster cycle (ms)
+        const DURATION = 320;
+        const INTERVAL = 1600;
 
         const tick = () => {
             setAnimating(true);
@@ -42,15 +41,14 @@ const PersonalizedPackageHero: React.FC = () => {
         <section className="bg-transparent">
             <div className="mx-auto max-w-[1100px] px-6 pt-6 md:pt-12 pb-2 md:pb-3">
                 <h1 className="text-center font-medium tracking-[-0.06em] text-black select-none">
-                    {/* Line 1 */}
+
                     <span className="block leading-[0.95] text-[clamp(40px,11vw,86px)] md:text-[clamp(44px,6vw,86px)]">
                         Build your
                     </span>
 
-                    {/* Line 2 (rotating word) */}
                     <span className="block mt-2 md:mt-3 leading-[0.85]">
                         <span className="inline-grid place-items-center min-w-[13ch]">
-                            {/* current */}
+
                             <span
                                 className={animating ? "word-out" : "word-still"}
                                 aria-hidden={false}
@@ -58,7 +56,6 @@ const PersonalizedPackageHero: React.FC = () => {
                                 {current}
                             </span>
 
-                            {/* next */}
                             {!reduceMotion && (
                                 <span className={animating ? "word-in" : "word-hidden"}>
                                     {next}
@@ -67,7 +64,6 @@ const PersonalizedPackageHero: React.FC = () => {
                         </span>
                     </span>
 
-                    {/* Line 3 */}
                     <span className="block mt-2 md:mt-3 leading-[0.95] text-[clamp(40px,11vw,86px)] md:text-[clamp(44px,6vw,86px)]">
                         plan
                     </span>

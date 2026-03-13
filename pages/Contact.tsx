@@ -14,35 +14,33 @@ const Contact: React.FC = () => {
 
     return (
         <div className="w-full min-h-screen bg-white text-black font-sans selection:bg-black selection:text-white">
-            <div className="w-full min-h-screen flex flex-col justify-between px-6 sm:px-10 pt-32 pb-10 max-w-[1400px] mx-auto">
+            <div className="w-full min-h-screen flex flex-col justify-between px-6 sm:px-10 pt-24 lg:pt-32 pb-10 max-w-[1400px] mx-auto">
                 <div className="flex-grow flex flex-col justify-center">
-                    {/* Header */}
-                    <div className="mb-16 md:mb-24">
+                    
+                    <div className="mb-12 lg:mb-24">
                         <h1 className="font-normal text-[clamp(3.5rem,7vw,7rem)] leading-[0.9] tracking-[-0.04em]">
                             Ready to talk?
                         </h1>
                     </div>
 
-                    {/* Layout */}
-                    <div className="grid grid-cols-1 md:grid-cols-[1.35fr_0.65fr] gap-12 lg:gap-20">
-                        {/* Left: Email + Phone */}
-                        <div className="flex flex-col gap-12 min-w-0">
+                    <div className="grid grid-cols-1 lg:grid-cols-[1.35fr_0.65fr] gap-12 lg:gap-20">
+                        
+                        <div className="flex flex-col gap-10 lg:gap-12 min-w-0">
                             <a
                                 href="mailto:contact@ollin.agency"
                                 className="
-                  font-normal
-                  text-[clamp(2rem,4.2vw,4.3rem)]
-                  leading-[0.9]
-                  tracking-[-0.04em]
-                  hover:opacity-70
-                  transition-opacity
-                  min-w-0
-                  md:whitespace-nowrap
-                "
+                                  font-normal
+                                  text-[clamp(2rem,4.2vw,4.3rem)]
+                                  leading-[0.9]
+                                  tracking-[-0.04em]
+                                  hover:opacity-70
+                                  transition-opacity
+                                  min-w-0
+                                  lg:whitespace-nowrap
+                                "
                             >
-                                {/* Prevent ugly breaks like ".agency" or lonely letters */}
-                                <span className="inline-block">contact@ollin.</span>
-                                <span className="inline-block">agency</span>
+                                <span className="inline-block border-b border-transparent">contact@ollin.</span>
+                                <span className="inline-block border-b border-transparent">agency</span>
                             </a>
 
                             <div className="flex flex-col gap-2">
@@ -58,8 +56,7 @@ const Contact: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* Right: Text us */}
-                        <div className="flex flex-col gap-2 md:pl-20">
+                        <div className="flex flex-col gap-2 lg:pl-20">
                             <span className="text-xs uppercase tracking-widest opacity-60">
                                 Text us
                             </span>
@@ -88,7 +85,6 @@ const Contact: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Footer */}
                 <div className="flex flex-col-reverse md:flex-row md:items-end justify-between gap-8 mt-20">
                     <div className="text-[11px] sm:text-[12px] tracking-[0.22em] uppercase opacity-30 pointer-events-none select-none">
                         © {year} OLLIN

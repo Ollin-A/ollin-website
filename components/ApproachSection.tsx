@@ -244,7 +244,7 @@ const ApproachSection: React.FC = () => {
       `}</style>
 
             <div className="max-w-[1500px] mx-auto px-[5vw] w-full">
-                {/* Top copy */}
+
                 <div className="max-w-[980px]">
                     <h3 className="text-3xl md:text-4xl lg:text-5xl tracking-tight leading-[1.02] font-medium">
                         <span className="text-ollin-black">Your</span>{" "}
@@ -265,7 +265,6 @@ const ApproachSection: React.FC = () => {
                     </p>
                 </div>
 
-                {/* Arrows only (top row) */}
                 <div className="mt-10 md:mt-12 flex items-center justify-end">
                     <div className="flex items-center gap-2">
                         <button
@@ -302,14 +301,12 @@ const ApproachSection: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Progress rail */}
                 <div className="mt-6">
                     <div className="progRail w-full">
                         <div className="progFill" style={{ transform: `scaleX(${progress})` }} />
                     </div>
                 </div>
 
-                {/* Carousel */}
                 <div className="mt-6">
                     <div
                         ref={trackRef}
@@ -347,7 +344,7 @@ const ApproachSection: React.FC = () => {
                                     "hover:border-black/20",
                                 ].join(" ")}
                             >
-                                {/* Baseline / Growth label */}
+
                                 <div className="text-[11px] uppercase tracking-[0.18em] text-ollin-black/45">
                                     <span
                                         className={[
@@ -383,7 +380,6 @@ const ApproachSection: React.FC = () => {
                             </div>
                         ))}
 
-                        {/* End spacer: lets the last cards align cleanly without getting stuck */}
                         <div
                             aria-hidden
                             data-spacer="1"
@@ -392,7 +388,6 @@ const ApproachSection: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Dots BELOW the cards, centered */}
                 <div className="mt-8">
                     <div className="dotsRow" aria-label="Jump to a step">
                         {cards.map((c, i) => (

@@ -37,7 +37,6 @@ function SectionTitle({
                 {title}
             </h2>
 
-            {/* Desktop copy (unchanged) */}
             <p
                 className="hidden md:block text-[15px] md:text-[17px] leading-relaxed text-ollin-black/70 max-w-[70ch]"
                 style={{ overflowWrap: "anywhere" }}
@@ -45,7 +44,6 @@ function SectionTitle({
                 {subtitle}
             </p>
 
-            {/* Mobile copy (shorter) */}
             <p
                 className="md:hidden text-[14px] leading-relaxed text-ollin-black/70 max-w-[46ch] break-words hyphens-auto"
                 style={{ overflowWrap: "anywhere" }}
@@ -74,7 +72,7 @@ function Card({
         <div
             className={cx(
                 `rounded-none border border-black/10 ${bg} p-6 sm:p-7 md:p-9`,
-                // MOBILE SAFETY: prevents “goes to infinity” horizontally
+
                 "max-md:max-w-full max-md:box-border max-md:overflow-hidden",
                 className
             )}
@@ -133,7 +131,7 @@ function BulletList({
 
     return (
         <>
-            {/* Desktop list (full) */}
+
             <div className="hidden md:block space-y-3 text-[14px] md:text-[15px] leading-relaxed text-ollin-black/70">
                 {items.map((t, i) => (
                     <p key={i} className="break-words" style={{ overflowWrap: "anywhere" }}>
@@ -142,9 +140,8 @@ function BulletList({
                 ))}
             </div>
 
-            {/* Mobile list (shorter + animated expand) */}
             <div className="md:hidden text-ollin-black/70">
-                {/* Preview bullets */}
+
                 <div className="space-y-3 text-[13.5px] leading-relaxed">
                     {mobile.map((t, i) => (
                         <p key={i} className="break-words hyphens-auto" style={{ overflowWrap: "anywhere" }}>
@@ -155,7 +152,7 @@ function BulletList({
 
                 {canExpand ? (
                     <div className="mt-4">
-                        {/* Animated content (grid trick: 0fr -> 1fr) */}
+
                         <div
                             className={cx(
                                 "grid",
@@ -178,7 +175,6 @@ function BulletList({
                             </div>
                         </div>
 
-                        {/* Toggle sits at the “footer” (doesn’t interrupt the reading flow) */}
                         <button
                             type="button"
                             onClick={() => setOpen((v) => !v)}
@@ -215,11 +211,11 @@ export default function ServicesAudit() {
         <main
             className={cx(
                 "w-full",
-                // MOBILE FIX: kill any accidental horizontal overflow (does not touch desktop)
+
                 "max-md:overflow-x-hidden"
             )}
         >
-            {/* Landscape phone safety — avoids “content drops down” without touching desktop */}
+
             <style>{`
         @media (max-height: 520px){
           .auditHero{
@@ -317,7 +313,6 @@ export default function ServicesAudit() {
         }
       `}</style>
 
-            {/* HERO */}
             <section className="auditSafeX auditHero w-full max-w-[1500px] mx-auto px-[5vw] pt-28 md:pt-32 pb-10 md:pb-14">
                 <Link
                     to="/services"
@@ -339,7 +334,6 @@ export default function ServicesAudit() {
                         Find what’s leaking revenue—then fix the order of operations.
                     </p>
 
-                    {/* Desktop paragraphs (unchanged) */}
                     <div className="hidden md:block mt-4 space-y-3 max-w-[82ch]">
                         <p className="text-[15px] md:text-[17px] leading-relaxed text-ollin-black/70">
                             Most contractors don’t have a “marketing problem.” They have an{" "}
@@ -352,7 +346,6 @@ export default function ServicesAudit() {
                         </p>
                     </div>
 
-                    {/* Mobile paragraphs (shorter) */}
                     <div className="md:hidden mt-4 space-y-3 max-w-[48ch]">
                         <p className="text-[14px] leading-relaxed text-ollin-black/70 break-words hyphens-auto" style={{ overflowWrap: "anywhere" }}>
                             This isn’t “do more marketing.” We find the leak in your pipeline.
@@ -392,7 +385,6 @@ export default function ServicesAudit() {
                         </Link>
                     </div>
 
-                    {/* Proof tiles */}
                     <div className="auditHeroTiles mt-10 md:mt-12 grid grid-cols-12 gap-8 max-md:mt-9 max-md:gap-6">
                         <div className="col-span-12 md:col-span-4">
                             <Card tone="soft">
@@ -439,9 +431,8 @@ export default function ServicesAudit() {
                 </div>
             </section>
 
-            {/* CONTENT */}
             <section className="auditSafeX w-full max-w-[1500px] mx-auto px-[5vw] pb-20 md:pb-28 space-y-16 md:space-y-20">
-                {/* WHAT WE REVIEW + WHAT YOU GET */}
+
                 <div className="grid grid-cols-12 gap-8 items-start max-md:gap-10">
                     <div id="review" className="col-span-12 md:col-span-6 scroll-mt-28">
                         <SectionTitle
@@ -537,7 +528,6 @@ export default function ServicesAudit() {
 
                 <Divider />
 
-                {/* LEAK MAP */}
                 <div id="leakmap" className="scroll-mt-28">
                     <SectionTitle
                         kicker="Clarity"
@@ -593,7 +583,6 @@ export default function ServicesAudit() {
 
                 <Divider />
 
-                {/* IMPLEMENTATION OPTIONS */}
                 <div id="options" className="scroll-mt-28">
                     <SectionTitle
                         kicker="Execution"
@@ -663,7 +652,6 @@ export default function ServicesAudit() {
                     </div>
                 </div>
 
-                {/* CTA */}
                 <div className="pt-4">
                     <div className="rounded-none border border-black/10 bg-white/30 p-7 sm:p-8 md:p-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
                         <div>
@@ -671,23 +659,19 @@ export default function ServicesAudit() {
                                 NEXT STEP
                             </p>
 
-                            {/* Desktop headline (unchanged) */}
                             <p className="hidden md:block text-[18px] md:text-[22px] font-medium text-ollin-black/85">
                                 Start with the 360° Revenue Leak Audit.
                             </p>
 
-                            {/* Mobile headline (shorter) */}
                             <p className="md:hidden text-[18px] font-medium text-ollin-black/85 max-w-[28ch] leading-snug">
                                 Start with the Revenue Leak Audit.
                             </p>
 
-                            {/* Desktop body (unchanged) */}
                             <p className="hidden md:block mt-2 text-[14px] md:text-[15px] leading-relaxed text-ollin-black/65 max-w-[70ch]">
                                 Tell us your trade + service area and we’ll map the fastest order of fixes to get you more booked calls
                                 without wasting spend.
                             </p>
 
-                            {/* Mobile body (shorter) */}
                             <p className="md:hidden mt-2 text-[14px] leading-relaxed text-ollin-black/65 max-w-[46ch]">
                                 Tell us your trade + service area. We’ll map the fastest fixes.
                             </p>

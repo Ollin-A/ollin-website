@@ -54,7 +54,6 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose }) => {
       body: JSON.stringify(payload),
     });
 
-    // intenta leer json para ver requestId / error
     const data = await response.json().catch(() => null);
 
     if (!response.ok) {
@@ -64,7 +63,6 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose }) => {
       throw new Error(msg);
     }
 
-    // opcional: log de requestId
     if (data?.requestId) console.log('Lead sent. requestId:', data.requestId);
 
     setSuccess(true);
@@ -89,11 +87,10 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose }) => {
   }
 };
 
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="relative w-full max-w-lg bg-[#F6F5F2] rounded-2xl shadow-2xl p-6 md:p-8 overflow-hidden animate-in zoom-in-95 duration-200">
-        {/* Close Button */}
+
         <button
           onClick={onClose}
           className="absolute top-4 right-4 p-2 text-gray-500 hover:text-black transition-colors rounded-full hover:bg-black/5"
@@ -122,7 +119,7 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose }) => {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Full Name */}
+
               <div>
                 <input
                   type="text"
@@ -135,7 +132,6 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose }) => {
                 />
               </div>
 
-              {/* Email & Phone */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input
                   type="email"
@@ -156,7 +152,6 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose }) => {
                 />
               </div>
 
-              {/* Business Type */}
               <div>
                 <select
                   name="businessType"
@@ -164,7 +159,7 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose }) => {
                   value={formData.businessType}
                   onChange={handleChange}
                   className="w-full px-4 py-3 bg-white rounded-lg border-0 focus:ring-2 focus:ring-black/5 outline-none transition-all text-ollin-black appearance-none cursor-pointer"
-                  style={{ backgroundImage: 'none' }} 
+                  style={{ backgroundImage: 'none' }}
                 >
                   <option value="" disabled className="text-gray-400">Select Business Type *</option>
                   <option value="roofing">Roofing</option>
@@ -177,7 +172,6 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose }) => {
                 </select>
               </div>
 
-              {/* Website & Location */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input
                   type="text"
@@ -197,7 +191,6 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose }) => {
                 />
               </div>
 
-              {/* Message */}
               <div>
                 <textarea
                   name="message"
@@ -213,7 +206,6 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose }) => {
                 <p className="text-red-500 text-sm text-center">{error}</p>
               )}
 
-              {/* Submit Button */}
               <button
                 type="submit"
                 disabled={loading}

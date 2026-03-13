@@ -26,7 +26,7 @@ export default function PackagesHero({ muted }: Props) {
             "lg:grid lg:grid-cols-12 lg:items-center"
           )}
         >
-          {/* Copy block */}
+
           <div
             className={cx(
               "order-1",
@@ -46,7 +46,6 @@ export default function PackagesHero({ muted }: Props) {
             </p>
           </div>
 
-          {/* Headline block */}
           <div
             className={cx(
               "order-2 w-full text-center",

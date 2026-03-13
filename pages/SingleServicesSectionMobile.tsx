@@ -38,7 +38,6 @@ function setBodyScrollLocked(locked: boolean) {
     };
 }
 
-// DUPLICATED CONSTANTS to avoid touching Desktop file
 const CORE_ITEMS: Array<{ id: string; label: string }> = [
     { id: "website", label: "Website build" },
     { id: "site-tune", label: "Website tune-up" },
@@ -123,7 +122,7 @@ export default function SingleServicesSectionMobile({ services, onRequestScope }
 
     return (
         <section className="mt-14 mb-10">
-            {/* Header */}
+
             <div className="text-center px-4">
                 <div className="text-[10px] uppercase tracking-[0.25em]" style={{ color: "rgba(0,0,0,0.45)" }}>
                     Single services
@@ -141,7 +140,6 @@ export default function SingleServicesSectionMobile({ services, onRequestScope }
             <div className="mt-8 px-4">
                 <div className="border-t" style={{ borderColor: LINE, opacity: 0.7 }} />
 
-                {/* Core Items - Always Visible */}
                 <div className="py-6 grid grid-cols-2 gap-x-4 gap-y-3">
                     {coreItems.map((item) => (
                         <button
@@ -162,7 +160,6 @@ export default function SingleServicesSectionMobile({ services, onRequestScope }
                     ))}
                 </div>
 
-                {/* Extra Items - Collapsible */}
                 {showAll && (
                     <div className="pb-6 grid grid-cols-2 gap-x-4 gap-y-3 animate-in fade-in slide-in-from-top-2">
                         {extraItems.map((item) => (
@@ -185,7 +182,6 @@ export default function SingleServicesSectionMobile({ services, onRequestScope }
                     </div>
                 )}
 
-                {/* Toggle Button */}
                 <div className="flex justify-center -mt-2 mb-6">
                     <button
                         onClick={() => setShowAll(!showAll)}
@@ -204,7 +200,6 @@ export default function SingleServicesSectionMobile({ services, onRequestScope }
                     </button>
                 </div>
 
-                {/* Footer Links - Stacked for mobile */}
                 <div className="flex flex-col items-center gap-3 text-sm mt-8 border-t pt-8" style={{ borderColor: LINE }}>
                     <span style={{ color: PALETTE.muted }}>Not seeing what you need?</span>
 
@@ -216,7 +211,6 @@ export default function SingleServicesSectionMobile({ services, onRequestScope }
                         Contact us directly
                     </button>
 
-                    {/* centered "or" without dashes */}
                     <div className="flex items-center justify-center gap-3 w-full">
                         <span className="h-px w-10 bg-black/10" />
                         <span className="text-xs" style={{ color: "rgba(0,0,0,0.35)" }}>
@@ -235,7 +229,6 @@ export default function SingleServicesSectionMobile({ services, onRequestScope }
                 </div>
             </div>
 
-            {/* Overlay Form removed to use global LeadModal container */}
         </section>
     );
 }

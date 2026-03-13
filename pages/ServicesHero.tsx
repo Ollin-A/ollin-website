@@ -18,13 +18,13 @@ export default function ServicesHero({ muted = "rgba(0,0,0,0.4)" }: Props) {
 
     return (
         <section className="relative pt-14 md:pt-16 lg:pt-20 pb-10 md:pb-14 flex justify-center w-full">
-            {/* 1. Agregamos flex-col y justify-center para centrar verticalmente en móvil */}
+
             <div className="relative min-h-[64vh] md:min-h-[70vh] lg:min-h-[78vh] w-full max-w-7xl mx-auto flex flex-col justify-center lg:block">
-                
+
                 <div
                     className={cx(
                         "max-w-[380px] mx-auto text-center",
-                        "mb-10 lg:mb-0", // Separación natural en móvil
+                        "mb-10 lg:mb-0",
                         "lg:mx-0 lg:text-left lg:absolute",
                         "lg:top-[25%] lg:left-[56%]",
                         "transition-all duration-[1000ms] delay-[120ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
@@ -41,8 +41,8 @@ export default function ServicesHero({ muted = "rgba(0,0,0,0.4)" }: Props) {
 
                 <div
                     className={cx(
-                        "relative w-full text-center", // 2. Centramos el texto y usamos flujo relativo en móvil
-                        "lg:absolute lg:inset-x-0 lg:text-left", // Volvemos a absolute en desktop
+                        "relative w-full text-center",
+                        "lg:absolute lg:inset-x-0 lg:text-left",
                         "lg:bottom-[25%]",
                         "px-5 sm:px-6 lg:px-10"
                     )}
@@ -61,7 +61,6 @@ export default function ServicesHero({ muted = "rgba(0,0,0,0.4)" }: Props) {
                         </span>
                     </h1>
 
-                    {/* 3. Cambiamos a justify-center en móvil y reducimos el gap vertical (mt-4) */}
                     <div className={cx("mt-4 md:mt-8 lg:mt-12", "flex justify-center lg:justify-end")}>
                         <div
                             className={cx(

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Send } from 'lucide-react';
@@ -48,7 +48,6 @@ const AIAssistant: React.FC = () => {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Generamos un ID único para TODA la sesión del chat desde que se abre.
   const [sessionId] = useState(() => generateId());
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -63,12 +62,11 @@ const AIAssistant: React.FC = () => {
     }
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     document.body.style.overflow = 'hidden';
-    document.documentElement.style.overflow = 'hidden';
+    
     return () => { 
       document.body.style.overflow = ''; 
-      document.documentElement.style.overflow = ''; 
     };
   }, []);
 
@@ -81,7 +79,7 @@ const AIAssistant: React.FC = () => {
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value);
     if (textareaRef.current) {
-      textareaRef.current.style.height = '56px';
+      textareaRef.current.style.height = 'auto'; 
       const scrollHeight = textareaRef.current.scrollHeight;
       textareaRef.current.style.height = `${Math.min(scrollHeight, 160)}px`;
     }
@@ -90,7 +88,7 @@ const AIAssistant: React.FC = () => {
   const resetInput = () => {
     setInput('');
     if (textareaRef.current) {
-      textareaRef.current.style.height = '56px';
+      textareaRef.current.style.height = 'auto'; 
     }
   };
 
@@ -107,6 +105,7 @@ const AIAssistant: React.FC = () => {
     }
 
     setIsLoading(true);
+    setTimeout(scrollToBottom, 50);
 
     try {
       const baseUrl = import.meta.env.VITE_API_BASE_URL || 'https://api.ollin.agency/api';
@@ -139,7 +138,7 @@ const AIAssistant: React.FC = () => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className="fixed inset-0 flex flex-col overflow-hidden bg-[#050505] z-0"
+      className="fixed top-0 left-0 w-full h-[100dvh] flex flex-col overflow-hidden bg-[#050505] z-0"
     >
       <div className="w-full h-[80px] md:h-[100px] shrink-0 pointer-events-none bg-transparent" />
 
@@ -225,7 +224,7 @@ const AIAssistant: React.FC = () => {
       <div className="relative z-20 shrink-0 w-full bg-[#050505] border-t border-white/5 pt-5 pb-6 px-4 md:px-8 shadow-[0_-20px_40px_rgba(0,0,0,0.6)]">
         <div className="w-full max-w-5xl mx-auto">
           {messages.length === 0 && (
-            <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
+            <div className="flex flex-col md:flex-row md:flex-wrap items-stretch md:items-center justify-center gap-3 mb-6 w-full">
               {SUGGESTED_PROMPTS.map((prompt, index) => (
                 <motion.button
                   key={prompt}
@@ -233,7 +232,7 @@ const AIAssistant: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 + index * 0.1 }}
                   onClick={(e) => { e.preventDefault(); handleSubmit(undefined, prompt); }}
-                  className="px-5 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-sm text-sm font-medium text-[#F2EFE9]/80 transition-colors text-left"
+                  className="w-full md:w-auto px-5 py-3.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-sm text-[13px] md:text-sm font-medium text-[#F2EFE9]/80 transition-colors text-left"
                 >
                   {prompt}
                 </motion.button>
@@ -254,17 +253,17 @@ const AIAssistant: React.FC = () => {
                   }
                 }}
                 placeholder="Ask about design, systems, or growth..."
-                className="w-full bg-transparent text-[#F2EFE9] py-4 px-5 resize-none outline-none custom-scrollbar placeholder:text-white/30 transition-[height] duration-75 ease-out"
+                className="w-full bg-transparent text-[#F2EFE9] text-sm md:text-[15px] leading-snug py-3 md:py-4 px-4 md:px-5 resize-none outline-none custom-scrollbar placeholder:text-white/30 transition-[height] duration-75 ease-out"
                 rows={1}
                 style={{ 
-                  minHeight: '56px',
+                  minHeight: '52px',
                   overflowY: input.length > 0 && textareaRef.current && textareaRef.current.scrollHeight > 160 ? 'auto' : 'hidden'
                 }}
               />
               <button
                 type="submit"
                 disabled={!input.trim() || isLoading}
-                className="shrink-0 w-[56px] h-[56px] text-[#F2EFE9]/50 hover:text-white flex items-center justify-center disabled:opacity-30 disabled:hover:text-[#F2EFE9]/50 transition-all hover:bg-white/5"
+                className="shrink-0 w-[52px] h-[52px] text-[#F2EFE9]/50 hover:text-white flex items-center justify-center disabled:opacity-30 disabled:hover:text-[#F2EFE9]/50 transition-all hover:bg-white/5"
               >
                 <Send size={20} />
               </button>

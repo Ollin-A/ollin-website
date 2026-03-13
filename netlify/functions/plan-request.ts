@@ -6,7 +6,6 @@ export const handler: Handler = async (event) => {
         'Content-Type': 'application/json',
     };
 
-    // Only allow POST
     if (event.httpMethod !== 'POST') {
         return {
             statusCode: 405,
@@ -31,14 +30,10 @@ export const handler: Handler = async (event) => {
         const body = JSON.parse(event.body || '{}');
         const { to, lead, preset, plainText } = body;
 
-        // Fallback if domain is not verified
-        // TODO: Change to "OLLIN <noreply@ollin.agency>" once domain is verified in Resend
         const fromEmail = 'OLLIN <onboarding@resend.dev>';
 
-        // Default recipient
         const toEmail = to || 'contact@ollin.agency';
 
-        // Construct email content with preset info if available
         let emailContent = plainText || 'No details provided.';
         if (preset) {
             const presetName = typeof preset === 'string' ? preset : (preset.name || 'Unknown Request');

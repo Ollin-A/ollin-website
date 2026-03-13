@@ -8,13 +8,6 @@ type Trade = {
     img: string;
 };
 
-/**
- * LiquidImage (14islands-ish):
- * - Canvas con overscan (inset negativo) para que la deformación pueda “salirse”.
- * - La imagen NO se escala al overscan (se mantiene calzada al recuadro original).
- * - Fondo transparente -> lo que se ve detrás es el bg del contenedor (aquí: bg-ollin-bg / #f2efe9).
- * - Sin “idle waves”: sólo anima cuando hay movimiento del cursor.
- */
 function LiquidImage({
     src,
     alt,
@@ -25,7 +18,7 @@ function LiquidImage({
     src: string;
     alt?: string;
     className?: string;
-    overscan?: number; // px extra alrededor para permitir deformación fuera del borde
+    overscan?: number;
 }) {
     const hostRef = useRef<HTMLDivElement | null>(null);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -37,7 +30,6 @@ function LiquidImage({
     const rafRef = useRef<number | null>(null);
     const runningRef = useRef(false);
 
-    // Guardamos posiciones ya en el espacio UV de WebGL (Y hacia arriba)
     const lastPosRef = useRef<{ x: number; y: number } | null>(null);
     const lastMoveTRef = useRef<number>(0);
 
@@ -67,7 +59,7 @@ function LiquidImage({
         gl.shaderSource(sh, source);
         gl.compileShader(sh);
         if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
-            // eslint-disable-next-line no-console
+
             console.error(gl.getShaderInfoLog(sh));
             gl.deleteShader(sh);
             return null;
@@ -91,7 +83,7 @@ function LiquidImage({
         gl.deleteShader(fs);
 
         if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
-            // eslint-disable-next-line no-console
+
             console.error(gl.getProgramInfoLog(prog));
             gl.deleteProgram(prog);
             return null;
@@ -150,7 +142,6 @@ function LiquidImage({
 
         const { w, h, pad } = sizeRef.current;
 
-        // Decaimiento rápido
         const dt = Math.min(0.05, (tNow - lastMoveTRef.current) / 1000);
         const s = strengthRef.current;
         const decay = Math.pow(0.12, dt);
@@ -326,7 +317,6 @@ function LiquidImage({
             const nx = Math.min(1, Math.max(0, x));
             const nyDom = Math.min(1, Math.max(0, yDom));
 
-            // ✅ FIX: DOM (0 arriba) -> UV WebGL (0 abajo)
             const ny = 1 - nyDom;
 
             const prev = lastPosRef.current;
@@ -370,7 +360,7 @@ function LiquidImage({
             programRef.current = null;
             texRef.current = null;
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+
     }, [src]);
 
     return (
@@ -499,7 +489,6 @@ const BookingSystemTrades: React.FC = () => {
     const [activeTradeIdx, setActiveTradeIdx] = useState(0);
     const activeTrade = trades[activeTradeIdx];
 
-    // ===== MOBILE/TABLET (NO WebGL) =====
     const MobileTradePicker = () => {
         return (
             <div className="mt-14 md:mt-16 lg:hidden">
@@ -510,7 +499,6 @@ const BookingSystemTrades: React.FC = () => {
                     Same system. Different trade. Same goal: more calls and more booked jobs.
                 </p>
 
-                {/* Tap-friendly list */}
                 <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-2">
                     {trades.map((t, idx) => {
                         const active = idx === activeTradeIdx;
@@ -527,7 +515,7 @@ const BookingSystemTrades: React.FC = () => {
                                     "text-[15px] md:text-[16px]",
                                     "tracking-tight",
                                     "transition-colors duration-150",
-                                    "py-2 -my-1", // hitbox mejor para dedo sin cambiar estética
+                                    "py-2 -my-1",
                                     "outline-none focus-visible:ring-2 focus-visible:ring-black/15 focus-visible:ring-offset-2 focus-visible:ring-offset-[#F2F2F2]",
                                     active
                                         ? "text-ollin-black"
@@ -540,10 +528,9 @@ const BookingSystemTrades: React.FC = () => {
                     })}
                 </div>
 
-                {/* Preview card (image NEVER deforms) */}
                 <div className="mt-8 relative">
                     <div className="relative overflow-visible rounded-none bg-transparent">
-                        {/* Image area: uses aspect ratio so it scales cleanly on mobile/tablet */}
+
                         <div className="relative z-0 w-full bg-ollin-bg overflow-hidden aspect-16/10 sm:aspect-video">
                             <img
                                 src={activeTrade.img}
@@ -562,7 +549,6 @@ const BookingSystemTrades: React.FC = () => {
                             />
                         </div>
 
-                        {/* Text panel */}
                         <div className="relative z-20 bg-white px-6 md:px-8 py-6 md:py-7">
                             <div className="text-xs font-semibold tracking-[0.18em] uppercase text-ollin-black/45">
                                 {activeTrade.name}
@@ -619,12 +605,11 @@ const BookingSystemTrades: React.FC = () => {
 
     return (
         <>
-            {/* MOBILE/TABLET */}
+
             <MobileTradePicker />
 
-            {/* DESKTOP (NO TOCAR NADA VISUAL) */}
             <div className="mt-14 md:mt-16 hidden lg:grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-10 items-start">
-                {/* Left list */}
+
                 <div>
                     <div className="text-xs font-semibold tracking-[0.18em] uppercase text-ollin-black/45">
                         Built for your trade
@@ -661,10 +646,9 @@ const BookingSystemTrades: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Right preview panel */}
                 <div className="relative">
                     <div className="relative overflow-visible rounded-none bg-transparent">
-                        {/* Image area */}
+
                         <div className="relative z-0 h-[260px] sm:h-[300px] md:h-[340px] bg-ollin-bg overflow-visible">
                             <LiquidImage
                                 key={activeTrade.img}
@@ -683,7 +667,6 @@ const BookingSystemTrades: React.FC = () => {
                             />
                         </div>
 
-                        {/* Text panel */}
                         <div className="relative z-20 bg-white px-6 md:px-8 py-6 md:py-7">
                             <div className="text-xs font-semibold tracking-[0.18em] uppercase text-ollin-black/45">
                                 {activeTrade.name}

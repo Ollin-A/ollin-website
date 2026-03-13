@@ -1,4 +1,4 @@
-// PersonalizedPackage_FieldControls.tsx
+
 import React from "react";
 
 export type Option = { value: string; label: string; hint?: string };
@@ -82,7 +82,7 @@ export const FieldControl: React.FC<FieldControlProps> = ({
     value,
     onChange,
 }) => {
-    // single
+
     if (field.type === "single" && field.options) {
         return (
             <div className="space-y-2">
@@ -102,7 +102,6 @@ export const FieldControl: React.FC<FieldControlProps> = ({
         );
     }
 
-    // multi
     if (field.type === "multi" && field.options) {
         const arr = Array.isArray(value) ? value : [];
         return (
@@ -131,7 +130,6 @@ export const FieldControl: React.FC<FieldControlProps> = ({
         );
     }
 
-    // toggle
     if (field.type === "toggle") {
         const bool = Boolean(value);
         return (
@@ -142,7 +140,6 @@ export const FieldControl: React.FC<FieldControlProps> = ({
         );
     }
 
-    // number
     if (field.type === "number") {
         const min = field.min ?? 0;
         const max = field.max ?? 99;
@@ -174,7 +171,6 @@ export const FieldControl: React.FC<FieldControlProps> = ({
         );
     }
 
-    // text (default)
     return (
         <input
             value={typeof value === "string" ? value : ""}

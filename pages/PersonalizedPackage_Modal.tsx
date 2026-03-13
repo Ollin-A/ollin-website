@@ -1,4 +1,4 @@
-// PersonalizedPackage_Modal.tsx
+
 import React, { useEffect, useMemo, useState } from "react";
 import { Check, X } from "lucide-react";
 
@@ -8,7 +8,6 @@ type LeadForm = {
     phone: string;
     businessType: string;
 
-    // legacy (kept for compatibility)
     cityState: string;
     website: string;
     notes: string;
@@ -71,7 +70,6 @@ export default function PersonalizedPackageModal({
         return "REQUEST MY PLAN";
     }, [hasEmail, hasPhone]);
 
-    // Body scroll lock + compact mode by viewport height
     useEffect(() => {
         if (!isOpen) return;
 
@@ -79,7 +77,7 @@ export default function PersonalizedPackageModal({
         document.body.style.overflow = "hidden";
 
         const measure = () => {
-            // tweak threshold if you want: lower = less aggressive compacting
+
             setIsShort(window.innerHeight < 780);
         };
 
@@ -92,7 +90,6 @@ export default function PersonalizedPackageModal({
         };
     }, [isOpen]);
 
-    // ESC close
     useEffect(() => {
         if (!isOpen) return;
 
@@ -130,7 +127,6 @@ export default function PersonalizedPackageModal({
         onSubmit();
     };
 
-    // textarea rows: smaller on short screens
     const contextRows = isShort ? 2 : 3;
 
     return (
@@ -216,7 +212,6 @@ export default function PersonalizedPackageModal({
         }
       `}</style>
 
-            {/* Backdrop */}
             <button
                 type="button"
                 className="absolute inset-0 w-full h-full"
@@ -229,25 +224,23 @@ export default function PersonalizedPackageModal({
                 }}
             />
 
-            {/* Center wrapper (use 100dvh to behave on mobile browser UI) */}
             <div className="relative w-full h-[100dvh] flex items-center justify-center px-3 sm:px-4 py-3 sm:py-4">
                 <div
                     className="relative w-full max-w-[900px] ollinGlassCard"
                     onClick={(e) => e.stopPropagation()}
                     style={{
-                        // make sure it never exceeds viewport height; aim for zero scroll
+
                         maxHeight: "calc(100dvh - 24px)",
                     }}
                 >
-                    {/* Scrim */}
+
                     <div className="absolute inset-0 ollinScrim pointer-events-none" />
 
-                    {/* Content */}
                     <div className="relative ollinScroll" style={{ maxHeight: "calc(100dvh - 24px)", overflow: "hidden" }}>
                         <div
                             className={cx("px-6 sm:px-8 md:px-10", isShort ? "pt-6 pb-6" : "pt-8 pb-7")}
                         >
-                            {/* Header */}
+
                             <div className="flex items-start justify-between gap-6">
                                 <div className="min-w-0">
                                     <div className="text-[11px] uppercase tracking-[0.28em]" style={{ color: MUTED }}>
@@ -272,7 +265,6 @@ export default function PersonalizedPackageModal({
                                     </p>
                                 </div>
 
-                                {/* Close */}
                                 <button
                                     type="button"
                                     onClick={closeIfAllowed}
@@ -292,7 +284,6 @@ export default function PersonalizedPackageModal({
                                 style={{ borderColor: LINE, opacity: 0.85 }}
                             />
 
-                            {/* Fields (2-column to reduce height) */}
                             <div className="ollinFields">
                                 <Field
                                     label="NAME"
@@ -354,7 +345,6 @@ export default function PersonalizedPackageModal({
                                 style={{ borderColor: LINE, opacity: 0.85 }}
                             />
 
-                            {/* Bottom bar (config + CTA on same row to save height) */}
                             <div className={cx("flex items-center justify-between gap-4", isShort ? "mt-4" : "mt-5")}>
                                 <div className="flex items-start gap-3 min-w-0">
                                     <div
@@ -400,21 +390,18 @@ export default function PersonalizedPackageModal({
                                 </button>
                             </div>
 
-                            {/* Error (only appears when needed; keeps layout stable enough) */}
                             {localError ? (
                                 <div className={cx(isShort ? "mt-3" : "mt-4", "text-sm")} style={{ color: "rgba(140,0,0,0.92)" }}>
                                     {localError}
                                 </div>
                             ) : null}
 
-                            {/* Footer microline (hide on short screens to avoid forcing scroll) */}
                             {!isShort ? (
                                 <div className="mt-4 text-xs" style={{ color: "rgba(0,0,0,0.55)" }}>
                                     We’ll reach out shortly with next steps.
                                 </div>
                             ) : null}
 
-                            {/* Server message (only when present) */}
                             {submitOk !== null ? (
                                 <div className="mt-3 text-sm" style={{ color: submitOk ? TEXT : MUTED }}>
                                     {submitMsg}

@@ -52,7 +52,7 @@ export default function PackageDetailSheet({
                     </div>
 
                     <div className="mt-3 flex flex-col lg:flex-row gap-10">
-                        {/* LEFT */}
+
                         <div className="min-w-[280px] max-w-[360px]">
                             <div className="font-[Montserrat] font-semibold text-3xl leading-tight">
                                 {panelPkg.name}
@@ -82,7 +82,6 @@ export default function PackageDetailSheet({
                             </div>
                         </div>
 
-                        {/* RIGHT */}
                         <div className="flex-1">
                             <div className="text-[11px] uppercase tracking-[0.22em]" style={{ color: PALETTE.muted }}>
                                 What you get
@@ -104,7 +103,6 @@ export default function PackageDetailSheet({
                                 ))}
                             </div>
 
-                            {/* CTAs */}
                             <div className="mt-10 flex flex-col md:flex-row gap-4 md:items-center">
                                 <button
                                     type="button"

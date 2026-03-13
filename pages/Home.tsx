@@ -18,7 +18,6 @@ const Home: React.FC = () => {
             <PricingSection />
             <Faq />
 
-            {/* Placeholder Anchors */}
             <div id="results" className="h-0 w-0 overflow-hidden absolute top-[120vh]" />
             <div id="contact" className="h-0 w-0 overflow-hidden absolute top-[150vh]" />
         </>

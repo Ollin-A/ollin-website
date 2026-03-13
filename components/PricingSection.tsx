@@ -10,7 +10,7 @@ type Tile = {
   imageSrc: string;
   imageAlt: string;
 
-  mobPos?: string; 
+  mobPos?: string;
 };
 
 const PricingSection: React.FC = () => {
@@ -108,7 +108,6 @@ const PricingSection: React.FC = () => {
     };
   }, []);
 
-  // ✅ Tease + Hint cuando la sección entra al viewport (esto arregla mobile)
   useEffect(() => {
     const sec = sectionRef.current;
     if (!sec || typeof window === "undefined") return;
@@ -117,23 +116,20 @@ const PricingSection: React.FC = () => {
       if (didIntroRef.current) return;
       didIntroRef.current = true;
 
-      // hint SIEMPRE
       setShowHint(true);
       window.setTimeout(() => setShowHint(false), 2600);
 
-      // micro-tease SOLO si no reduce motion
       if (!reduceMotionRef.current) {
         setTeaseOn(true);
         window.setTimeout(() => setTeaseOn(false), 900);
       }
     };
 
-    // Si ya está visible de entrada (desktop), corre inmediato
     const r = sec.getBoundingClientRect();
     const vh = window.innerHeight || 0;
     const initiallyVisible = r.top < vh * 0.85 && r.bottom > vh * 0.15;
     if (initiallyVisible) {
-      // pequeño delay para evitar “flicker” al montar
+
       const t = window.setTimeout(runIntro, 250);
       return () => window.clearTimeout(t);
     }
@@ -148,7 +144,7 @@ const PricingSection: React.FC = () => {
         }
       },
       {
-        // entra “antes” para que en mobile lo alcances a ver
+
         rootMargin: "-10% 0px -25% 0px",
         threshold: [0, 0.1, 0.2],
       }
@@ -158,7 +154,6 @@ const PricingSection: React.FC = () => {
     return () => obs.disconnect();
   }, []);
 
-  // ESC closes
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -170,7 +165,6 @@ const PricingSection: React.FC = () => {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
 
-  // Auto-close when leaving section
   useEffect(() => {
     const sec = sectionRef.current;
     if (!sec || typeof window === "undefined") return;
@@ -191,7 +185,6 @@ const PricingSection: React.FC = () => {
     return () => obs.disconnect();
   }, []);
 
-  // Tilt vars set on TILE; actual transform happens inside (more stable)
   const onMoveTilt = (e: React.MouseEvent<HTMLElement>) => {
     if (!canHoverFine || reduceMotion) return;
     const tile = e.currentTarget as HTMLElement;
@@ -227,7 +220,7 @@ const PricingSection: React.FC = () => {
       className="relative w-full bg-[#F2F2F2] text-ollin-black py-20 md:py-28"
     >
       <div className="max-w-[1500px] mx-auto px-[5vw] w-full">
-        {/* Top copy */}
+
         <div className="max-w-[980px]">
           <h3 className="text-3xl md:text-4xl lg:text-5xl tracking-tight leading-[1.02] font-medium">
             Pick your starting point. We’ll build the rest when you’re ready.
@@ -239,7 +232,6 @@ const PricingSection: React.FC = () => {
           </p>
         </div>
 
-        {/* Flip Tiles */}
         <div className="mt-10 md:mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {tiles.map((t, idx) => {
             const isOpen = openId === t.id;
@@ -279,7 +271,6 @@ const PricingSection: React.FC = () => {
                           <div className="ollinEdgeR" aria-hidden="true" />
                           <div className="ollinEdgeL" aria-hidden="true" />
 
-                          {/* FRONT */}
                           <div className="ollinFace ollinFront">
                             <img
                               src={t.imageSrc}
@@ -296,7 +287,6 @@ const PricingSection: React.FC = () => {
                             </div>
                           </div>
 
-                          {/* BACK */}
                           <div className="ollinFace ollinBack">
                             <div className="inline-flex items-center gap-2">
                               <span
@@ -339,7 +329,6 @@ const PricingSection: React.FC = () => {
           })}
         </div>
 
-        {/* Bottom line + CTA */}
         <div className={["mt-10 md:mt-12", "flex flex-col", "lg:flex-row lg:items-center lg:justify-between", "gap-6"].join(" ")}>
           <div className="text-sm md:text-[15px] text-ollin-black/65">
             <span className="text-ollin-black/80 font-medium">Everything is modular.</span> Start Baseline. Add Growth when you want

@@ -39,17 +39,14 @@ function SectionTitle({
                 {title}
             </h2>
 
-            {/* Desktop copy (unchanged intent) */}
             <p className="hidden md:block text-[15px] md:text-[17px] leading-relaxed text-ollin-black/70 max-w-[70ch] max-md:max-w-[46ch]">
                 {subtitle}
             </p>
 
-            {/* Tablet copy (sm.. <md) */}
             <p className="hidden sm:block md:hidden text-[14px] leading-relaxed text-ollin-black/70 max-w-[58ch] break-words hyphens-auto max-md:[overflow-wrap:anywhere]">
                 {subtitleTablet ?? subtitle}
             </p>
 
-            {/* Mobile copy (<sm) */}
             <p className="sm:hidden text-[14px] leading-relaxed text-ollin-black/70 max-w-[46ch] break-words hyphens-auto max-md:[overflow-wrap:anywhere]">
                 {subtitleMobile ?? subtitleTablet ?? subtitle}
             </p>
@@ -76,7 +73,7 @@ function Card({
         <div
             className={cx(
                 `rounded-none border border-black/10 ${bg} p-6 sm:p-7 md:p-9`,
-                // MOBILE SAFETY: prevents “goes to infinity” horizontally (doesn't touch desktop)
+
                 "max-md:max-w-full max-md:box-border max-md:overflow-hidden",
                 className
             )}
@@ -149,14 +146,13 @@ function BulletList({
 
     return (
         <>
-            {/* Desktop list (full) */}
+
             <div className="hidden md:block space-y-3 text-[14px] md:text-[15px] leading-relaxed text-ollin-black/70 max-md:text-[13.5px]">
                 {items.map((t, i) => (
                     <p key={i}>• {t}</p>
                 ))}
             </div>
 
-            {/* Tablet list (sm.. <md) */}
             <div className="hidden sm:block md:hidden text-ollin-black/70">
                 <div className="space-y-3 text-[13.5px] leading-relaxed">
                     {tablet.map((t, i) => (
@@ -211,7 +207,6 @@ function BulletList({
                 ) : null}
             </div>
 
-            {/* Mobile list (<sm) */}
             <div className="sm:hidden text-ollin-black/70">
                 <div className="space-y-3 text-[13.5px] leading-relaxed">
                     {mobile.map((t, i) => (
@@ -342,36 +337,29 @@ function LeadPathRail({ steps }: { steps: string[] }) {
 
     const showNow = reducedMotion ? true : revealed;
 
-    // ✅ Slower, appreciable
     const DURATION_MS = 2800;
     const DELAY_MS = 140;
     const EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
 
-    // Background must match page
     const curtainColorClass = "bg-ollin-bg";
 
-    // ✅ Dots: solid gray, opaque
-    const DOT_SIZE = 12; // px (h-3 w-3)
-    const DOT_COLOR = "#7A7A7A"; // neutral gray, opaque (tweak if you want lighter)
+    const DOT_SIZE = 12;
+    const DOT_COLOR = "#7A7A7A";
 
-    // Geometry (do NOT change rail/tick positions)
     const RAIL_Y = 6;
 
-    // ✅ Text spacing fix (ONLY text, not lines):
-    // This is the key: create a stable gap from tick end to text top.
-    const TEXT_GAP_DESKTOP = 14; // px from tick bottom to label top (more breathing room)
+    const TEXT_GAP_DESKTOP = 14;
     const TEXT_LINE_HEIGHT_DESKTOP = 1.15;
 
-    // Mobile spacing (label to the right; keep comfy)
     const MOBILE_LABEL_PADLEFT = 36;
     const MOBILE_ROW_MINH = 26;
 
     return (
         <div ref={ref} className="mt-5 md:mt-6">
-            {/* MOBILE: vertical timeline (reveal top -> bottom) */}
+
             <div className="md:hidden relative">
                 <div className="relative pl-8">
-                    {/* main vertical rail */}
+
                     <div className="absolute left-[6px] top-[6px] bottom-[6px] w-px bg-black/20" />
 
                     <div className="space-y-6">
@@ -381,7 +369,7 @@ function LeadPathRail({ steps }: { steps: string[] }) {
                                 className="relative"
                                 style={{ minHeight: `${MOBILE_ROW_MINH}px` }}
                             >
-                                {/* Dot */}
+
                                 <div
                                     className="absolute left-[0px] top-[2px] rounded-full"
                                     style={{
@@ -391,10 +379,8 @@ function LeadPathRail({ steps }: { steps: string[] }) {
                                     }}
                                 />
 
-                                {/* Tick (anchored) */}
                                 <div className="absolute left-[12px] top-[7px] h-px w-[16px] bg-black/15" />
 
-                                {/* Label (more breathing room happens naturally here) */}
                                 <p
                                     className="text-[13.5px] font-medium text-ollin-black/80 max-w-[34ch]"
                                     style={{
@@ -408,7 +394,6 @@ function LeadPathRail({ steps }: { steps: string[] }) {
                         ))}
                     </div>
 
-                    {/* Curtain wipe ABOVE content */}
                     {!reducedMotion && (
                         <div
                             aria-hidden
@@ -428,10 +413,9 @@ function LeadPathRail({ steps }: { steps: string[] }) {
                 </div>
             </div>
 
-            {/* DESKTOP/TABLET: horizontal timeline (reveal left -> right) */}
             <div className="hidden md:block relative">
                 <div className="relative">
-                    {/* rail */}
+
                     <div className="absolute left-0 right-0" style={{ top: `${RAIL_Y}px` }}>
                         <div className="h-px w-full bg-black/20" />
                     </div>
@@ -439,7 +423,7 @@ function LeadPathRail({ steps }: { steps: string[] }) {
                     <div className="grid grid-cols-4">
                         {steps.map((label) => (
                             <div key={label} className="relative flex flex-col items-center">
-                                {/* Dot */}
+
                                 <div
                                     className="rounded-full"
                                     style={{
@@ -449,11 +433,8 @@ function LeadPathRail({ steps }: { steps: string[] }) {
                                     }}
                                 />
 
-                                {/* Tick stays as-is (do not move) */}
                                 <div className="mt-3 h-7 w-px bg-black/15" />
 
-                                {/* ✅ Label spacing fix:
-                    We DO NOT touch the tick/rail, only add a stable gap under the tick. */}
                                 <p
                                     className="text-center text-[14px] font-medium text-ollin-black/80 max-w-[22ch]"
                                     style={{
@@ -467,7 +448,6 @@ function LeadPathRail({ steps }: { steps: string[] }) {
                         ))}
                     </div>
 
-                    {/* Curtain wipe ABOVE content */}
                     {!reducedMotion && (
                         <div
                             aria-hidden
@@ -503,7 +483,7 @@ export default function ServicesFoundation() {
 
     return (
         <main className={cx("w-full", "max-md:overflow-x-hidden")}>
-            {/* ✅ Height-based fixes for landscape phones (md width but short height) */}
+
             <style>{`
         @media (max-height: 520px){
           .foundationHero{
@@ -534,7 +514,6 @@ export default function ServicesFoundation() {
         }
       `}</style>
 
-            {/* HERO */}
             <section className="foundationSafeX foundationHero w-full max-w-[1500px] mx-auto px-[5vw] pt-28 md:pt-32 pb-10 md:pb-14">
                 <Link
                     to="/services"
@@ -556,7 +535,6 @@ export default function ServicesFoundation() {
                         Look established in 30 seconds.
                     </p>
 
-                    {/* Desktop paragraphs (unchanged) */}
                     <div className="hidden md:block mt-4 space-y-3 max-w-[78ch]">
                         <p className="text-[15px] md:text-[17px] leading-relaxed text-ollin-black/70">
                             People decide fast: your logo, website, and social pages either feel legit—or “new.”
@@ -566,7 +544,6 @@ export default function ServicesFoundation() {
                         </p>
                     </div>
 
-                    {/* Tablet paragraphs */}
                     <div className="hidden sm:block md:hidden mt-4 space-y-3 max-w-[60ch]">
                         <p className="text-[14px] leading-relaxed text-ollin-black/70 break-words hyphens-auto max-md:[overflow-wrap:anywhere]">
                             People decide fast: your brand either feels legit—or “new.”
@@ -576,7 +553,6 @@ export default function ServicesFoundation() {
                         </p>
                     </div>
 
-                    {/* Mobile paragraphs */}
                     <div className="sm:hidden mt-4 space-y-3 max-w-[46ch]">
                         <p className="text-[14px] leading-relaxed text-ollin-black/70 break-words hyphens-auto max-md:[overflow-wrap:anywhere]">
                             Look legit fast.
@@ -750,18 +726,15 @@ export default function ServicesFoundation() {
                         <Card tone="soft">
                             <Label>REAL-WORLD TEST</Label>
 
-                            {/* Desktop (unchanged) */}
                             <p className="hidden md:block text-[14px] md:text-[15px] leading-relaxed text-ollin-black/70 max-w-[90ch] max-md:max-w-[52ch]">
                                 We test your logo at tiny sizes (profile icon), mid sizes (website header), and real sizes (truck/yard sign)
                                 so it stays readable.
                             </p>
 
-                            {/* Tablet */}
                             <p className="hidden sm:block md:hidden text-[14px] leading-relaxed text-ollin-black/70 max-w-[64ch] break-words hyphens-auto max-md:[overflow-wrap:anywhere]">
                                 We test your logo at real sizes (profile, website header, truck/sign) so it stays readable.
                             </p>
 
-                            {/* Mobile */}
                             <p className="sm:hidden text-[14px] leading-relaxed text-ollin-black/70 max-w-[46ch] break-words hyphens-auto max-md:[overflow-wrap:anywhere]">
                                 We test your logo at real sizes so it stays readable.
                             </p>
@@ -783,7 +756,6 @@ export default function ServicesFoundation() {
                     <div className="mt-10 max-md:mt-8">
                         <Label>THE LEAD PATH</Label>
 
-                        {/* DO NOT TOUCH: timeline stays exactly as-is */}
                         <LeadPathRail steps={leadSteps} />
                     </div>
 
@@ -983,7 +955,6 @@ export default function ServicesFoundation() {
                                 NEXT STEP
                             </p>
 
-                            {/* Desktop (unchanged copy) */}
                             <div className="hidden md:block">
                                 <p className="text-[18px] md:text-[22px] font-medium text-ollin-black/85 max-md:max-w-[28ch]">
                                     Want Foundation done fast and clean?
@@ -994,7 +965,6 @@ export default function ServicesFoundation() {
                                 </p>
                             </div>
 
-                            {/* Tablet */}
                             <div className="hidden sm:block md:hidden">
                                 <p className="text-[18px] font-medium text-ollin-black/85 max-w-[44ch] leading-snug">
                                     Want Foundation done fast and clean?
@@ -1004,7 +974,6 @@ export default function ServicesFoundation() {
                                 </p>
                             </div>
 
-                            {/* Mobile */}
                             <div className="sm:hidden">
                                 <p className="text-[18px] font-medium text-ollin-black/85 max-w-[30ch] leading-snug">
                                     Want Foundation done fast?

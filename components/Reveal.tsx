@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 type RevealProps = {
     children: React.ReactNode;
     className?: string;
-    delay?: number; // seconds
+    delay?: number;
 };
 
 const Reveal: React.FC<RevealProps> = ({ children, className = "", delay = 0 }) => {

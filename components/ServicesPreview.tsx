@@ -7,9 +7,9 @@ type Headline = { muted: string; strong: string };
 
 type ServiceGroup = {
     key: string;
-    title: string; 
-    subtitle: string; 
-    items: string[]; 
+    title: string;
+    subtitle: string;
+    items: string[];
     ctaLabel: string;
     to: string;
 };
@@ -44,7 +44,6 @@ function DecryptedTitleText({
     const [isScrambling, setIsScrambling] = useState<boolean>(false);
     const [revealedIndices, setRevealedIndices] = useState<Set<number>>(new Set());
 
-    // Keep display in sync if text changes.
     useEffect(() => {
         if (!isHovering) setDisplayText(text);
     }, [text, isHovering]);
@@ -123,7 +122,6 @@ function DecryptedTitleText({
                 .join("");
         };
 
-        // If not hovering: reset exactly like the snippet.
         if (!isHovering) {
             setDisplayText(text);
             setRevealedIndices(new Set());
@@ -133,7 +131,6 @@ function DecryptedTitleText({
             };
         }
 
-        // Hovering: start scrambling exactly like the snippet.
         setIsScrambling(true);
 
         interval = setInterval(() => {
@@ -195,7 +192,6 @@ function RotatingHeadline({
         return () => window.clearInterval(t);
     }, [phrases.length, intervalMs]);
 
-    // Altura fija para que NO cambie el layout al cambiar texto.
     return (
         <div className="relative w-full">
             <div className="h-[180px] sm:h-[210px] md:h-[240px] lg:h-[270px]">
@@ -222,12 +218,6 @@ function RotatingHeadline({
     );
 }
 
-/**
- * Botón estilo Made-in-Evolve:
- * - Base: limpio, opaco, sin ver nada de atrás
- * - Punto rojo (círculo) a la izquierda
- * - Hover: el MISMO círculo se expande y llena todo el botón de rojo
- */
 function BlobCTA({
     label,
     onClick,
@@ -283,7 +273,7 @@ function ServiceCardContent({ group, openModal }: { group: ServiceGroup; openMod
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}
         >
-            {/* Header */}
+
             <div className="mb-4">
                 <div className="grid grid-cols-[18px_1fr] items-center gap-2">
                     <div className="w-[18px] h-[18px] grid place-items-center leading-none text-ollin-black/60">
@@ -306,7 +296,6 @@ function ServiceCardContent({ group, openModal }: { group: ServiceGroup; openMod
                 <div className="mt-3 text-xs md:text-sm text-ollin-black/70">{group.subtitle}</div>
             </div>
 
-            {/* Long list */}
             <div
                 className={[
                     "mt-6",
@@ -328,13 +317,12 @@ function ServiceCardContent({ group, openModal }: { group: ServiceGroup; openMod
                 </ul>
             </div>
 
-            {/* ✅ CTA SUBIDO (más aire) */}
             <BlobCTA
                 label={group.ctaLabel}
                 onClick={() => navigate(group.to)}
                 className={[
                     "absolute left-7 md:left-8",
-                    "bottom-10 md:bottom-11", 
+                    "bottom-10 md:bottom-11",
                     "w-[260px] max-w-[calc(100%-3.5rem)]",
                     "h-[52px]",
                     "opacity-0 translate-y-2",
@@ -487,12 +475,11 @@ const ServicesPreview: React.FC = () => {
         []
     );
 
-    // ✅ hover state SOLO para el callout (para no tocar nada más)
     const [isAuditHovering, setIsAuditHovering] = useState(false);
 
     return (
         <section id="services" className="relative w-full bg-[#F2F2F2] text-ollin-black py-20 md:py-28">
-            {/* ✅ Botón 14islands (versión compacta para "Explore services") */}
+
             <style>{`
         .btnSecondary.btnSecondary14 {
           color: #6b6b6b;
@@ -611,7 +598,7 @@ const ServicesPreview: React.FC = () => {
       `}</style>
 
             <div className="max-w-[1500px] mx-auto px-[5vw] w-full">
-                {/* TOP ROW */}
+
                 <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-12 items-start mb-12 md:mb-16">
                     <RotatingHeadline phrases={headlines} intervalMs={2600} />
 
@@ -658,7 +645,6 @@ const ServicesPreview: React.FC = () => {
                     </div>
                 </div>
 
-                {/* CARDS */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {groups.map((g) => (
                         <div
@@ -667,7 +653,7 @@ const ServicesPreview: React.FC = () => {
                                 "group relative",
                                 "rounded-none",
                                 "border border-black/10",
-                                "bg-[#F2F2F2]", // ✅ antes: bg-ollin-bg
+                                "bg-[#F2F2F2]",
                                 "text-ollin-black",
                                 "overflow-hidden",
                                 "h-[330px] md:h-[380px]",
@@ -675,7 +661,7 @@ const ServicesPreview: React.FC = () => {
                                 "transition-all duration-300",
                                 "hover:border-black/20",
                             ].join(" ")}
-                            onMouseEnter={() => {}} 
+                            onMouseEnter={() => {}}
                             onMouseLeave={() => {}}
                         >
                             <ServiceCardContent group={g} openModal={openModal} />
@@ -683,7 +669,6 @@ const ServicesPreview: React.FC = () => {
                     ))}
                 </div>
 
-                {/* CALLOUT */}
                 <div
                     className={[
                         "group relative",

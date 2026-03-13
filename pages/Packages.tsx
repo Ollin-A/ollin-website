@@ -22,7 +22,6 @@ export default function PackagesPage() {
     const navigate = useNavigate();
     const { openModal } = useLeadModal();
 
-    // arranca cerrado
     const [activeId, setActiveId] = useState<string | null>(null);
     const [panelPkg, setPanelPkg] = useState<PackageTier>(() => PACKAGES[0]);
 
@@ -59,7 +58,7 @@ export default function PackagesPage() {
     return (
         <div className="w-full" style={{ background: PALETTE.bg, color: PALETTE.ink }}>
             <div className="max-w-6xl mx-auto px-6 pt-14 pb-20 font-[Poppins]">
-                {/* HERO */}
+
                 <div className="hidden md:block">
                     <PackagesHero muted={PALETTE.muted} />
                 </div>
@@ -67,7 +66,6 @@ export default function PackagesPage() {
                     <PackagesHeroMobile muted={PALETTE.muted} />
                 </div>
 
-                {/* PACKAGES GRID */}
                 <div className="hidden md:block">
                     <PackagesGrid
                         packages={PACKAGES}
@@ -83,7 +81,6 @@ export default function PackagesPage() {
                     />
                 </div>
 
-                {/* DETAIL SHEET */}
                 <PackageDetailSheet
                     outerRef={panelOuterRef}
                     activeId={activeId}
@@ -92,7 +89,6 @@ export default function PackagesPage() {
                     onBuildYourOwnPlan={handleBuildYourOwnPlan}
                 />
 
-                {/* COMPARISON (moved ABOVE single services) */}
                 <div className="hidden md:block">
                     <ComparisonSection
                         packages={PACKAGES}
@@ -108,7 +104,6 @@ export default function PackagesPage() {
                     />
                 </div>
 
-                {/* SINGLE SERVICES (moved BELOW comparison) */}
                 <div className="hidden md:block">
                     <SingleServicesSection
                         services={SINGLE_SERVICES}
@@ -126,7 +121,6 @@ export default function PackagesPage() {
                     />
                 </div>
 
-                {/* CUSTOM CTA */}
                 <CustomPlanCTASection onBuildYourOwnPlan={handleBuildYourOwnPlan} />
             </div>
         </div>

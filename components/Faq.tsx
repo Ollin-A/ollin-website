@@ -14,7 +14,6 @@ import { Link } from "react-router-dom";
 import Reveal from "./Reveal";
 import { useLeadModal } from "./LeadModalContext";
 
-// --- TYPES ---
 type FaqItem = { id: string; question: string; answer: string };
 
 type FaqCategory = {
@@ -25,7 +24,6 @@ type FaqCategory = {
     faqs: FaqItem[];
 };
 
-// --- DATA ---
 const faqCategories: FaqCategory[] = [
     {
         id: "fit",
@@ -269,21 +267,18 @@ const faqCategories: FaqCategory[] = [
     },
 ];
 
-const OPEN_SCROLL_DELAY_MS = 340; // coincide con duration-300 + un colchón
+const OPEN_SCROLL_DELAY_MS = 340;
 
 const Faq: React.FC = () => {
     const { openModal } = useLeadModal();
     const [activeCategoryId, setActiveCategoryId] = useState<string>(faqCategories[0].id);
 
-    // ✅ por default ninguna pregunta abierta
     const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-    // ✅ por default el panel completo colapsado
     const [accordionOpen, setAccordionOpen] = useState<boolean>(false);
 
     const accordionRef = useRef<HTMLDivElement>(null);
 
-    // ✅ si abrimos desde “todo cerrado”, scrolleamos DESPUÉS de la animación
     const pendingScrollRef = useRef(false);
     const scrollTimerRef = useRef<number | null>(null);
 
@@ -298,7 +293,6 @@ const Faq: React.FC = () => {
         window.scrollTo({ top: y, behavior: "smooth" });
     };
 
-    // ✅ scroll “post-open” (soluciona el scroll incompleto del primer click)
     useEffect(() => {
         if (!accordionOpen) return;
         if (!pendingScrollRef.current) return;
@@ -319,7 +313,6 @@ const Faq: React.FC = () => {
     const handleCategoryClick = (id: string) => {
         const isSame = id === activeCategoryId;
 
-        // click al mismo card => toggle del panel (abre/cierra)
         if (isSame) {
             if (accordionOpen) {
                 setAccordionOpen(false);
@@ -329,21 +322,19 @@ const Faq: React.FC = () => {
 
             setAccordionOpen(true);
             setOpenIndex(null);
-            pendingScrollRef.current = true; // ✅ scroll después de abrir
+            pendingScrollRef.current = true;
             return;
         }
 
-        // cambiar de categoría
         setActiveCategoryId(id);
         setOpenIndex(null);
 
         if (accordionOpen) {
-            // si ya estaba abierto, scroll normal (rápido)
+
             requestAnimationFrame(() => scrollToAccordion());
             return;
         }
 
-        // si estaba cerrado: abrir + scroll post-open
         setAccordionOpen(true);
         pendingScrollRef.current = true;
     };
@@ -355,7 +346,7 @@ const Faq: React.FC = () => {
     return (
         <section id="faq" className="relative w-full bg-[#F2F2F2] text-ollin-black py-12 md:py-28">
             <div className="max-w-[1500px] mx-auto px-[5vw] w-full">
-                {/* Top copy */}
+
                 <Reveal>
                     <div className="max-w-[980px]">
                         <h3 className="text-3xl md:text-4xl lg:text-5xl tracking-tight leading-[1.02] font-medium">
@@ -369,7 +360,6 @@ const Faq: React.FC = () => {
                     </div>
                 </Reveal>
 
-                {/* Categories */}
                 <div className="mt-10 md:mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                     {faqCategories.map((cat, idx) => {
                         const isActive = activeCategoryId === cat.id;
@@ -389,7 +379,7 @@ const Faq: React.FC = () => {
                                         isActive ? "border-black/20" : "",
                                     ].join(" ")}
                                 >
-                                    {/* Active indicator line */}
+
                                     <div
                                         className={[
                                             "absolute left-0 right-0 top-0 h-[2px] bg-black transition-opacity",
@@ -431,7 +421,6 @@ const Faq: React.FC = () => {
                     })}
                 </div>
 
-                {/* Accordion wrapper (collapsible) */}
                 <div
                     ref={accordionRef}
                     className={[
@@ -525,7 +514,6 @@ const Faq: React.FC = () => {
                                     })}
                                 </div>
 
-                                {/* tiny CTA row */}
                                 <div className="pt-5 md:pt-6 border-t border-black/10 mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                                     <div className="text-sm md:text-[15px] text-ollin-black/65">
                                         Still unsure? We’ll tell you the simplest next step—based on your
@@ -541,7 +529,6 @@ const Faq: React.FC = () => {
                                             Get a quick plan
                                         </button>
 
-                                        {/* ✅ UPDATED: packages CTA */}
                                         <Link
                                             to="/packages"
                                             className="inline-flex items-center justify-center px-4 py-3 border border-black/10 bg-transparent text-ollin-black/70 text-sm font-medium hover:text-ollin-black transition"

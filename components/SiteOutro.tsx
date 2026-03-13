@@ -1,4 +1,4 @@
-// SiteOutro.tsx
+
 import React, { useRef } from "react";
 import { useInView } from "framer-motion";
 import SplashCursor from "./SplashCursor";
@@ -48,8 +48,7 @@ export default function SiteOutro() {
       )}
 
       <div className="relative z-10 w-full min-h-[100svh] flex flex-col pointer-events-none">
-        
-        {/* MOBILE + TABLET */}
+
         <div className="lg:hidden flex flex-col min-h-[100svh] pointer-events-auto">
           <div className="px-6 sm:px-10 pt-20 sm:pt-24 pb-6">
             <h2 className="font-normal tracking-[-0.04em] leading-[0.98] text-[clamp(2.3rem,8.4vw,3.6rem)]">
@@ -73,7 +72,6 @@ export default function SiteOutro() {
 
           <div className="flex-1" />
 
-          {/* Updated Mobile Footer */}
           <div className="px-6 sm:px-10 pb-10 sm:pb-12">
             <div className="flex flex-col gap-y-6 mb-8">
               <div className="flex flex-wrap gap-x-6 gap-y-3">
@@ -112,11 +110,10 @@ export default function SiteOutro() {
           </div>
         </div>
 
-        {/* DESKTOP */}
         <div className="hidden lg:flex lg:flex-col lg:min-h-[100svh] pointer-events-auto">
-          
+
           <div className="flex-1 w-full max-w-[1400px] mx-auto px-10 pt-24 flex flex-col">
-            
+
             <div className="max-w-[980px]">
               <h2 className="font-normal text-[clamp(3.2rem,6.2vw,6.1rem)] leading-[0.92] tracking-[-0.04em]">
                 <span className="block">Let’s make something</span>
@@ -139,10 +136,9 @@ export default function SiteOutro() {
 
           </div>
 
-          {/* Updated Desktop Footer */}
           <div className="w-full max-w-[1400px] mx-auto px-10 pb-8 mt-auto">
             <div className="h-px bg-black/10 w-full mb-6" />
-            
+
             <div className="flex justify-between items-center w-full">
               <div className="text-[12px] tracking-[0.22em] uppercase text-black/25 select-none shrink-0">
                 © {year} OLLIN
@@ -160,8 +156,7 @@ export default function SiteOutro() {
                     {l.label}
                   </a>
                 ))}
-                
-                {/* Subtle vertical divider between Legal and Social */}
+
                 <div className="w-px h-3 bg-black/20 hidden xl:block mx-2" />
 
                 {socialLinks.map((l) => (

@@ -11,7 +11,7 @@ type Props = {
 };
 
 type LeadDraft = {
-    serviceId: string; // real id (website/gbp/etc) OR "custom"
+    serviceId: string;
     serviceName: string;
     name: string;
     phone: string;
@@ -22,9 +22,9 @@ type LeadDraft = {
 
 type MenuItem = {
     key: string;
-    serviceId: string; // what we send to /contact
-    label: string;     // what user sees in the list + modal title
-    hint?: string;     // optional modal subcopy
+    serviceId: string;
+    label: string;
+    hint?: string;
 };
 
 const STORAGE_KEY = "ollin.scope_draft.v1";
@@ -38,10 +38,6 @@ function setBodyScrollLocked(locked: boolean) {
     };
 }
 
-/**
- * These map to your existing SINGLE_SERVICES ids (so /contact receives a known service id)
- * Display labels are shortened so the whole list can fit in one viewport.
- */
 const CORE_ITEMS: Array<{ id: string; label: string }> = [
     { id: "website", label: "Website build" },
     { id: "site-tune", label: "Website tune-up" },
@@ -53,12 +49,6 @@ const CORE_ITEMS: Array<{ id: string; label: string }> = [
     { id: "tracking", label: "Tracking + ROI" },
 ];
 
-/**
- * Extra services (from your list). These open the same overlay,
- * but submit as serviceId="custom" while preserving the selected label in sessionStorage.
- *
- * Keep these short so mobile can stay 2 columns without making the list tall.
- */
 const EXTRA_ITEMS: string[] = [
     "360° Revenue Leak Audit",
     "Call review (30–50)",
@@ -129,7 +119,6 @@ export default function SingleServicesSection({ services, onRequestScope }: Prop
         onRequestScope("custom");
     };
 
-    // Lock scroll + ESC close
     useEffect(() => {
         if (!openKey) return;
 
@@ -147,11 +136,9 @@ export default function SingleServicesSection({ services, onRequestScope }: Prop
 
     if (!menuItems.length) return null;
 
-    // Removed the inline submit handler since we open the global LeadModal directly
-
     return (
         <section className="mt-16">
-            {/* ✅ CSS del botón (igual al Hero) + override para que NO “brinque” el texto */}
+
             <style>{`
         .btnSecondary.btnSecondary14 {
           color: #6b6b6b;
@@ -249,7 +236,6 @@ export default function SingleServicesSection({ services, onRequestScope }: Prop
         }
       `}</style>
 
-            {/* header (kept compact so the list can fit without scroll) */}
             <div
                 className="text-[11px] uppercase tracking-[0.28em]"
                 style={{ color: "rgba(0,0,0,0.45)" }}
@@ -269,7 +255,6 @@ export default function SingleServicesSection({ services, onRequestScope }: Prop
             <div className="mt-6">
                 <div className="border-t" style={{ borderColor: LINE, opacity: 0.7 }} />
 
-                {/* Compact list (landing-like): small, gray, no bold, no hover “OPEN” */}
                 <div className="pt-5 grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-12 gap-y-3">
                     {menuItems.map((item) => (
                         <button
@@ -282,13 +267,13 @@ export default function SingleServicesSection({ services, onRequestScope }: Prop
                             )}
                             style={{
                                 fontFamily: "Montserrat, system-ui, -apple-system, Segoe UI, Roboto, Arial",
-                                fontWeight: 400, // <- no bold
-                                fontSize: "14px", // <- smaller
+                                fontWeight: 400,
+                                fontSize: "14px",
                                 lineHeight: 1.35,
-                                color: "rgba(0,0,0,0.52)", // <- gray like your landing
+                                color: "rgba(0,0,0,0.52)",
                             }}
                             onMouseEnter={(e) => {
-                                // subtle hover: just a tiny opacity lift
+
                                 (e.currentTarget.style.color = "rgba(0,0,0,0.70)");
                             }}
                             onMouseLeave={(e) => {
@@ -300,11 +285,9 @@ export default function SingleServicesSection({ services, onRequestScope }: Prop
                     ))}
                 </div>
 
-                {/* Bottom line */}
                 <div className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
                     <span style={{ color: PALETTE.muted }}>Not seeing what you need?</span>
 
-                    {/* ✅ Contact us -> botón v14 (sheen + arrow) */}
                     <button
                         type="button"
                         onClick={openCustomBlank}
@@ -344,7 +327,6 @@ export default function SingleServicesSection({ services, onRequestScope }: Prop
 
                     <span style={{ color: "rgba(0,0,0,0.35)" }}>or</span>
 
-                    {/* ✅ Browse all services -> botón v14 (sheen + arrow) */}
                     <button
                         type="button"
                         onClick={() => navigate("/services")}
@@ -384,12 +366,10 @@ export default function SingleServicesSection({ services, onRequestScope }: Prop
                 </div>
             </div>
 
-            {/* Overlay Form removed to use global LeadModal */}
         </section>
     );
 }
 
-/** Minimal “landing-like” fields: no boxes, just hairline + label */
 function Field({
     label,
     value,

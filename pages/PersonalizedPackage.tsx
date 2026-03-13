@@ -1,4 +1,4 @@
-// PersonalizedPackage.tsx
+
 import React, { useMemo, useState } from "react";
 import { Layers, Zap, Rocket, Crown } from "lucide-react";
 
@@ -20,8 +20,8 @@ type PresetDef = {
   title: string;
   tagline: string;
   icon: React.ReactNode;
-  services: string[]; // service ids
-  defaults: Record<string, Record<string, any>>; // serviceId -> fieldId -> value
+  services: string[];
+  defaults: Record<string, Record<string, any>>;
 };
 
 type LeadForm = {
@@ -701,7 +701,6 @@ const PersonalizedPackage: React.FC = () => {
     [],
   );
 
-  // ---------- State ----------
   const [presetId, setPresetId] = useState<string>("");
   const [selected, setSelected] = useState<Record<string, boolean>>({});
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
@@ -724,7 +723,6 @@ const PersonalizedPackage: React.FC = () => {
   const [submitOk, setSubmitOk] = useState<null | boolean>(null);
   const [submitMsg, setSubmitMsg] = useState<string>("");
 
-  // ---------- Initialize defaults on selection ----------
   const ensureServiceDefaults = (serviceId: string) => {
     const service = SERVICES.find((s) => s.id === serviceId);
     if (!service) return;
@@ -811,7 +809,6 @@ const PersonalizedPackage: React.FC = () => {
     }));
   };
 
-  // ---------- Derived ----------
   const selectedServices = useMemo(() => {
     const ids = Object.entries(selected)
       .filter(([_, v]) => v)
@@ -991,7 +988,7 @@ const PersonalizedPackage: React.FC = () => {
   }
 
   const selectedTitles = selectedServices.map((s) => s.title).join(", ");
-  const summary = buildPlainTextSummary(); 
+  const summary = buildPlainTextSummary();
 
   const payload = {
     fullName: lead.name,
@@ -1046,14 +1043,12 @@ const PersonalizedPackage: React.FC = () => {
   }
 };
 
-  // ---------- UI ----------
   return (
     <div className="w-full min-h-screen bg-ollin-bg text-ollin-black relative">
       <div className="max-w-[1200px] mx-auto px-5 md:px-8 pt-14 pb-16">
-        {/* Hero */}
+
         <PersonalizedPackageHero />
 
-        {/* Presets */}
         <PersonalizedPackagePresets
           SERVICES={SERVICES.map((s) => ({ id: s.id, title: s.title }))}
           PRESETS={PRESETS}
@@ -1067,7 +1062,6 @@ const PersonalizedPackage: React.FC = () => {
           }}
         />
 
-        {/* Builder */}
         <PersonalizedPackageBuilder
           SERVICES={SERVICES}
           selectedServices={selectedServices}
@@ -1089,7 +1083,6 @@ const PersonalizedPackage: React.FC = () => {
         />
       </div>
 
-      {/* Modal */}
       <PersonalizedPackageModal
         isOpen={isModalOpen}
         submitting={submitting}

@@ -159,7 +159,6 @@ export default function BlogPost() {
     };
   }, [post, canonicalPath]);
 
-  // Manejo de SEO limpio con unhead
   useHead({
     title: seoTitle,
     meta: [

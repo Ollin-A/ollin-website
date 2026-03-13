@@ -1,4 +1,4 @@
-// App.tsx
+
 import React, { useEffect, Suspense, lazy } from "react";
 import { LeadModalProvider } from "./components/LeadModalContext";
 import AIAssistant from "./components/AIAssistant";
@@ -34,7 +34,6 @@ const App: React.FC = () => {
   const isChat = path === "/chat";
   const needsXClip = isHome;
 
-  // 3) Safety net: re-apply the global title on any route changes
   useEffect(() => {
     document.title = "OLLIN - Design & Systems";
   }, [location.pathname]);
@@ -100,7 +99,6 @@ const App: React.FC = () => {
               <Route path="/services/retention" element={<ServicesRetention />} />
               <Route path="/services/audit" element={<ServicesAudit />} />
 
-              {/* BLOG (nested) */}
               <Route path="/blog" element={<Blog />}>
                 <Route index element={<BlogIndex />} />
                 <Route path=":slug" element={<BlogPost />} />

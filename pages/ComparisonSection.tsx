@@ -24,7 +24,7 @@ type Props = {
     packages: PackageTier[];
     rows: CompareRow[];
     activeId: string | null;
-    onSelect: (id: string) => void; // kept for compatibility, not used here
+    onSelect: (id: string) => void;
 };
 
 type DrawerState = "closed" | "opening" | "open" | "closing";
@@ -35,7 +35,6 @@ export default function ComparisonSection({ packages, rows }: Props) {
     const isVisible = drawer !== "closed";
     const isOpen = drawer === "open";
 
-    // Fit-to-viewport scaling (no scroll)
     const bodyRef = useRef<HTMLDivElement | null>(null);
     const contentRef = useRef<HTMLDivElement | null>(null);
     const [scale, setScale] = useState(1);
@@ -51,14 +50,12 @@ export default function ComparisonSection({ packages, rows }: Props) {
         setDrawer("closing");
     };
 
-    // close after animation
     useEffect(() => {
         if (drawer !== "closing") return;
         const t = window.setTimeout(() => setDrawer("closed"), 520);
         return () => window.clearTimeout(t);
     }, [drawer]);
 
-    // lock body scroll when visible
     useEffect(() => {
         if (!isVisible) return;
         const prev = document.body.style.overflow;
@@ -68,7 +65,6 @@ export default function ComparisonSection({ packages, rows }: Props) {
         };
     }, [isVisible]);
 
-    // ESC to close
     useEffect(() => {
         if (!isVisible) return;
         const onKey = (e: KeyboardEvent) => {
@@ -78,7 +74,6 @@ export default function ComparisonSection({ packages, rows }: Props) {
         return () => window.removeEventListener("keydown", onKey);
     }, [isVisible]);
 
-    // Recalculate scale to fit content without scroll + keep breathing room
     useLayoutEffect(() => {
         if (!isVisible) return;
 
@@ -87,9 +82,8 @@ export default function ComparisonSection({ packages, rows }: Props) {
             const content = contentRef.current;
             if (!body || !content) return;
 
-            // --- breathing room so table doesn't kiss edges
-            const GUTTER_X = 0; // px (usually not needed since we center)
-            const GUTTER_Y = 34; // px (prevents bottom edge kiss)
+            const GUTTER_X = 0;
+            const GUTTER_Y = 34;
 
             const availW = Math.max(0, body.clientWidth - GUTTER_X);
             const availH = Math.max(0, body.clientHeight - GUTTER_Y);
@@ -104,12 +98,10 @@ export default function ComparisonSection({ packages, rows }: Props) {
 
             const s = Math.min(1, availW / naturalW, availH / naturalH);
 
-            // tiny rounding to avoid constant reflow jitter
             const snapped = Math.floor(s * 1000) / 1000;
             setScale(Number.isFinite(snapped) ? snapped : 1);
         };
 
-        // measure twice: once now, once after fonts/render settle
         measure();
         const raf = requestAnimationFrame(measure);
 
@@ -127,7 +119,6 @@ export default function ComparisonSection({ packages, rows }: Props) {
         };
     }, [isVisible, packages.length, rows.length]);
 
-    // --- glass / grayscale only
     const EASE = "cubic-bezier(0.16,1,0.3,1)";
     const cols = packages.length;
 
@@ -135,14 +126,14 @@ export default function ComparisonSection({ packages, rows }: Props) {
     const PANEL_BG = "rgba(255,255,255,0.12)";
     const PANEL_SHADOW = "0 30px 120px rgba(0,0,0,0.22)";
 
-    const TABLE_BG = "rgba(255,255,255,0.22)"; // no pure white slabs
+    const TABLE_BG = "rgba(255,255,255,0.22)";
     const textMain = "rgba(0,0,0,0.86)";
     const textSub = "rgba(0,0,0,0.55)";
     const textMicro = "rgba(0,0,0,0.46)";
 
     return (
         <div className="mt-16">
-            {/* Trigger row */}
+
             <button
                 type="button"
                 onClick={openDrawer}
@@ -167,10 +158,9 @@ export default function ComparisonSection({ packages, rows }: Props) {
                 </div>
             </button>
 
-            {/* Drawer */}
             {isVisible && (
                 <div className="fixed inset-0 z-[80]" role="dialog" aria-modal="true" aria-label="Comparison panel">
-                    {/* Backdrop */}
+
                     <button
                         type="button"
                         onClick={closeDrawer}
@@ -183,7 +173,6 @@ export default function ComparisonSection({ packages, rows }: Props) {
                         aria-label="Close"
                     />
 
-                    {/* Sliding panel */}
                     <div
                         className={cx(
                             "absolute right-0 top-0 h-full",
@@ -195,7 +184,7 @@ export default function ComparisonSection({ packages, rows }: Props) {
                             transitionTimingFunction: EASE,
                         }}
                     >
-                        {/* Panel shell */}
+
                         <div
                             className="h-full border-l relative backdrop-blur-[18px] flex flex-col"
                             style={{
@@ -204,7 +193,7 @@ export default function ComparisonSection({ packages, rows }: Props) {
                                 boxShadow: PANEL_SHADOW,
                             }}
                         >
-                            {/* subtle grayscale sheen */}
+
                             <div
                                 className="pointer-events-none absolute inset-0"
                                 style={{
@@ -214,7 +203,6 @@ export default function ComparisonSection({ packages, rows }: Props) {
                                 }}
                             />
 
-                            {/* Header */}
                             <div className="relative px-6 py-5 border-b" style={{ borderColor: LINE_SOFT }}>
                                 <div className="flex items-start justify-between gap-6">
                                     <div>
@@ -238,11 +226,10 @@ export default function ComparisonSection({ packages, rows }: Props) {
                                 </div>
                             </div>
 
-                            {/* Body: NO SCROLL. Everything must fit here. */}
                             <div ref={bodyRef} className="relative flex-1 overflow-hidden px-6 pt-5 pb-9">
-                                {/* center container */}
+
                                 <div className="w-full h-full flex justify-center items-start" style={{ willChange: "transform" }}>
-                                    {/* scale wrapper */}
+
                                     <div
                                         ref={contentRef}
                                         style={{
@@ -250,13 +237,13 @@ export default function ComparisonSection({ packages, rows }: Props) {
                                             transformOrigin: "top center",
                                         }}
                                     >
-                                        {/* DESKTOP matrix */}
+
                                         <div className="hidden sm:block">
                                             <div
                                                 className="min-w-[920px] border rounded-none overflow-hidden backdrop-blur-[12px]"
                                                 style={{ borderColor: LINE, background: TABLE_BG }}
                                             >
-                                                {/* Header row: no special white background */}
+
                                                 <div
                                                     className="grid"
                                                     style={{
@@ -282,7 +269,6 @@ export default function ComparisonSection({ packages, rows }: Props) {
                                                     ))}
                                                 </div>
 
-                                                {/* Body rows */}
                                                 {rows.map((row, idx) => (
                                                     <div
                                                         key={row.key}
@@ -317,7 +303,6 @@ export default function ComparisonSection({ packages, rows }: Props) {
                                             </div>
                                         </div>
 
-                                        {/* MOBILE */}
                                         <div className="sm:hidden">
                                             <div
                                                 className="border rounded-none overflow-hidden backdrop-blur-[12px]"
@@ -359,7 +344,6 @@ export default function ComparisonSection({ packages, rows }: Props) {
                                 </div>
                             </div>
 
-                            {/* subtle edge */}
                             <div className="pointer-events-none absolute left-0 top-0 h-full w-px" style={{ background: "rgba(255,255,255,0.12)" }} />
                         </div>
                     </div>

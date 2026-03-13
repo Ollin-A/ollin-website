@@ -13,7 +13,7 @@ const CHAPTERS = [
         title: "FOUNDATION",
         headline: "Look established in 30 seconds.",
         body: "A consistent brand everywhere, a high-converting website, and a social presence that builds trust.",
-        // Mobile-only copy (shorter, breathes)
+
         headlineMobile: "Look established fast.",
         bodyMobile: "Brand, website, and social that feel consistent—and earn the first call.",
         linkText: "Explore Foundation →",
@@ -54,7 +54,6 @@ const CHAPTERS = [
     },
 ];
 
-// Timing
 const CHAPTER_SCREENS = 1.2;
 const BUFFER_SCREENS = 0.4;
 const TOTAL_SCREENS = 1 + CHAPTERS.length * CHAPTER_SCREENS + BUFFER_SCREENS;
@@ -73,12 +72,12 @@ function ChapterCanvas({
     prefersReducedMotion: boolean;
 }) {
     return (
-        // ✅ Restore your original centering behavior EXACTLY
+
         <div className="servicesChaptersCanvas h-screen w-full flex items-center">
             <div className="relative w-full max-w-[1400px] mx-auto px-6 md:px-12">
                 <div className="grid grid-cols-12 gap-10 items-center max-md:gap-7">
                     <div className="col-span-12 md:col-span-8 md:col-start-4">
-                        {/* ✅ CRITICAL: bring back min-height so absolute slides don't collapse layout */}
+
                         <div className="relative min-h-[360px] md:min-h-[420px]">
                             {CHAPTERS.map((chapter, index) => {
                                 const isActive = index === active;
@@ -93,37 +92,31 @@ function ChapterCanvas({
                                             isActive ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
                                         )}
                                     >
-                                        {/* Label — desktop unchanged; mobile slightly softer */}
+
                                         <p className="text-xs md:text-sm font-bold tracking-[0.2em] mb-4 text-ollin-black/50 uppercase max-md:font-semibold max-md:mb-5">
                                             {chapter.label}
                                         </p>
 
-                                        {/* Title — desktop unchanged EXACTLY; mobile uses clamp override only under md */}
                                         <h2 className="text-[3rem] md:text-[5rem] lg:text-[6rem] leading-[0.9] font-[Montserrat] font-normal tracking-tight mb-6 max-md:text-[clamp(44px,10.5vw,64px)]">
                                             {chapter.title}
                                         </h2>
 
-                                        {/* Headline */}
-                                        {/* Mobile */}
                                         <p className="md:hidden text-[clamp(18px,5vw,22px)] font-medium mb-4 leading-[1.25] max-w-[26ch]">
                                             {chapter.headlineMobile ?? chapter.headline}
                                         </p>
-                                        {/* Desktop (unchanged) */}
+
                                         <p className="hidden md:block text-xl md:text-2xl font-medium mb-4 max-w-2xl">
                                             {chapter.headline}
                                         </p>
 
-                                        {/* Body */}
-                                        {/* Mobile */}
                                         <p className="md:hidden text-[15px] sm:text-[16px] text-ollin-black/70 mb-8 max-w-[46ch] leading-relaxed">
                                             {chapter.bodyMobile ?? chapter.body}
                                         </p>
-                                        {/* Desktop (unchanged) */}
+
                                         <p className="hidden md:block text-base md:text-lg text-ollin-black/70 mb-8 max-w-xl leading-relaxed">
                                             {chapter.body}
                                         </p>
 
-                                        {/* CTA — keep your original behavior/position; just a tiny mobile tap breathing */}
                                         <Link
                                             to={chapter.to}
                                             data-ollin-cta14="services-chapters"
@@ -288,7 +281,7 @@ export default function ServicesChapters() {
             window.removeEventListener("resize", onResize);
             ro.disconnect();
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+
     }, []);
 
     const portalTarget = typeof document !== "undefined" ? document.body : null;
@@ -411,7 +404,7 @@ export default function ServicesChapters() {
       `}</style>
 
             <div ref={wrapperRef} className="relative w-full" style={{ height: `${TOTAL_SCREENS * 100}vh` }}>
-                {/* INLINE STAGE */}
+
                 <div
                     aria-hidden={phase === "pinned"}
                     className={cx(
@@ -426,7 +419,6 @@ export default function ServicesChapters() {
                     <ChapterCanvas active={active} prefersReducedMotion={prefersReducedMotion} />
                 </div>
 
-                {/* PINNED STAGE */}
                 {phase === "pinned" && portalTarget
                     ? createPortal(
                         <div className="fixed inset-0 z-[60]">
@@ -437,7 +429,6 @@ export default function ServicesChapters() {
                     : null}
             </div>
 
-            {/* Closing section — restore EXACT original */}
             <div className="relative py-24 md:py-32 flex flex-col items-center justify-center text-center bg-transparent">
                 <p className="text-2xl md:text-4xl font-[Montserrat] font-normal leading-tight">
                     <span className="block mb-2">Start with one pillar.</span>
