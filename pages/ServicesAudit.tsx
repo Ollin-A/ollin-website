@@ -1,205 +1,23 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
-
-function cx(...classes: Array<string | false | null | undefined>) {
-    return classes.filter(Boolean).join(" ");
-}
-
-function Chip({ href, children }: { href: string; children: React.ReactNode }) {
-    return (
-        <a
-            href={href}
-            className="inline-flex items-center rounded-full border border-black/15 px-4 py-2 max-md:px-3 max-md:py-2 text-[12px] md:text-[13px] tracking-[0.14em] uppercase text-ollin-black/80 hover:bg-black/5 transition-colors"
-        >
-            {children}
-        </a>
-    );
-}
-
-function SectionTitle({
-    kicker,
-    title,
-    subtitle,
-    subtitleMobile,
-}: {
-    kicker: string;
-    title: string;
-    subtitle: string;
-    subtitleMobile?: string;
-}) {
-    return (
-        <div className="max-w-[1100px]">
-            <p className="text-[11px] md:text-[12px] tracking-[0.28em] uppercase text-ollin-black/45 mb-4 max-md:mb-5">
-                {kicker}
-            </p>
-
-            <h2 className="font-[Montserrat] font-normal tracking-tight leading-[0.95] text-[clamp(34px,4.4vw,56px)] mb-4">
-                {title}
-            </h2>
-
-            <p
-                className="hidden md:block text-[15px] md:text-[17px] leading-relaxed text-ollin-black/70 max-w-[70ch]"
-                style={{ overflowWrap: "anywhere" }}
-            >
-                {subtitle}
-            </p>
-
-            <p
-                className="md:hidden text-[14px] leading-relaxed text-ollin-black/70 max-w-[46ch] break-words hyphens-auto"
-                style={{ overflowWrap: "anywhere" }}
-            >
-                {subtitleMobile ?? subtitle}
-            </p>
-        </div>
-    );
-}
-
-function Divider() {
-    return <div className="h-px w-full bg-black/10" />;
-}
-
-function Card({
-    tone = "glass",
-    className = "",
-    children,
-}: {
-    tone?: "glass" | "soft" | "mid";
-    className?: string;
-    children: React.ReactNode;
-}) {
-    const bg = tone === "glass" ? "bg-white/35" : tone === "soft" ? "bg-white/20" : "bg-white/30";
-    return (
-        <div
-            className={cx(
-                `rounded-none border border-black/10 ${bg} p-6 sm:p-7 md:p-9`,
-
-                "max-md:max-w-full max-md:box-border max-md:overflow-hidden",
-                className
-            )}
-        >
-            {children}
-        </div>
-    );
-}
-
-function Label({ children }: { children: React.ReactNode }) {
-    return (
-        <p className="text-[13px] tracking-[0.2em] uppercase text-ollin-black/45 mb-3 md:mb-4">
-            {children}
-        </p>
-    );
-}
-
-function Chevron({
-    open,
-    reducedMotion,
-}: {
-    open: boolean;
-    reducedMotion: boolean;
-}) {
-    return (
-        <span
-            className={cx(
-                "inline-flex items-center justify-center w-4 h-4",
-                reducedMotion ? "" : "transition-transform duration-300 ease-out",
-                open ? "rotate-180" : "rotate-0"
-            )}
-            aria-hidden="true"
-        >
-            <svg className="block" viewBox="0 0 16 16" width="16" height="16" fill="none">
-                <path d="M3.5 6.25L8 10.25L12.5 6.25" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-        </span>
-    );
-}
-
-function BulletList({
-    items,
-    itemsMobile,
-    collapsibleMobile = true,
-    reducedMotion,
-}: {
-    items: string[];
-    itemsMobile?: string[];
-    collapsibleMobile?: boolean;
-    reducedMotion: boolean;
-}) {
-    const mobile = itemsMobile ?? items;
-    const canExpand = collapsibleMobile && items.length > mobile.length;
-
-    const [open, setOpen] = useState(false);
-
-    return (
-        <>
-
-            <div className="hidden md:block space-y-3 text-[14px] md:text-[15px] leading-relaxed text-ollin-black/70">
-                {items.map((t, i) => (
-                    <p key={i} className="break-words" style={{ overflowWrap: "anywhere" }}>
-                        • {t}
-                    </p>
-                ))}
-            </div>
-
-            <div className="md:hidden text-ollin-black/70">
-
-                <div className="space-y-3 text-[13.5px] leading-relaxed">
-                    {mobile.map((t, i) => (
-                        <p key={i} className="break-words hyphens-auto" style={{ overflowWrap: "anywhere" }}>
-                            • {t}
-                        </p>
-                    ))}
-                </div>
-
-                {canExpand ? (
-                    <div className="mt-4">
-
-                        <div
-                            className={cx(
-                                "grid",
-                                reducedMotion ? "" : "transition-[grid-template-rows,opacity,transform] duration-350 ease-out",
-                                open ? "grid-rows-[1fr] opacity-100 translate-y-0" : "grid-rows-[0fr] opacity-0 -translate-y-1"
-                            )}
-                            style={{
-                                transitionProperty: reducedMotion ? undefined : "grid-template-rows, opacity, transform",
-                            }}
-                            aria-hidden={!open}
-                        >
-                            <div className="overflow-hidden">
-                                <div className="mt-3 space-y-3 text-[13.5px] leading-relaxed">
-                                    {items.map((t, i) => (
-                                        <p key={`full-${i}`} className="break-words hyphens-auto" style={{ overflowWrap: "anywhere" }}>
-                                            • {t}
-                                        </p>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-
-                        <button
-                            type="button"
-                            onClick={() => setOpen((v) => !v)}
-                            className={cx(
-                                "mt-4 w-full flex items-center justify-between",
-                                "cursor-pointer select-none",
-                                "text-[12px] tracking-[0.14em] uppercase text-ollin-black/55 hover:text-ollin-black",
-                                reducedMotion ? "" : "transition-colors"
-                            )}
-                            aria-expanded={open}
-                        >
-                            <span className="inline-flex items-center gap-2">
-                                <span className="opacity-80">{open ? "Hide full list" : "See full list"}</span>
-                            </span>
-
-                            <Chevron open={open} reducedMotion={reducedMotion} />
-                        </button>
-                    </div>
-                ) : null}
-            </div>
-        </>
-    );
-}
+import { useHead } from "@unhead/react";
+import StructuredData from "../components/StructuredData";
+import {
+    cx, Chip, SectionTitle, Divider, Card, Label,
+    BulletList,
+} from "../components/shared/services";
 
 export default function ServicesAudit() {
+    useHead({
+        title: "360° Revenue Leak Audit — OLLIN",
+        meta: [
+            { name: "description", content: "Find where calls, leads, and margin are leaking — then get a clear priority plan to fix it. For U.S. contractors." },
+            { property: "og:title", content: "360° Revenue Leak Audit — OLLIN" },
+            { property: "og:description", content: "Find where calls, leads, and margin are leaking — then get a clear priority plan to fix it. For U.S. contractors." },
+        ],
+        link: [{ rel: "canonical", href: "https://ollin.agency/services/audit" }],
+    });
+
     const prefersReducedMotion = useMemo(() => {
         if (typeof window === "undefined" || !window.matchMedia) return false;
         return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -215,6 +33,22 @@ export default function ServicesAudit() {
                 "max-md:overflow-x-hidden"
             )}
         >
+            <StructuredData
+                data={{
+                    "@context": "https://schema.org",
+                    "@type": "Service",
+                    serviceType: "Contractor Marketing - Audit",
+                    provider: {
+                        "@type": "Organization",
+                        name: "OLLIN Agency",
+                        url: "https://ollin.agency",
+                    },
+                    areaServed: { "@type": "Country", name: "United States" },
+                    availableLanguage: ["English", "Spanish"],
+                    description:
+                        "Find what's leaking revenue—then fix the order of operations.",
+                }}
+            />
 
             <style>{`
         @media (max-height: 520px){
@@ -395,6 +229,7 @@ export default function ServicesAudit() {
                                 <BulletList
                                     reducedMotion={prefersReducedMotion}
                                     items={["Acquisition, conversion, and retention leaks.", "Fix the bottleneck—not the symptom."]}
+                                    itemsTablet={["Find the bottleneck.", "Fix the right thing first."]}
                                     itemsMobile={["Find the bottleneck.", "Fix the right thing first."]}
                                 />
                             </Card>
@@ -409,6 +244,7 @@ export default function ServicesAudit() {
                                 <BulletList
                                     reducedMotion={prefersReducedMotion}
                                     items={["Stop spending while the pipeline leaks.", "Sequence > effort (it compounds)."]}
+                                    itemsTablet={["Stop waste first.", "Sequence compounds."]}
                                     itemsMobile={["Stop waste first.", "Sequence compounds."]}
                                 />
                             </Card>
@@ -423,6 +259,7 @@ export default function ServicesAudit() {
                                 <BulletList
                                     reducedMotion={prefersReducedMotion}
                                     items={["Highest-impact changes, lowest disruption.", "Clear next steps your team can run."]}
+                                    itemsTablet={["Fast wins, low disruption.", "Clear next steps."]}
                                     itemsMobile={["Fast wins, low disruption.", "Clear next steps."]}
                                 />
                             </Card>
@@ -450,6 +287,7 @@ export default function ServicesAudit() {
                                     items={[
                                         "Missed calls, slow replies, and “dead leads” patterns.",
                                     ]}
+                                    itemsTablet={["Where leads go (calls/forms/DMs).", "Response speed + handoffs."]}
                                     itemsMobile={["Where leads go (calls/forms/DMs).", "Response speed + handoffs."]}
                                 />
                             </Card>
@@ -461,6 +299,7 @@ export default function ServicesAudit() {
                                     items={[
                                         "Whether decisions are being made blind.",
                                     ]}
+                                    itemsTablet={["What’s visible vs invisible.", "Source truth (Ads/Maps/Organic)."]}
                                     itemsMobile={["What’s visible vs invisible.", "Source truth (Ads/Maps/Organic)."]}
                                 />
                             </Card>
@@ -473,6 +312,7 @@ export default function ServicesAudit() {
                                         "Message match (does the page match what people searched?).",
                                         "CTA clarity (what to do next, and how easy it is).",
                                     ]}
+                                    itemsTablet={["Does the page match intent?", "Friction + trust blockers."]}
                                     itemsMobile={["Does the page match intent?", "Friction + trust blockers."]}
                                 />
                             </Card>
@@ -495,6 +335,7 @@ export default function ServicesAudit() {
                                     items={[
                                         "Short list your team can execute without chaos.",
                                     ]}
+                                    itemsTablet={["Highest-impact fixes first.", "Clear next steps."]}
                                     itemsMobile={["Highest-impact fixes first.", "Clear next steps."]}
                                 />
                             </Card>
@@ -507,6 +348,7 @@ export default function ServicesAudit() {
                                         "A simple view of where revenue escapes across the pipeline.",
                                         "How changes compound when done in order.",
                                     ]}
+                                    itemsTablet={["Where revenue escapes.", "Fix now vs later."]}
                                     itemsMobile={["Where revenue escapes.", "Fix now vs later."]}
                                 />
                             </Card>
@@ -519,6 +361,7 @@ export default function ServicesAudit() {
                                         "Execute with your team, with us, or mix both.",
                                         "If you want help, we can scope the smallest sprint that moves results.",
                                     ]}
+                                    itemsTablet={["DIY, Done-with-you, or Done-for-you.", "No rebuild required."]}
                                     itemsMobile={["DIY, Done-with-you, or Done-for-you.", "No rebuild required."]}
                                 />
                             </Card>
@@ -546,6 +389,7 @@ export default function ServicesAudit() {
                                         "Ads/Maps sending clicks that can’t convert.",
                                         "Low trust at first glance (profile/site mismatch).",
                                     ]}
+                                    itemsTablet={["Wrong traffic (intent/area/service).", "Low trust at first glance."]}
                                     itemsMobile={["Wrong traffic (intent/area/service).", "Low trust at first glance."]}
                                 />
                             </Card>
@@ -560,6 +404,7 @@ export default function ServicesAudit() {
                                         "Forms/calls not reaching you or not being tracked.",
                                         "Friction that kills leads quietly (slow pages, confusion).",
                                     ]}
+                                    itemsTablet={["Unclear offer + CTA.", "Lost calls/forms or no tracking."]}
                                     itemsMobile={["Unclear offer + CTA.", "Lost calls/forms or no tracking."]}
                                 />
                             </Card>
@@ -574,6 +419,7 @@ export default function ServicesAudit() {
                                         "No review velocity / reputation protection.",
                                         "No reactivation (past customers go cold).",
                                     ]}
+                                    itemsTablet={["Slow follow-up.", "No reviews / reactivation."]}
                                     itemsMobile={["Slow follow-up.", "No reviews / reactivation."]}
                                 />
                             </Card>
@@ -601,6 +447,7 @@ export default function ServicesAudit() {
                                         "We provide the plan + priorities + guardrails.",
                                         "Best if you already have internal capacity.",
                                     ]}
+                                    itemsTablet={["You execute.", "We provide the priorities."]}
                                     itemsMobile={["You execute.", "We provide the priorities."]}
                                 />
                             </Card>
@@ -615,6 +462,7 @@ export default function ServicesAudit() {
                                         "We implement the highest-impact fixes together.",
                                         "Small sprint scope (no “forever project”).",
                                     ]}
+                                    itemsTablet={["Implement together.", "Fast + accountable."]}
                                     itemsMobile={["Implement together.", "Fast + accountable."]}
                                 />
                             </Card>
@@ -629,6 +477,7 @@ export default function ServicesAudit() {
                                         "Best when you want leverage and speed.",
                                         "We keep scope tight and results-first.",
                                     ]}
+                                    itemsTablet={["We implement end-to-end.", "Tight scope, results first."]}
                                     itemsMobile={["We implement end-to-end.", "Tight scope, results first."]}
                                 />
                             </Card>
@@ -645,6 +494,7 @@ export default function ServicesAudit() {
                                     "Not a forced rebuild of your website/brand.",
                                     "Not a pile of metrics with no action attached.",
                                 ]}
+                                itemsTablet={["Not generic advice.", "Not a forced rebuild."]}
                                 itemsMobile={["Not generic advice.", "Not a forced rebuild."]}
                                 collapsibleMobile={false}
                             />

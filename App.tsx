@@ -6,6 +6,7 @@ import Navbar from "./components/Navbar";
 import SiteOutro from "./components/SiteOutro";
 import ScrollToTop from "./components/ScrollToTop";
 import PageLoader from "./components/PageLoader";
+import StructuredData from "./components/StructuredData";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { useHead } from "@unhead/react";
 
@@ -24,6 +25,8 @@ const BlogPost = lazy(() => import("./pages/BlogPost"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const Terms = lazy(() => import("./pages/Terms"));
 const DataDeletion = lazy(() => import("./pages/DataDeletion"));
+const ThankYou = lazy(() => import("./pages/ThankYou"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 const App: React.FC = () => {
   const location = useLocation();
@@ -33,10 +36,6 @@ const App: React.FC = () => {
   const isHome = path === "/";
   const isChat = path === "/chat";
   const needsXClip = isHome;
-
-  useEffect(() => {
-    document.title = "OLLIN - Design & Systems";
-  }, [location.pathname]);
 
   useHead({
     title: "OLLIN - Design & Systems",
@@ -79,6 +78,41 @@ const App: React.FC = () => {
 
   return (
     <LeadModalProvider>
+      <StructuredData
+        data={{
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "OLLIN Agency",
+          url: "https://ollin.agency",
+          logo: "https://ollin.agency/favicon-32.png",
+          description:
+            "Marketing agency for U.S. contractors — websites, ads, Google Maps, follow-up systems, and AI-powered lead handling. English and Spanish.",
+          email: "contact@ollin.agency",
+          telephone: "+526692740503",
+          address: {
+            "@type": "PostalAddress",
+            addressCountry: "MX",
+            addressLocality: "Mazatlán",
+            addressRegion: "Sinaloa",
+          },
+          sameAs: [
+            "https://www.instagram.com/ollinagency/",
+            "https://x.com/OLLINAGENCY",
+            "https://www.facebook.com/ollin.agency",
+            "https://www.threads.com/@ollinagency",
+            "https://www.linkedin.com/company/ollinagency/",
+          ],
+          knowsLanguage: ["en", "es"],
+        }}
+      />
+      <StructuredData
+        data={{
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "OLLIN Agency",
+          url: "https://ollin.agency",
+        }}
+      />
       <ScrollToTop />
       <Navbar theme={isChat ? 'dark' : 'light'} />
       <main
@@ -114,6 +148,8 @@ const App: React.FC = () => {
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/data-deletion" element={<DataDeletion />} />
+              <Route path="/thank-you" element={<ThankYou />} />
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
         </div>

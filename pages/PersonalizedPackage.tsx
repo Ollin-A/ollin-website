@@ -1,5 +1,7 @@
 
 import React, { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useHead } from "@unhead/react";
 import { Layers, Zap, Rocket, Crown } from "lucide-react";
 
 import type { Field } from "./PersonalizedPackage_FieldControls";
@@ -45,6 +47,18 @@ function safeJson(value: any) {
 }
 
 const PersonalizedPackage: React.FC = () => {
+  const navigate = useNavigate();
+
+  useHead({
+    title: "Build Your Plan — OLLIN",
+    meta: [
+      { name: "description", content: "Build a custom contractor marketing plan. Select the services you need and request a personalized scope." },
+      { property: "og:title", content: "Build Your Plan — OLLIN" },
+      { property: "og:description", content: "Build a custom contractor marketing plan. Select the services you need and request a personalized scope." },
+    ],
+    link: [{ rel: "canonical", href: "https://ollin.agency/packages/personalized" }],
+  });
+
   const SERVICES: ServiceDef[] = useMemo(
     () => [
       {
@@ -1010,6 +1024,7 @@ const PersonalizedPackage: React.FC = () => {
     user_agent: navigator.userAgent,
     ts_client: new Date().toISOString(),
     source: "ollin_packages_builder",
+    company_fax: "",
   };
 
   setSubmitting(true);
@@ -1033,6 +1048,8 @@ const PersonalizedPackage: React.FC = () => {
 
     setSubmitOk(true);
     setSubmitMsg("Thanks — we got your plan. We’ll reach out shortly.");
+    setIsModalOpen(false);
+    navigate("/thank-you");
     return;
   } catch (err) {
     console.error("Plan submit error:", err);

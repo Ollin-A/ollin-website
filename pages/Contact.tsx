@@ -1,4 +1,5 @@
 import React from "react";
+import { useHead } from "@unhead/react";
 
 const footerLinks = [
     { label: "Instagram", href: "https://www.instagram.com/ollinagency/" },
@@ -10,6 +11,16 @@ const footerLinks = [
 ];
 
 const Contact: React.FC = () => {
+    useHead({
+        title: "Contact — OLLIN",
+        meta: [
+            { name: "description", content: "Ready to talk? Reach OLLIN by email, phone, WhatsApp, or SMS. English and Spanish." },
+            { property: "og:title", content: "Contact — OLLIN" },
+            { property: "og:description", content: "Ready to talk? Reach OLLIN by email, phone, WhatsApp, or SMS. English and Spanish." },
+        ],
+        link: [{ rel: "canonical", href: "https://ollin.agency/contact" }],
+    });
+
     const year = new Date().getFullYear();
 
     return (

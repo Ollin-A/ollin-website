@@ -1,6 +1,17 @@
 import React, { useEffect } from "react";
+import { useHead } from "@unhead/react";
 
 const Privacy: React.FC = () => {
+  useHead({
+    title: "Privacy Policy — OLLIN",
+    meta: [
+      { name: "description", content: "How OLLIN Agency handles your data. Privacy policy for ollin.agency." },
+      { property: "og:title", content: "Privacy Policy — OLLIN" },
+      { property: "og:description", content: "How OLLIN Agency handles your data. Privacy policy for ollin.agency." },
+    ],
+    link: [{ rel: "canonical", href: "https://ollin.agency/privacy" }],
+  });
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);

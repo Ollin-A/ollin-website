@@ -3,6 +3,7 @@ import React, { useRef } from "react";
 import { useInView } from "framer-motion";
 import SplashCursor from "./SplashCursor";
 import { useDesktopFinePointerLg } from "../hooks/useDesktopFinePointerLg";
+import { useDeviceCapability } from "../hooks/useDeviceCapability";
 
 const socialLinks = [
   { label: "Instagram", href: "https://www.instagram.com/ollinagency/" },
@@ -23,9 +24,10 @@ export default function SiteOutro() {
 
   const isInView = useInView(sectionRef, { amount: 0.55 });
   const isDesktopFine = useDesktopFinePointerLg();
+  const { isLowPower } = useDeviceCapability();
   const year = new Date().getFullYear();
 
-  const enabled = isDesktopFine && isInView;
+  const enabled = isDesktopFine && isInView && !isLowPower;
 
   return (
     <section

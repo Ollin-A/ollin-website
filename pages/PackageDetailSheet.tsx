@@ -2,6 +2,7 @@ import React, { useLayoutEffect, useRef, useState } from "react";
 import type { PackageTier } from "./packages.types";
 import { PALETTE, LINE, LINE_SOFT } from "./packages.constants";
 import { cx } from "./packages.utils";
+import SecondaryButton from "../components/SecondaryButton";
 
 type Props = {
     activeId: string | null;
@@ -122,42 +123,7 @@ export default function PackageDetailSheet({
                                     Request scope →
                                 </button>
 
-                                <button
-                                    type="button"
-                                    onClick={onBuildYourOwnPlan}
-                                    className="btnSecondary btnSecondary14"
-                                >
-                                    <span className="btnSecondary14Text" data-text="BUILD YOUR OWN PLAN">
-                                        BUILD YOUR OWN PLAN
-                                    </span>
-
-                                    <span className="btnSecondary14Arrow" aria-hidden="true">
-                                        <svg className="btnSecondary14ArrowLineSvg" viewBox="0 0 100 16" fill="none">
-                                            <line
-                                                x1="0"
-                                                y1="8"
-                                                x2="100"
-                                                y2="8"
-                                                stroke="currentColor"
-                                                strokeWidth="1"
-                                                strokeLinecap="butt"
-                                                vectorEffect="non-scaling-stroke"
-                                            />
-                                        </svg>
-
-                                        <svg
-                                            className="btnSecondary14ArrowHeadSvg"
-                                            viewBox="0 0 18 16"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            strokeWidth="1"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                        >
-                                            <path d="M0 3 L12 8 L0 13" vectorEffect="non-scaling-stroke" />
-                                        </svg>
-                                    </span>
-                                </button>
+                                <SecondaryButton onClick={onBuildYourOwnPlan} label="BUILD YOUR OWN PLAN" />
                             </div>
                         </div>
                     </div>

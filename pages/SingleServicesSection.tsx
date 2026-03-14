@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import type { SingleService } from "./packages.types";
 import { PALETTE, LINE } from "./packages.constants";
 import { cx } from "./packages.utils";
+import SecondaryButton from "../components/SecondaryButton";
 
 type Props = {
     services: SingleService[];
@@ -139,103 +140,6 @@ export default function SingleServicesSection({ services, onRequestScope }: Prop
     return (
         <section className="mt-16">
 
-            <style>{`
-        .btnSecondary.btnSecondary14 {
-          color: #6b6b6b;
-          background: transparent;
-          border: 0;
-          padding: 0;              
-          display: inline-flex;
-          align-items: center;
-          cursor: pointer;
-          transition: color 280ms ease-out;
-
-          transform: none !important; 
-          will-change: auto;
-
-          --arrowLen: 18px;
-          --arrowLenHover: 46px;
-          --arrowOverlap: 7.5px;
-        }
-        .btnSecondary.btnSecondary14:hover {
-          color: #111111;
-          --arrowLen: var(--arrowLenHover);
-          transform: none !important; 
-        }
-
-        .btnSecondary14Text {
-          position: relative;
-          display: inline-block;
-          line-height: 1;
-        }
-        .btnSecondary14Text::after {
-          content: attr(data-text);
-          position: absolute;
-          inset: 0;
-          color: transparent;
-          background-image: linear-gradient(
-            90deg,
-            transparent 0%,
-            rgba(255, 248, 220, 0.92) 45%,
-            transparent 62%
-          );
-          background-size: 220% 100%;
-          background-position: 220% 0;
-          -webkit-background-clip: text;
-          background-clip: text;
-          opacity: 0;
-          pointer-events: none;
-        }
-        @keyframes ollinSheenOnceLR {
-          0%   { background-position: 220% 0; opacity: 0; }
-          12%  { opacity: 0.70; }
-          88%  { opacity: 0.70; }
-          100% { background-position: -220% 0; opacity: 0; }
-        }
-        .btnSecondary.btnSecondary14:hover .btnSecondary14Text::after {
-          animation: ollinSheenOnceLR 720ms ease-out 1;
-        }
-
-        .btnSecondary14Arrow {
-          position: relative;
-          display: inline-block;
-          width: 68px;
-          height: 12px;
-          margin-left: 6px;
-          pointer-events: none;
-        }
-
-        .btnSecondary14ArrowLineSvg {
-          position: absolute;
-          left: 0;
-          top: 50%;
-          transform: translateY(-50%);
-          width: var(--arrowLen);
-          height: 12px;
-          overflow: visible;
-          transition: width 380ms cubic-bezier(0.2, 0.7, 0.2, 1);
-          will-change: width;
-        }
-
-        .btnSecondary14ArrowHeadSvg {
-          position: absolute;
-          left: 0;
-          top: 50%;
-          width: 13px;
-          height: 12px;
-          transform: translate3d(calc(var(--arrowLen) - var(--arrowOverlap)), -50%, 0);
-          transition: transform 380ms cubic-bezier(0.2, 0.7, 0.2, 1);
-          will-change: transform;
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .btnSecondary.btnSecondary14 { transition: none !important; }
-          .btnSecondary14ArrowLineSvg,
-          .btnSecondary14ArrowHeadSvg { transition: none !important; }
-          .btnSecondary.btnSecondary14:hover .btnSecondary14Text::after { animation: none !important; }
-        }
-      `}</style>
-
             <div
                 className="text-[11px] uppercase tracking-[0.28em]"
                 style={{ color: "rgba(0,0,0,0.45)" }}
@@ -288,81 +192,11 @@ export default function SingleServicesSection({ services, onRequestScope }: Prop
                 <div className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
                     <span style={{ color: PALETTE.muted }}>Not seeing what you need?</span>
 
-                    <button
-                        type="button"
-                        onClick={openCustomBlank}
-                        className={cx("btnSecondary btnSecondary14")}
-                    >
-                        <span className="btnSecondary14Text" data-text="Contact us">
-                            Contact us
-                        </span>
-
-                        <span className="btnSecondary14Arrow" aria-hidden="true">
-                            <svg className="btnSecondary14ArrowLineSvg" viewBox="0 0 100 16" fill="none">
-                                <line
-                                    x1="0"
-                                    y1="8"
-                                    x2="100"
-                                    y2="8"
-                                    stroke="currentColor"
-                                    strokeWidth="1"
-                                    strokeLinecap="butt"
-                                    vectorEffect="non-scaling-stroke"
-                                />
-                            </svg>
-
-                            <svg
-                                className="btnSecondary14ArrowHeadSvg"
-                                viewBox="0 0 18 16"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="1"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            >
-                                <path d="M0 3 L12 8 L0 13" vectorEffect="non-scaling-stroke" />
-                            </svg>
-                        </span>
-                    </button>
+                    <SecondaryButton onClick={openCustomBlank} label="Contact us" />
 
                     <span style={{ color: "rgba(0,0,0,0.35)" }}>or</span>
 
-                    <button
-                        type="button"
-                        onClick={() => navigate("/services")}
-                        className={cx("btnSecondary btnSecondary14")}
-                    >
-                        <span className="btnSecondary14Text" data-text="Browse all services">
-                            Browse all services
-                        </span>
-
-                        <span className="btnSecondary14Arrow" aria-hidden="true">
-                            <svg className="btnSecondary14ArrowLineSvg" viewBox="0 0 100 16" fill="none">
-                                <line
-                                    x1="0"
-                                    y1="8"
-                                    x2="100"
-                                    y2="8"
-                                    stroke="currentColor"
-                                    strokeWidth="1"
-                                    strokeLinecap="butt"
-                                    vectorEffect="non-scaling-stroke"
-                                />
-                            </svg>
-
-                            <svg
-                                className="btnSecondary14ArrowHeadSvg"
-                                viewBox="0 0 18 16"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="1"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            >
-                                <path d="M0 3 L12 8 L0 13" vectorEffect="non-scaling-stroke" />
-                            </svg>
-                        </span>
-                    </button>
+                    <SecondaryButton onClick={() => navigate("/services")} label="Browse all services" />
                 </div>
             </div>
 

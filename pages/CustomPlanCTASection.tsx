@@ -1,5 +1,6 @@
 import React from "react";
 import { PALETTE } from "./packages.constants";
+import SecondaryButton from "../components/SecondaryButton";
 
 type Props = {
     onBuildYourOwnPlan: () => void;
@@ -15,38 +16,7 @@ export default function CustomPlanCTASection({ onBuildYourOwnPlan }: Props) {
                 </p>
 
                 <div className="mt-6">
-                    <button type="button" onClick={onBuildYourOwnPlan} className="btnSecondary btnSecondary14">
-                        <span className="btnSecondary14Text" data-text="BUILD YOUR OWN PLAN">
-                            Build your own plan
-                        </span>
-
-                        <span className="btnSecondary14Arrow" aria-hidden="true">
-                            <svg className="btnSecondary14ArrowLineSvg" viewBox="0 0 100 16" fill="none">
-                                <line
-                                    x1="0"
-                                    y1="8"
-                                    x2="100"
-                                    y2="8"
-                                    stroke="currentColor"
-                                    strokeWidth="1"
-                                    strokeLinecap="butt"
-                                    vectorEffect="non-scaling-stroke"
-                                />
-                            </svg>
-
-                            <svg
-                                className="btnSecondary14ArrowHeadSvg"
-                                viewBox="0 0 18 16"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="1"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            >
-                                <path d="M0 3 L12 8 L0 13" vectorEffect="non-scaling-stroke" />
-                            </svg>
-                        </span>
-                    </button>
+                    <SecondaryButton onClick={onBuildYourOwnPlan} label="Build your own plan" dataText="BUILD YOUR OWN PLAN" />
                 </div>
             </div>
         </div>

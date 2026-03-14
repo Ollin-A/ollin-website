@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
     Plus,
     Minus,
@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import Reveal from "./Reveal";
+import StructuredData from "./StructuredData";
 import { useLeadModal } from "./LeadModalContext";
 
 type FaqItem = { id: string; question: string; answer: string };
@@ -271,6 +272,24 @@ const OPEN_SCROLL_DELAY_MS = 340;
 
 const Faq: React.FC = () => {
     const { openModal } = useLeadModal();
+
+    const faqSchema = useMemo(
+        () => ({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: faqCategories.flatMap((cat) =>
+                cat.faqs.map((faq) => ({
+                    "@type": "Question",
+                    name: faq.question,
+                    acceptedAnswer: {
+                        "@type": "Answer",
+                        text: faq.answer,
+                    },
+                }))
+            ),
+        }),
+        []
+    );
     const [activeCategoryId, setActiveCategoryId] = useState<string>(faqCategories[0].id);
 
     const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -344,6 +363,8 @@ const Faq: React.FC = () => {
     };
 
     return (
+        <>
+        <StructuredData data={faqSchema} />
         <section id="faq" className="relative w-full bg-[#F2F2F2] text-ollin-black py-12 md:py-28">
             <div className="max-w-[1500px] mx-auto px-[5vw] w-full">
 
@@ -543,6 +564,7 @@ const Faq: React.FC = () => {
                 </div>
             </div>
         </section>
+        </>
     );
 };
 

@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import BookingSystemTrades from "./BookingSystemTrades";
+import SecondaryButton from "./SecondaryButton";
 
 type Step = {
     title: string;
@@ -44,104 +45,6 @@ const BookingSystemSection: React.FC = () => {
 
     return (
         <section id="system" className="relative w-full bg-[#F2F2F2] text-ollin-black py-20 md:py-28">
-            <style>{`
-        /* =========================
-           Secondary Button v14 (same as Hero / PricingSection)
-           ========================= */
-        .btnSecondary.btnSecondary14 {
-          color: #6b6b6b;
-          background: transparent;
-          border: 0;
-          padding: 0;
-          display: inline-flex;
-          align-items: center;
-          cursor: pointer;
-          transition: color 280ms ease-out;
-
-          /* single source of truth */
-          --arrowLen: 18px;
-          --arrowLenHover: 46px;
-          --arrowOverlap: 7.5px;
-        }
-        .btnSecondary.btnSecondary14:hover {
-          color: #111111;
-          --arrowLen: var(--arrowLenHover);
-        }
-
-        /* ===== SHEEN ===== */
-        .btnSecondary14Text {
-          position: relative;
-          display: inline-block;
-          line-height: 1;
-        }
-        .btnSecondary14Text::after {
-          content: attr(data-text);
-          position: absolute;
-          inset: 0;
-          color: transparent;
-          background-image: linear-gradient(
-            90deg,
-            transparent 0%,
-            rgba(255, 248, 220, 0.92) 45%,
-            transparent 62%
-          );
-          background-size: 220% 100%;
-          background-position: 220% 0;
-          -webkit-background-clip: text;
-          background-clip: text;
-          opacity: 0;
-          pointer-events: none;
-        }
-        @keyframes ollinSheenOnceLR {
-          0%   { background-position: 220% 0; opacity: 0; }
-          12%  { opacity: 0.70; }
-          88%  { opacity: 0.70; }
-          100% { background-position: -220% 0; opacity: 0; }
-        }
-        .btnSecondary.btnSecondary14:hover .btnSecondary14Text::after {
-          animation: ollinSheenOnceLR 720ms ease-out 1;
-        }
-
-        /* ===== ARROW ===== */
-        .btnSecondary14Arrow {
-          position: relative;
-          display: inline-block;
-          width: 68px;
-          height: 12px;
-          margin-left: 6px;
-          pointer-events: none;
-        }
-
-        .btnSecondary14ArrowLineSvg {
-          position: absolute;
-          left: 0;
-          top: 50%;
-          transform: translateY(-50%);
-          width: var(--arrowLen);
-          height: 12px;
-          overflow: visible;
-          transition: width 380ms cubic-bezier(0.2, 0.7, 0.2, 1);
-          will-change: width;
-        }
-
-        .btnSecondary14ArrowHeadSvg {
-          position: absolute;
-          left: 0;
-          top: 50%;
-          width: 13px;
-          height: 12px;
-          transform: translate3d(calc(var(--arrowLen) - var(--arrowOverlap)), -50%, 0);
-          transition: transform 380ms cubic-bezier(0.2, 0.7, 0.2, 1);
-          will-change: transform;
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .btnSecondary.btnSecondary14 { transition: none !important; }
-          .btnSecondary14ArrowLineSvg,
-          .btnSecondary14ArrowHeadSvg { transition: none !important; }
-          .btnSecondary.btnSecondary14:hover .btnSecondary14Text::after { animation: none !important; }
-        }
-      `}</style>
 
             <div className="max-w-[1500px] mx-auto px-[5vw] w-full">
 
@@ -155,42 +58,11 @@ const BookingSystemSection: React.FC = () => {
                             A clear system that turns demand into booked work.
                         </p>
 
-                        <button
-                            type="button"
+                        <SecondaryButton
                             onClick={() => navigate("/services/retention")}
-                            className="mt-8 text-sm font-semibold tracking-tight btnSecondary btnSecondary14"
-                        >
-                            <span className="btnSecondary14Text" data-text="Get a quick breakdown">
-                                Get a quick breakdown
-                            </span>
-
-                            <span className="btnSecondary14Arrow" aria-hidden="true">
-                                <svg className="btnSecondary14ArrowLineSvg" viewBox="0 0 100 16" fill="none">
-                                    <line
-                                        x1="0"
-                                        y1="8"
-                                        x2="100"
-                                        y2="8"
-                                        stroke="currentColor"
-                                        strokeWidth="1"
-                                        strokeLinecap="butt"
-                                        vectorEffect="non-scaling-stroke"
-                                    />
-                                </svg>
-
-                                <svg
-                                    className="btnSecondary14ArrowHeadSvg"
-                                    viewBox="0 0 18 16"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="1"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                >
-                                    <path d="M0 3 L12 8 L0 13" vectorEffect="non-scaling-stroke" />
-                                </svg>
-                            </span>
-                        </button>
+                            label="Get a quick breakdown"
+                            className="mt-8 text-sm font-semibold tracking-tight"
+                        />
                     </div>
 
                     <div className="relative">

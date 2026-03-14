@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLeadModal } from "./LeadModalContext";
+import SecondaryButton from "./SecondaryButton";
+import { useDeviceCapability } from "../hooks/useDeviceCapability";
 
 type Trade = {
     name: string;
@@ -377,110 +379,111 @@ function LiquidImage({
                 }}
                 aria-hidden
             />
-            <img src={src} alt={alt || ""} className="absolute inset-0 h-full w-full object-cover opacity-0" />
+            <img src={src} alt={alt || ""} loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover opacity-0" />
         </div>
     );
 }
 
 const BookingSystemTrades: React.FC = () => {
     const { openModal } = useLeadModal();
+    const { isLowPower, supportsWebGL } = useDeviceCapability();
     const trades: Trade[] = useMemo(
         () => [
             {
                 name: "Roofing",
                 headline: "Win the urgent calls.",
                 sub: "Storm season visibility + fast follow-ups.",
-                img: "https://i.imgur.com/KboxYWk.jpeg",
+                img: "/media/images/trade-roofing.jpeg",
             },
             {
                 name: "Plumbing",
                 headline: "Be the first they call.",
                 sub: "Maps + quick replies for high-intent jobs.",
-                img: "https://i.imgur.com/hngnVk5.jpeg",
+                img: "/media/images/trade-plumbing.jpeg",
             },
             {
                 name: "HVAC",
                 headline: "Stay booked all year.",
                 sub: "Seasonal demand + consistent lead flow.",
-                img: "https://i.imgur.com/9tnMBOj.jpeg",
+                img: "/media/images/trade-hvac.jpeg",
             },
             {
                 name: "Electrical",
                 headline: "Cleaner leads, better jobs.",
                 sub: "Target the right service calls in your area.",
-                img: "https://i.imgur.com/uS8JLVJ.jpeg",
+                img: "/media/images/trade-electrical.jpeg",
             },
             {
                 name: "Remodeling",
                 headline: "Premium positioning.",
                 sub: "Before/after proof that sells bigger projects.",
-                img: "https://i.imgur.com/PTimlDZ.jpeg",
+                img: "/media/images/trade-remodeling.jpeg",
             },
             {
                 name: "Concrete",
                 headline: "Own your service radius.",
                 sub: "Local visibility + estimate requests that convert.",
-                img: "https://i.imgur.com/eTviQMQ.jpeg",
+                img: "/media/images/trade-concrete.jpeg",
             },
             {
                 name: "Landscaping",
                 headline: "Consistent weekly inquiries.",
                 sub: "Keep the phone ringing beyond peak season.",
-                img: "https://i.imgur.com/Wfj4hI5.jpeg",
+                img: "/media/images/trade-landscaping.jpeg",
             },
             {
                 name: "Painting",
                 headline: "Look pro online.",
                 sub: "Photos + simple pages that drive estimates.",
-                img: "https://i.imgur.com/24cphdG.jpeg",
+                img: "/media/images/trade-painting.jpeg",
             },
             {
                 name: "Cleaning",
                 headline: "More recurring clients.",
                 sub: "Simple booking flow + follow-ups that stick.",
-                img: "https://i.imgur.com/4rUOBOr.jpeg",
+                img: "/media/images/trade-cleaning.jpeg",
             },
             {
                 name: "Restoration",
                 headline: "High-intent emergencies.",
                 sub: "Be visible when they need you now.",
-                img: "https://i.imgur.com/58WFTc9.jpeg",
+                img: "/media/images/trade-restoration.jpeg",
             },
             {
                 name: "Fencing",
                 headline: "Better projects, fewer tire-kickers.",
                 sub: "Targeted leads + proof that builds trust.",
-                img: "https://i.imgur.com/VmfyjWQ.jpeg",
+                img: "/media/images/trade-fencing.jpeg",
             },
             {
                 name: "General Contractors",
                 headline: "A full pipeline, installed.",
                 sub: "Visibility → calls → estimates → booked work.",
-                img: "https://i.imgur.com/3kyCJvL.jpeg",
+                img: "/media/images/trade-general-contractors.jpeg",
             },
             {
                 name: "Mold Remediation",
                 headline: "Own the urgent fixes.",
                 sub: "Be visible when water shows up fast.",
-                img: "https://i.imgur.com/T8bnrBX.jpeg",
+                img: "/media/images/trade-mold-remediation.jpeg",
             },
             {
                 name: "Waterproofing",
                 headline: "Protect the home, win the job.",
                 sub: "High-intent leads + faster booking.",
-                img: "https://i.imgur.com/1knX8Pm.jpeg",
+                img: "/media/images/trade-waterproofing.jpeg",
             },
             {
                 name: "Siding",
                 headline: "Look sharp from the street.",
                 sub: "Local visibility + proof that builds trust.",
-                img: "https://i.imgur.com/XXRCowa.jpeg",
+                img: "/media/images/trade-siding.jpeg",
             },
             {
                 name: "And many more...",
                 headline: "Full-service marketing, built for contractors.",
                 sub: "Ads, websites, and social that looks premium and brings booked work.",
-                img: "https://i.imgur.com/dIs7Ayn.jpeg",
+                img: "/media/images/trade-more.jpeg",
             },
         ],
         []
@@ -560,42 +563,11 @@ const BookingSystemTrades: React.FC = () => {
                                 {activeTrade.sub}
                             </div>
 
-                            <button
-                                type="button"
+                            <SecondaryButton
                                 onClick={openModal}
-                                className="mt-6 text-sm font-semibold tracking-tight btnSecondary btnSecondary14"
-                            >
-                                <span className="btnSecondary14Text" data-text="Talk to us">
-                                    Talk to us
-                                </span>
-
-                                <span className="btnSecondary14Arrow" aria-hidden="true">
-                                    <svg className="btnSecondary14ArrowLineSvg" viewBox="0 0 100 16" fill="none">
-                                        <line
-                                            x1="0"
-                                            y1="8"
-                                            x2="100"
-                                            y2="8"
-                                            stroke="currentColor"
-                                            strokeWidth="1"
-                                            strokeLinecap="butt"
-                                            vectorEffect="non-scaling-stroke"
-                                        />
-                                    </svg>
-
-                                    <svg
-                                        className="btnSecondary14ArrowHeadSvg"
-                                        viewBox="0 0 18 16"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="1"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    >
-                                        <path d="M0 3 L12 8 L0 13" vectorEffect="non-scaling-stroke" />
-                                    </svg>
-                                </span>
-                            </button>
+                                label="Talk to us"
+                                className="mt-6 text-sm font-semibold tracking-tight"
+                            />
                         </div>
                     </div>
                 </div>
@@ -650,13 +622,24 @@ const BookingSystemTrades: React.FC = () => {
                     <div className="relative overflow-visible rounded-none bg-transparent">
 
                         <div className="relative z-0 h-[260px] sm:h-[300px] md:h-[340px] bg-ollin-bg overflow-visible">
-                            <LiquidImage
-                                key={activeTrade.img}
-                                src={activeTrade.img}
-                                alt={activeTrade.name}
-                                className="absolute inset-0 h-full w-full"
-                                overscan={22}
-                            />
+                            {!isLowPower && supportsWebGL ? (
+                                <LiquidImage
+                                    key={activeTrade.img}
+                                    src={activeTrade.img}
+                                    alt={activeTrade.name}
+                                    className="absolute inset-0 h-full w-full"
+                                    overscan={22}
+                                />
+                            ) : (
+                                <img
+                                    key={activeTrade.img}
+                                    src={activeTrade.img}
+                                    alt={activeTrade.name}
+                                    loading="lazy"
+                                    decoding="async"
+                                    className="absolute inset-0 h-full w-full object-cover"
+                                />
+                            )}
 
                             <div
                                 className="absolute inset-0 pointer-events-none"
@@ -678,42 +661,11 @@ const BookingSystemTrades: React.FC = () => {
                                 {activeTrade.sub}
                             </div>
 
-                            <button
-                                type="button"
+                            <SecondaryButton
                                 onClick={openModal}
-                                className="mt-6 text-sm font-semibold tracking-tight btnSecondary btnSecondary14"
-                            >
-                                <span className="btnSecondary14Text" data-text="Talk to us">
-                                    Talk to us
-                                </span>
-
-                                <span className="btnSecondary14Arrow" aria-hidden="true">
-                                    <svg className="btnSecondary14ArrowLineSvg" viewBox="0 0 100 16" fill="none">
-                                        <line
-                                            x1="0"
-                                            y1="8"
-                                            x2="100"
-                                            y2="8"
-                                            stroke="currentColor"
-                                            strokeWidth="1"
-                                            strokeLinecap="butt"
-                                            vectorEffect="non-scaling-stroke"
-                                        />
-                                    </svg>
-
-                                    <svg
-                                        className="btnSecondary14ArrowHeadSvg"
-                                        viewBox="0 0 18 16"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="1"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    >
-                                        <path d="M0 3 L12 8 L0 13" vectorEffect="non-scaling-stroke" />
-                                    </svg>
-                                </span>
-                            </button>
+                                label="Talk to us"
+                                className="mt-6 text-sm font-semibold tracking-tight"
+                            />
                         </div>
                     </div>
                 </div>

@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import { useHead } from "@unhead/react";
 import { useNavigate } from "react-router-dom";
 import PackagesHero from "./PackagesHero";
 import PackagesHeroMobile from "./PackagesHeroMobile";
@@ -19,6 +20,16 @@ import CustomPlanCTASection from "./CustomPlanCTASection";
 import { useLeadModal } from "../components/LeadModalContext";
 
 export default function PackagesPage() {
+    useHead({
+        title: "Packages & Plans — OLLIN",
+        meta: [
+            { name: "description", content: "Pick your starting point. Modular packages for contractor marketing — from basic presence to full growth systems." },
+            { property: "og:title", content: "Packages & Plans — OLLIN" },
+            { property: "og:description", content: "Pick your starting point. Modular packages for contractor marketing — from basic presence to full growth systems." },
+        ],
+        link: [{ rel: "canonical", href: "https://ollin.agency/packages" }],
+    });
+
     const navigate = useNavigate();
     const { openModal } = useLeadModal();
 

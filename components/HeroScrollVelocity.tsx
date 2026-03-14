@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   motion,
   useScroll,
@@ -50,6 +50,20 @@ const VelocityLine: React.FC<{
   baseVelocity: number;
   reverse?: boolean;
 }> = ({ items, baseVelocity, reverse = false }) => {
+  const lineRef = useRef<HTMLDivElement>(null);
+  const isVisible = useRef(true);
+
+  useEffect(() => {
+    const el = lineRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => { isVisible.current = entry.isIntersecting; },
+      { threshold: 0 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   const baseX = useMotionValue(0);
 
   const { scrollY } = useScroll();
@@ -74,6 +88,7 @@ const VelocityLine: React.FC<{
   const directionFactor = useRef<number>(reverse ? -1 : 1);
 
   useAnimationFrame((_t, delta) => {
+    if (!isVisible.current) return;
 
     const dt = delta / 1000;
 
@@ -100,7 +115,7 @@ const VelocityLine: React.FC<{
   );
 
   return (
-    <div className="hvLine">
+    <div ref={lineRef} className="hvLine">
       <motion.div className="hvScroller" style={{ x }}>
         {Array.from({ length: numCopies }).map((_, i) => (
           <Copy key={i} isFirst={i === 0} />

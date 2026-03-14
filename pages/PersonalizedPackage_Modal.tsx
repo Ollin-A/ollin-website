@@ -1,6 +1,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { Check, X } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 
 type LeadForm = {
     name: string;
@@ -46,6 +47,12 @@ const LINE = "rgba(0,0,0,0.18)";
 const TEXT = "rgba(0,0,0,0.90)";
 const MUTED = "rgba(0,0,0,0.62)";
 
+const slideVariants = {
+    enter: (dir: number) => ({ x: dir > 0 ? "100%" : "-100%", opacity: 0 }),
+    center: { x: 0, opacity: 1 },
+    exit: (dir: number) => ({ x: dir > 0 ? "-100%" : "100%", opacity: 0 }),
+};
+
 export default function PersonalizedPackageModal({
     isOpen,
     submitting,
@@ -60,15 +67,10 @@ export default function PersonalizedPackageModal({
 }: Props) {
     const [localError, setLocalError] = useState<string | null>(null);
     const [isShort, setIsShort] = useState(false);
+    const [step, setStep] = useState<1 | 2>(1);
+    const [direction, setDirection] = useState<1 | -1>(1);
 
     const hasEmail = useMemo(() => lead.email.trim().length > 0, [lead.email]);
-    const hasPhone = useMemo(() => lead.phone.trim().length > 0, [lead.phone]);
-
-    const ctaLabel = useMemo(() => {
-        if (hasEmail) return "REQUEST MY PLAN";
-        if (hasPhone) return "SUBMIT REQUEST";
-        return "REQUEST MY PLAN";
-    }, [hasEmail, hasPhone]);
 
     useEffect(() => {
         if (!isOpen) return;
@@ -104,6 +106,8 @@ export default function PersonalizedPackageModal({
     useEffect(() => {
         if (!isOpen) return;
         setLocalError(null);
+        setStep(1);
+        setDirection(1);
     }, [isOpen]);
 
     if (!isOpen) return null;
@@ -112,18 +116,30 @@ export default function PersonalizedPackageModal({
         if (!submitting) onClose();
     };
 
-    const submit = () => {
+    const goToStep2 = () => {
         setLocalError(null);
 
         if (!lead.name.trim()) {
             setLocalError("Please add your name.");
             return;
         }
-        if (!hasEmail && !hasPhone) {
-            setLocalError("Add either a phone number or an email.");
+        if (!hasEmail) {
+            setLocalError("Please add your email.");
             return;
         }
 
+        setDirection(1);
+        setStep(2);
+    };
+
+    const goBack = () => {
+        setLocalError(null);
+        setDirection(-1);
+        setStep(1);
+    };
+
+    const submit = () => {
+        setLocalError(null);
         onSubmit();
     };
 
@@ -254,14 +270,16 @@ export default function PersonalizedPackageModal({
                                         )}
                                         style={{ color: TEXT }}
                                     >
-                                        Let’s build your growth system.
+                                        Let's build your growth system.
                                     </h2>
 
                                     <p
                                         className={cx("mt-3 leading-relaxed", isShort ? "text-sm" : "text-sm sm:text-base")}
                                         style={{ color: MUTED }}
                                     >
-                                        Share a few details — we’ll reply with a clean scope and your custom plan.
+                                        {step === 1
+                                            ? "Share your name and email — we'll follow up with a custom plan."
+                                            : "A few more details so we can tailor your plan."}
                                     </p>
                                 </div>
 
@@ -284,110 +302,168 @@ export default function PersonalizedPackageModal({
                                 style={{ borderColor: LINE, opacity: 0.85 }}
                             />
 
-                            <div className="ollinFields">
-                                <Field
-                                    label="NAME"
-                                    required
-                                    value={lead.name}
-                                    onChange={(v) => {
-                                        setLocalError(null);
-                                        setLead((p) => ({ ...p, name: v }));
-                                    }}
-                                    placeholder="Juan Perez"
-                                />
+                            <div className="overflow-hidden">
+                                <AnimatePresence mode="wait" custom={direction}>
+                                    {step === 1 ? (
+                                        <motion.div
+                                            key="step1"
+                                            custom={direction}
+                                            variants={slideVariants}
+                                            initial="enter"
+                                            animate="center"
+                                            exit="exit"
+                                            transition={{ duration: 0.25, ease: "easeOut" }}
+                                        >
+                                            <div className="ollinFields">
+                                                <Field
+                                                    label="NAME"
+                                                    required
+                                                    value={lead.name}
+                                                    onChange={(v) => {
+                                                        setLocalError(null);
+                                                        setLead((p) => ({ ...p, name: v }));
+                                                    }}
+                                                    placeholder="Juan Perez"
+                                                />
 
-                                <Field
-                                    label="BUSINESS TYPE"
-                                    required
-                                    value={lead.businessType}
-                                    onChange={(v) => {
-                                        setLocalError(null);
-                                        setLead((p) => ({ ...p, businessType: v }));
-                                    }}
-                                    placeholder="Roofing"
-                                />
-
-                                <Field
-                                    label="EMAIL"
-                                    value={lead.email}
-                                    onChange={(v) => {
-                                        setLocalError(null);
-                                        setLead((p) => ({ ...p, email: v }));
-                                    }}
-                                    placeholder="juan@company.com"
-                                    inputMode="email"
-                                />
-
-                                <Field
-                                    label="PHONE"
-                                    value={lead.phone}
-                                    onChange={(v) => {
-                                        setLocalError(null);
-                                        setLead((p) => ({ ...p, phone: v }));
-                                    }}
-                                    placeholder="(555) 123-4567"
-                                    inputMode="tel"
-                                />
-
-                                <Field
-                                    className="ollinSpan2"
-                                    label="ANY CONTEXT (OPTIONAL)"
-                                    value={lead.notes}
-                                    onChange={(v) => setLead((p) => ({ ...p, notes: v }))}
-                                    placeholder="Example: city/market, deadline, current site link, special constraints..."
-                                    textarea
-                                    rows={contextRows}
-                                />
-                            </div>
-
-                            <div
-                                className={cx("border-t", isShort ? "mt-5" : "mt-6")}
-                                style={{ borderColor: LINE, opacity: 0.85 }}
-                            />
-
-                            <div className={cx("flex items-center justify-between gap-4", isShort ? "mt-4" : "mt-5")}>
-                                <div className="flex items-start gap-3 min-w-0">
-                                    <div
-                                        className="w-10 h-10 border flex items-center justify-center"
-                                        style={{
-                                            borderColor: LINE,
-                                            background: "rgba(255,255,255,0.35)",
-                                        }}
-                                    >
-                                        <Check size={18} style={{ color: "rgba(0,0,0,0.78)" }} />
-                                    </div>
-
-                                    <div className="min-w-0">
-                                        <div className={cx(isShort ? "text-sm" : "text-sm sm:text-base")} style={{ color: "rgba(0,0,0,0.72)" }}>
-                                            Including configuration for{" "}
-                                            <span style={{ color: TEXT, fontWeight: 600 }}>
-                                                {selectedServicesCount} services selected
-                                            </span>
-                                        </div>
-                                        {preset ? (
-                                            <div className="text-xs mt-1" style={{ color: "rgba(0,0,0,0.50)" }}>
-                                                Starting level: {preset.title}
+                                                <Field
+                                                    label="EMAIL"
+                                                    required
+                                                    value={lead.email}
+                                                    onChange={(v) => {
+                                                        setLocalError(null);
+                                                        setLead((p) => ({ ...p, email: v }));
+                                                    }}
+                                                    placeholder="juan@company.com"
+                                                    inputMode="email"
+                                                />
                                             </div>
-                                        ) : null}
-                                    </div>
-                                </div>
 
-                                <button
-                                    type="button"
-                                    onClick={submit}
-                                    disabled={submitting}
-                                    className={cx(
-                                        "border px-6 py-3 text-xs uppercase tracking-[0.22em] transition-opacity duration-300 hover:opacity-85 shrink-0",
-                                        submitting && "opacity-70 cursor-wait"
+                                            <div className={cx(isShort ? "mt-5" : "mt-6")}>
+                                                <button
+                                                    type="button"
+                                                    onClick={goToStep2}
+                                                    className={cx(
+                                                        "border px-6 py-3 text-xs uppercase tracking-[0.22em] transition-opacity duration-300 hover:opacity-85 w-full"
+                                                    )}
+                                                    style={{
+                                                        borderColor: LINE,
+                                                        background: "rgba(255,255,255,0.35)",
+                                                        color: "rgba(0,0,0,0.78)",
+                                                    }}
+                                                >
+                                                    GET MY FREE GROWTH PLAN →
+                                                </button>
+
+                                                <div className="mt-3 text-xs text-center" style={{ color: "rgba(0,0,0,0.40)" }}>
+                                                    No spam. We'll reply within 24 hours.
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    ) : (
+                                        <motion.div
+                                            key="step2"
+                                            custom={direction}
+                                            variants={slideVariants}
+                                            initial="enter"
+                                            animate="center"
+                                            exit="exit"
+                                            transition={{ duration: 0.25, ease: "easeOut" }}
+                                        >
+                                            <button
+                                                type="button"
+                                                onClick={goBack}
+                                                className={cx("text-sm transition-opacity hover:opacity-70", isShort ? "mt-4 mb-1" : "mt-5 mb-2")}
+                                                style={{ color: MUTED }}
+                                            >
+                                                ← Back
+                                            </button>
+
+                                            <div className="ollinFields">
+                                                <Field
+                                                    label="PHONE"
+                                                    value={lead.phone}
+                                                    onChange={(v) => {
+                                                        setLocalError(null);
+                                                        setLead((p) => ({ ...p, phone: v }));
+                                                    }}
+                                                    placeholder="(555) 123-4567"
+                                                    inputMode="tel"
+                                                />
+
+                                                <Field
+                                                    label="BUSINESS TYPE"
+                                                    value={lead.businessType}
+                                                    onChange={(v) => {
+                                                        setLocalError(null);
+                                                        setLead((p) => ({ ...p, businessType: v }));
+                                                    }}
+                                                    placeholder={preset ? preset.title : "Roofing"}
+                                                />
+
+                                                <Field
+                                                    className="ollinSpan2"
+                                                    label="ANY CONTEXT (OPTIONAL)"
+                                                    value={lead.notes}
+                                                    onChange={(v) => setLead((p) => ({ ...p, notes: v }))}
+                                                    placeholder="Example: city/market, deadline, current site link, special constraints..."
+                                                    textarea
+                                                    rows={contextRows}
+                                                />
+                                            </div>
+
+                                            <div
+                                                className={cx("border-t", isShort ? "mt-5" : "mt-6")}
+                                                style={{ borderColor: LINE, opacity: 0.85 }}
+                                            />
+
+                                            <div className={cx("flex items-center justify-between gap-4", isShort ? "mt-4" : "mt-5")}>
+                                                <div className="flex items-start gap-3 min-w-0">
+                                                    <div
+                                                        className="w-10 h-10 border flex items-center justify-center"
+                                                        style={{
+                                                            borderColor: LINE,
+                                                            background: "rgba(255,255,255,0.35)",
+                                                        }}
+                                                    >
+                                                        <Check size={18} style={{ color: "rgba(0,0,0,0.78)" }} />
+                                                    </div>
+
+                                                    <div className="min-w-0">
+                                                        <div className={cx(isShort ? "text-sm" : "text-sm sm:text-base")} style={{ color: "rgba(0,0,0,0.72)" }}>
+                                                            Including configuration for{" "}
+                                                            <span style={{ color: TEXT, fontWeight: 600 }}>
+                                                                {selectedServicesCount} services selected
+                                                            </span>
+                                                        </div>
+                                                        {preset ? (
+                                                            <div className="text-xs mt-1" style={{ color: "rgba(0,0,0,0.50)" }}>
+                                                                Starting level: {preset.title}
+                                                            </div>
+                                                        ) : null}
+                                                    </div>
+                                                </div>
+
+                                                <button
+                                                    type="button"
+                                                    onClick={submit}
+                                                    disabled={submitting}
+                                                    className={cx(
+                                                        "border px-6 py-3 text-xs uppercase tracking-[0.22em] transition-opacity duration-300 hover:opacity-85 shrink-0",
+                                                        submitting && "opacity-70 cursor-wait"
+                                                    )}
+                                                    style={{
+                                                        borderColor: LINE,
+                                                        background: "rgba(255,255,255,0.35)",
+                                                        color: "rgba(0,0,0,0.78)",
+                                                    }}
+                                                >
+                                                    {submitting ? "SUBMITTING…" : "SEND REQUEST →"}
+                                                </button>
+                                            </div>
+                                        </motion.div>
                                     )}
-                                    style={{
-                                        borderColor: LINE,
-                                        background: "rgba(255,255,255,0.35)",
-                                        color: "rgba(0,0,0,0.78)",
-                                    }}
-                                >
-                                    {submitting ? "SUBMITTING…" : ctaLabel}
-                                </button>
+                                </AnimatePresence>
                             </div>
 
                             {localError ? (
@@ -396,9 +472,9 @@ export default function PersonalizedPackageModal({
                                 </div>
                             ) : null}
 
-                            {!isShort ? (
+                            {!isShort && step === 1 ? (
                                 <div className="mt-4 text-xs" style={{ color: "rgba(0,0,0,0.55)" }}>
-                                    We’ll reach out shortly with next steps.
+                                    We'll reach out shortly with next steps.
                                 </div>
                             ) : null}
 

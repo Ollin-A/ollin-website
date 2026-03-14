@@ -1,6 +1,17 @@
 import React, { useEffect } from "react";
+import { useHead } from "@unhead/react";
 
 const Terms: React.FC = () => {
+  useHead({
+    title: "Terms of Service — OLLIN",
+    meta: [
+      { name: "description", content: "Terms of service for OLLIN Agency's operational system and contractor marketing services." },
+      { property: "og:title", content: "Terms of Service — OLLIN" },
+      { property: "og:description", content: "Terms of service for OLLIN Agency's operational system and contractor marketing services." },
+    ],
+    link: [{ rel: "canonical", href: "https://ollin.agency/terms" }],
+  });
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);

@@ -4,10 +4,31 @@ const ReelPeekSection: React.FC = () => {
   const [mounted, setMounted] = useState(false);
   const [aspectRatio, setAspectRatio] = useState<number | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setMounted(true), 100);
     return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    const container = containerRef.current;
+    if (!video || !container) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      },
+      { threshold: 0.3 },
+    );
+
+    observer.observe(container);
+    return () => observer.disconnect();
   }, []);
 
   const handleLoadedMetadata = () => {
@@ -30,6 +51,7 @@ const ReelPeekSection: React.FC = () => {
       `}</style>
 
       <div
+        ref={containerRef}
         className={`
           w-full max-w-none mx-0
           md:max-w-[1500px] md:mx-auto
@@ -49,11 +71,10 @@ const ReelPeekSection: React.FC = () => {
           <video
             ref={videoRef}
             className="w-full h-full object-cover opacity-95 pointer-events-none"
-            autoPlay
             muted
             loop
             playsInline
-            preload="metadata"
+            preload="none"
             disablePictureInPicture
             controlsList="nodownload noplaybackrate noremoteplayback"
             disableRemotePlayback

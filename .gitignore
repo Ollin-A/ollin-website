@@ -7,3 +7,9 @@ dist
 !.env.example
 .DS_Store
 EOF
+
+# Claude Code context files
+CLAUDE.md
+.claudeignore
+prompt.md
+.claude

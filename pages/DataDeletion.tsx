@@ -1,6 +1,17 @@
 import React, { useEffect } from "react";
+import { useHead } from "@unhead/react";
 
 const DataDeletion: React.FC = () => {
+  useHead({
+    title: "Data Deletion — OLLIN",
+    meta: [
+      { name: "description", content: "Instructions for requesting deletion of your data from OLLIN Agency systems." },
+      { property: "og:title", content: "Data Deletion — OLLIN" },
+      { property: "og:description", content: "Instructions for requesting deletion of your data from OLLIN Agency systems." },
+    ],
+    link: [{ rel: "canonical", href: "https://ollin.agency/data-deletion" }],
+  });
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);

@@ -23,6 +23,10 @@ jobs:
 
       - name: Build project
         run: node generate-sitemap.js && vite build && npx puppeteer browsers install chrome && node prerender.mjs
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_SITE_URL: https://ollin.agency
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/pages-action@v1

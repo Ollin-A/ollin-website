@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useLeadModal } from "./LeadModalContext";
 import { ChevronRight } from "lucide-react";
+import SecondaryButton from "./SecondaryButton";
 
 type Headline = { muted: string; strong: string };
 
@@ -480,123 +481,6 @@ const ServicesPreview: React.FC = () => {
     return (
         <section id="services" className="relative w-full bg-[#F2F2F2] text-ollin-black py-20 md:py-28">
 
-            <style>{`
-        .btnSecondary.btnSecondary14 {
-          color: #6b6b6b;
-          background: transparent;
-          border: 0;
-          display: inline-flex;
-          align-items: center;
-          cursor: pointer;
-          transition: color 280ms ease-out;
-
-          /* misma lógica que el "código ganador" */
-          --arrowLen: 18px;
-          --arrowLenHover: 46px;
-          --arrowOverlap: 7.5px;
-        }
-        .btnSecondary.btnSecondary14:hover {
-          color: #111111;
-          --arrowLen: var(--arrowLenHover);
-        }
-
-        /* SHEEN (igual que ganador) */
-        .btnSecondary14Text {
-          position: relative;
-          display: inline-block;
-          line-height: 1;
-        }
-        .btnSecondary14Text::after {
-          content: attr(data-text);
-          position: absolute;
-          inset: 0;
-          color: transparent;
-          background-image: linear-gradient(
-            90deg,
-            transparent 0%,
-            rgba(255, 248, 220, 0.92) 45%,
-            transparent 62%
-          );
-          background-size: 220% 100%;
-          background-position: 220% 0;
-          -webkit-background-clip: text;
-          background-clip: text;
-          opacity: 0;
-          pointer-events: none;
-        }
-        @keyframes ollinSheenOnceLR {
-          0%   { background-position: 220% 0; opacity: 0; }
-          12%  { opacity: 0.70; }
-          88%  { opacity: 0.70; }
-          100% { background-position: -220% 0; opacity: 0; }
-        }
-        .btnSecondary.btnSecondary14:hover .btnSecondary14Text::after {
-          animation: ollinSheenOnceLR 720ms ease-out 1;
-        }
-
-        /* Flecha (igual que ganador) */
-        .btnSecondary14Arrow {
-          position: relative;
-          display: inline-block;
-          width: 68px;
-          height: 12px;
-          margin-left: 6px;
-          pointer-events: none;
-        }
-        .btnSecondary14ArrowLineSvg {
-          position: absolute;
-          left: 0;
-          top: 50%;
-          transform: translateY(-50%);
-          width: var(--arrowLen);
-          height: 12px;
-          overflow: visible;
-          transition: width 380ms cubic-bezier(0.2, 0.7, 0.2, 1);
-          will-change: width;
-        }
-        .btnSecondary14ArrowHeadSvg {
-          position: absolute;
-          left: 0;
-          top: 50%;
-          width: 13px;
-          height: 12px;
-          transform: translate3d(calc(var(--arrowLen) - var(--arrowOverlap)), -50%, 0);
-          transition: transform 380ms cubic-bezier(0.2, 0.7, 0.2, 1);
-          will-change: transform;
-        }
-
-        /* ✅ Compacto SOLO para este CTA */
-        .btnSecondary14--sm {
-          font-size: 14px;         /* parecido a tu text-sm */
-          font-weight: 600;
-          border-bottom: 1px solid rgba(17,17,17,0.9); /* igual a tu border-b */
-          padding-bottom: 2px;     /* pb-0.5-ish */
-        }
-        .btnSecondary14--sm .btnSecondary14Arrow {
-          width: 56px;             /* menos espacio reservado */
-          height: 11px;
-          margin-left: 6px;
-        }
-        .btnSecondary14--sm .btnSecondary14ArrowLineSvg {
-          height: 11px;
-        }
-        .btnSecondary14--sm .btnSecondary14ArrowHeadSvg {
-          width: 12px;
-          height: 11px;
-        }
-        .btnSecondary14--sm line,
-        .btnSecondary14--sm path {
-          stroke-width: 1;         /* igual que ganador */
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .btnSecondary.btnSecondary14 { transition: none !important; }
-          .btnSecondary14ArrowLineSvg,
-          .btnSecondary14ArrowHeadSvg { transition: none !important; }
-          .btnSecondary.btnSecondary14:hover .btnSecondary14Text::after { animation: none !important; }
-        }
-      `}</style>
-
             <div className="max-w-[1500px] mx-auto px-[5vw] w-full">
 
                 <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-12 items-start mb-12 md:mb-16">
@@ -607,41 +491,12 @@ const ServicesPreview: React.FC = () => {
                             Everything contractors need: brand, demand generation, and follow-up systems—built to turn clicks into booked jobs.
                         </p>
 
-                        <Link
+                        <SecondaryButton
                             to="/services"
-                            className="mt-7 btnSecondary btnSecondary14 btnSecondary14--sm"
-                        >
-                            <span className="btnSecondary14Text" data-text="Explore services">
-                                Explore services
-                            </span>
-
-                            <span className="btnSecondary14Arrow" aria-hidden="true">
-                                <svg className="btnSecondary14ArrowLineSvg" viewBox="0 0 100 16" fill="none">
-                                    <line
-                                        x1="0"
-                                        y1="8"
-                                        x2="100"
-                                        y2="8"
-                                        stroke="currentColor"
-                                        strokeWidth="1"
-                                        strokeLinecap="butt"
-                                        vectorEffect="non-scaling-stroke"
-                                    />
-                                </svg>
-
-                                <svg
-                                    className="btnSecondary14ArrowHeadSvg"
-                                    viewBox="0 0 18 16"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="1"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                >
-                                    <path d="M0 3 L12 8 L0 13" vectorEffect="non-scaling-stroke" />
-                                </svg>
-                            </span>
-                        </Link>
+                            label="Explore services"
+                            compact
+                            className="mt-7"
+                        />
                     </div>
                 </div>
 
