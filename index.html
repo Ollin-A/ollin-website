@@ -51,7 +51,6 @@
         overflow-x: hidden;
       }
 
-      /* --- GRAIN & VIGNETTE --- */
       .textureOverlay {
         position: fixed;
         top: 0;
@@ -79,7 +78,6 @@
         );
       }
 
-      /* --- HERO ROOT --- */
       .hero {
         position: relative;
         min-height: 100vh;
@@ -91,11 +89,10 @@
         background-color: var(--bg);
       }
 
-      /* --- BACKGROUND SHAPE (Rings + Orb) --- */
       .bgRingsGroup {
         position: absolute;
         top: 50%;
-        left: 70%; /* Position mostly behind the right column */
+        left: 70%;
         transform: translate(-50%, -50%);
         width: 900px;
         height: 900px;
@@ -126,11 +123,10 @@
         left: 50%;
         transform: translate(-50%, -50%);
         border-radius: 50%;
-        border: 1px solid rgba(17, 17, 17, 0.08); /* Warm faint gray */
+        border: 1px solid rgba(17, 17, 17, 0.08);
         box-sizing: border-box;
       }
 
-      /* Individual Ring Sizing & Timing */
       .bgRing:nth-child(2) {
         width: 100%;
         height: 100%;
@@ -176,7 +172,6 @@
         }
       }
 
-      /* --- GRID LAYOUT --- */
       .heroInner {
         position: relative;
         z-index: 2;
@@ -185,12 +180,11 @@
         margin: 0 auto;
         padding: 0 5vw;
         display: grid;
-        grid-template-columns: 1.3fr 1fr; /* Stronger focus on headline */
+        grid-template-columns: 1.3fr 1fr;
         gap: clamp(40px, 6vw, 120px);
-        align-items: center; /* Vertically center initially, then adjust children */
+        align-items: center;
       }
 
-      /* --- TYPOGRAPHY & ELEMENTS --- */
       .eyebrow {
         font-size: 11px;
         letter-spacing: 0.2em;
@@ -202,7 +196,6 @@
       }
 
       .heroLeft {
-        /* No padding needed if grid handles it */
       }
 
       .heroTitle {
@@ -217,21 +210,20 @@
         display: block;
         font-weight: 600;
         color: var(--ink);
-        white-space: nowrap; /* Force one line on desktop */
+        white-space: nowrap;
       }
 
       .heroTitleSoft {
         display: block;
         font-weight: 400;
-        color: rgba(17, 17, 17, 0.5); /* Reduced contrast for echo effect */
+        color: rgba(17, 17, 17, 0.5);
         margin-top: 8px;
-        font-size: 0.9em; /* Slight visual reduction */
+        font-size: 0.9em;
       }
 
       .heroRight {
         display: flex;
         flex-direction: column;
-        /* Move up visually to align with decision zone */
         transform: translateY(-24px);
       }
 
@@ -241,7 +233,7 @@
         line-height: 1.6;
         color: rgba(17, 17, 17, 0.7);
         font-weight: 400;
-        max-width: 44ch; /* Editorial constraint */
+        max-width: 44ch;
       }
 
       .bilingualLine {
@@ -254,7 +246,7 @@
       .heroCtas {
         display: flex;
         align-items: center;
-        gap: 24px; /* Reduced spacing */
+        gap: 24px;
         margin-bottom: 48px;
         flex-wrap: wrap;
       }
@@ -307,14 +299,13 @@
         transform: translateX(3px);
       }
 
-      /* --- MARQUEE (Restyled) --- */
       .marquee {
         width: 100%;
-        max-width: 440px; /* Constrain width to right column area approximately */
+        max-width: 440px;
         overflow: hidden;
         position: relative;
-        margin-top: -12px; /* Move UP towards content */
-        opacity: 0.8; /* Slightly higher opacity for legibility of light text */
+        margin-top: -12px;
+        opacity: 0.8;
         mask-image: linear-gradient(
           to right,
           transparent 0%,
@@ -347,20 +338,19 @@
       .marqueeItem {
         display: inline-flex;
         align-items: center;
-        padding-right: 32px; /* Uniform gap */
+        padding-right: 32px;
         white-space: nowrap;
-        font-size: 10px; /* Smaller */
+        font-size: 10px;
         letter-spacing: 0.18em;
         text-transform: uppercase;
         font-weight: 500;
-        color: #9aa0a6; /* Light Gray Text as requested */
+        color: #9aa0a6;
       }
 
-      /* Custom separator: Slash / */
       .sepMark {
         display: inline-block;
-        margin-left: 32px; /* Spacing */
-        color: #b0b4b8; /* Even lighter gray for the slash */
+        margin-left: 32px;
+        color: #b0b4b8;
         font-weight: 300;
         border: none;
         width: auto;
@@ -377,7 +367,6 @@
         }
       }
 
-      /* --- ENTRANCE ANIMATIONS --- */
       .heroIntro {
         opacity: 0;
         filter: blur(8px);
@@ -406,7 +395,6 @@
         }
       }
 
-      /* --- RESPONSIVE --- */
       @media (max-width: 1024px) {
         .heroInner {
           grid-template-columns: 1fr;
@@ -419,7 +407,7 @@
         }
         .heroTitleStrong {
           white-space: normal;
-        } /* Allow break on mobile */
+        } 
         .heroRight {
           transform: none;
         }
@@ -431,12 +419,11 @@
           margin-top: 0;
         }
 
-        /* Adjust background for mobile */
         .bgRingsGroup {
           left: 50%;
           width: 100vw;
           height: 100vw;
-          opacity: 0.5; /* Fade out slightly on mobile */
+          opacity: 0.5;
         }
       }
 

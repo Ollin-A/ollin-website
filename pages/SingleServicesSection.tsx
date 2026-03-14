@@ -144,13 +144,13 @@ export default function SingleServicesSection({ services, onRequestScope }: Prop
           color: #6b6b6b;
           background: transparent;
           border: 0;
-          padding: 0;              /* ✅ evita layout shift por estilos default */
+          padding: 0;              
           display: inline-flex;
           align-items: center;
           cursor: pointer;
           transition: color 280ms ease-out;
 
-          transform: none !important; /* ✅ por si tu .btnSecondary global mete translate */
+          transform: none !important; 
           will-change: auto;
 
           --arrowLen: 18px;
@@ -160,7 +160,7 @@ export default function SingleServicesSection({ services, onRequestScope }: Prop
         .btnSecondary.btnSecondary14:hover {
           color: #111111;
           --arrowLen: var(--arrowLenHover);
-          transform: none !important; /* ✅ no queremos “brinco” */
+          transform: none !important; 
         }
 
         .btnSecondary14Text {
