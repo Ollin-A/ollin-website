@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "node generate-sitemap.js && vite build",
-    "preview": "vite preview"
+    "preview": "npm run build && wrangler dev",
+    "deploy": "npm run build && wrangler deploy"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
@@ -29,6 +30,7 @@
   },
   "devDependencies": {
     "@babel/parser": "^7.29.0",
+    "@cloudflare/vite-plugin": "^1.28.0",
     "@netlify/functions": "^5.1.2",
     "@tailwindcss/cli": "^4.1.18",
     "@tailwindcss/postcss": "^4.1.18",
@@ -42,6 +44,7 @@
     "puppeteer": "^24.37.5",
     "tailwindcss": "^4.1.18",
     "typescript": "~5.8.2",
-    "vite": "^6.2.0"
+    "vite": "^6.2.0",
+    "wrangler": "^4.73.0"
   }
 }
